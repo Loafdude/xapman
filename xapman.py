@@ -20,7 +20,7 @@ class XapConnection(object):
         for u in range(8):
             uid = self.connection.getUniqueId(u)
             if uid != None:
-                unit = {'id': str(u), 'UID':uid, 'version':xap.getVersion(u)}
+                unit = {'id': str(u), 'UID':uid, 'version':self.connection.getVersion(u)}
                 print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(unit)
 
