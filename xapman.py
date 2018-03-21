@@ -14,23 +14,24 @@ class XapConnection(object):
         self.baudrate   = baudrate
         self.units = []
         self.serial_path = serial_path
-        self.connection = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
-        self.connection.connect()
+        self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
+        self.comms.connect()
         self.scanDevices()
 
     def scanDevices(self):
         '''Scan for XAP units'''
         self.units = []
         print("Searching for devices...")
-        delay = self.connection._maxrespdelay
-        self.connection._maxrespdelay = 0.1 # reduce timeout delay when searching for non-existant devices
+        delay = self.comms._maxrespdelay
+        self.comms._maxrespdelay = 0.1 # reduce timeout delay when searching for non-existant devices
         for u in range(8):
-            uid = self.connection.getUniqueId(u)
+            uid = self.comms.getUniqueId(u)
             if uid != None:
                 unit = {'id': str(u), 'UID':uid, 'version':self.connection.getVersion(u)}
                 print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(XapUnit(self, XAP_unit=u))
         print("Found " + str(len(self.units)) + " units.")
+        self.comms._maxrespdelay = delay
         return self.units
 
 
@@ -47,6 +48,7 @@ class XapUnit(object):
                  alt_mqtt_paths=[],
                  XAP_unit=0):
         self.connection = xap_connection
+        self.comms      = xap_connection.connection
         self.device_id = XAP_unit
         self.mqtt_path      = mqtt_path
         self.alt_mqtt_paths = alt_mqtt_paths
@@ -73,96 +75,96 @@ class XapUnit(object):
     
     def getID(self):
         '''Fetch ID from XAP Unit'''
-        id = self.connection.getDeviceID(unitCode=self.device_id)
+        id = self.comms.getDeviceID(unitCode=self.device_id)
         return id
         
     def getFW(self):
         '''Fetch FW Version from XAP Unit'''
-        FW = self.connection.getVersion(unitCode=self.device_id)
+        FW = self.comms.getVersion(unitCode=self.device_id)
         self.FW_version = FW
         return FW
         
     def getDSP(self):
         '''Fetch DSP Version from XAP Unit'''
-        DSP = self.connection.getDSPVersion(unitCode=self.device_id)
+        DSP = self.comms.getDSPVersion(unitCode=self.device_id)
         self.DSP_version = DSP
         return DSP
         
     def getSerialNumber(self):
         '''Fetch Unique ID from XAP Unit'''
-        serial = self.connection.getUniqueId(unitCode=self.device_id)
+        serial = self.comms.getUniqueId(unitCode=self.device_id)
         self.serial_number = serial
         return serial
         
     def getModemMode(self):
         '''Fetch Modem Mode from XAP Unit'''
-        mode = self.connection.getModemMode(unitCode=self.device_id)
+        mode = self.comms.getModemMode(unitCode=self.device_id)
         self.modem_mode = mode
         return mode
         
     def setModemMode(self, isEnabled):
         '''Set Modem Mode to XAP Unit'''
-        mode = self.connection.setModemMode(isEnabled, unitCode=self.device_id)
+        mode = self.comms.setModemMode(isEnabled, unitCode=self.device_id)
         self.modem_mode = mode
         return mode
         
     def getModemInit(self):
         '''Fetch Modem Init String from XAP Unit'''
-        string = self.connection.getModemInitString(unitCode=self.device_id)
+        string = self.comms.getModemInitString(unitCode=self.device_id)
         self.modem_init_string = string
         return string
         
     def setModemInit(self, string):
         '''Set Modem Init String to XAP Unit'''
-        string = self.connection.setModemInitString(string, unitCode=self.device_id)
+        string = self.comms.setModemInitString(string, unitCode=self.device_id)
         self.modem_init_string = string
         return string
         
     def getModemPass(self):
         '''Fetch Modem Init String from XAP Unit'''
-        string = self.connection.getModemModePassword(unitCode=self.device_id)
+        string = self.comms.getModemModePassword(unitCode=self.device_id)
         self.modem_pass = string
         return string
         
     def setModemPass(self, string):
         '''Set Modem Init String to XAP Unit'''
-        string = self.connection.setModemModePassword(string, unitCode=self.device_id)
+        string = self.comms.setModemModePassword(string, unitCode=self.device_id)
         self.modem_pass = string
         return string
         
     def getSafetyMute(self):
         '''Fetch safety mute status from XAP Unit'''
-        status = self.connection.getSafetyMute(unitCode=self.device_id)
+        status = self.comms.getSafetyMute(unitCode=self.device_id)
         self.safety_mute = status
         return status
         
     def setSafetyMute(self, isEnabled):
         '''Set safety mute status to XAP Unit'''
-        status = self.connection.setSafetyMute(isEnabled, unitCode=self.device_id)
+        status = self.comms.setSafetyMute(isEnabled, unitCode=self.device_id)
         self.safety_mute = status
         return status
         
     def getPanelTimeout(self):
         '''Fetch panel timout in min from XAP Unit'''
-        minutes = self.connection.getScreenTimeout(unitCode=self.device_id)
+        minutes = self.comms.getScreenTimeout(unitCode=self.device_id)
         self.panel_timeout = minutes
         return minutes
         
     def setPanelTimeout(self, minutes):
         '''Set panel timout in min to XAP Unit'''
-        minutes = self.connection.setScreenTimeout(minutes, unitCode=self.device_id)
+        minutes = self.comms.setScreenTimeout(minutes, unitCode=self.device_id)
         self.panel_timeout = minutes
         return minutes
         
     def getPanelLock(self):
         '''Fetch panel lock from XAP Unit'''
-        status = self.connection.getFrontPanelLock(unitCode=self.device_id)
+        status = self.comms.getFrontPanelLock(unitCode=self.device_id)
         self.panel_lockout = status
         return status
         
     def setPanelLock(self, isEnabled):
         '''Set panel lock to XAP Unit'''
-        status = self.connection.setFrontPanelLock(isEnabled, unitCode=self.device_id)
+        status = self.comms.setFrontPanelLock(isEnabled, unitCode=self.device_id)
         self.panel_lockout = status
         return status
 
