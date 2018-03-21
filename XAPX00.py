@@ -351,9 +351,6 @@ class XAPX00(object):
             raise Exception('Gain not available on Expansion Bus')
         maxdb = self.getMaxGain(channel, group=group, unitCode=unitCode,
                                 stereo=0)
-        # self.send("%s%s %s %s %s %s" % (XAP800_CMD, unitCode, "GAIN", channel,
-        #                                 group, EOM))
-        # resp = db2linear(self.readResponse(2)[0], maxdb)
         resp = self.XAPCommand("GAIN", channel, group, unitCode=unitCode, rtnCount=2)
         resp = db2linear(resp[0], maxdb)
         return resp
