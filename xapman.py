@@ -62,43 +62,43 @@ class XapUnit(object):
         self.serial_number = serial
         return serial
         
-    def getModemMode(self)
+    def getModemMode(self):
         '''Fetch Modem Mode from XAP Unit'''
         mode = self.connection.getModemMode(unitCode=self.device_id)
         self.modem_mode = mode
         return mode
         
-    def setModemMode(self, isEnabled)
+    def setModemMode(self, isEnabled):
         '''Set Modem Mode to XAP Unit'''
         mode = self.connection.setModemMode(isEnabled, unitCode=self.device_id)
         self.modem_mode = mode
         return mode
         
-    def getModemInit(self)
+    def getModemInit(self):
         '''Fetch Modem Init String from XAP Unit'''
         string = self.connection.getModemInitString(unitCode=self.device_id)
         self.modem_init_string = string
         return string
         
-    def setModemInit(self, string)
+    def setModemInit(self, string):
         '''Set Modem Init String to XAP Unit'''
         string = self.connection.setModemInitString(string, unitCode=self.device_id)
         self.modem_init_string = string
         return string
         
-    def getModemPass(self)
+    def getModemPass(self):
         '''Fetch Modem Init String from XAP Unit'''
         string = self.connection.getModemModePassword(unitCode=self.device_id)
         self.modem_pass = string
         return string
         
-    def setModemPass(self, string)
+    def setModemPass(self, string):
         '''Set Modem Init String to XAP Unit'''
         string = self.connection.setModemModePassword(string, unitCode=self.device_id)
         self.modem_pass = string
         return string
         
-    def getSafetyMute(self)
+    def getSafetyMute(self):
         '''Fetch safety mute status from XAP Unit'''
         status = self.connection.getSafetyMute(unitCode=self.device_id)
         self.safety_mute = status
@@ -110,25 +110,25 @@ class XapUnit(object):
         self.safety_mute = status
         return status
         
-    def getPanelTimeout(self)
+    def getPanelTimeout(self):
         '''Fetch panel timout in min from XAP Unit'''
         minutes = self.connection.getScreenTimeout(unitCode=self.device_id)
         self.panel_timeout = minutes
         return minutes
         
-    def setPanelTimeout(self, minutes)
+    def setPanelTimeout(self, minutes):
         '''Set panel timout in min to XAP Unit'''
         minutes = self.connection.setScreenTimeout(minutes, unitCode=self.device_id)
         self.panel_timeout = minutes
         return minutes
         
-    def getPanelLock(self)
+    def getPanelLock(self):
         '''Fetch panel lock from XAP Unit'''
         status = self.connection.getFrontPanelLock(unitCode=self.device_id)
         self.panel_lockout = status
         return status
         
-    def setPanelLock(self, isEnabled)
+    def setPanelLock(self, isEnabled):
         '''Set panel lock to XAP Unit'''
         status = self.connection.setFrontPanelLock(isEnabled, unitCode=self.device_id)
         self.panel_lockout = status
