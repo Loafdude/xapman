@@ -3,7 +3,9 @@ import XAPX00
 class XapConnection(object):
     """Xap Serial Connection Wrapper
     """
-    
+    def __repr__(self):
+        return "XAP on " + self.serial_path
+
     def __init__(self, serial_path="/dev/ttyUSB0",
                  baudrate=38400,
                  mqtt_path="home/HA/AudioMixers/",
@@ -11,6 +13,7 @@ class XapConnection(object):
         self.mqtt_path  = mqtt_path
         self.baudrate   = baudrate
         self.units = []
+        self.serial_path = serial_path
         self.connection = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
         self.connection.connect()
 
@@ -23,6 +26,7 @@ class XapConnection(object):
                 unit = {'id': str(u), 'UID':uid, 'version':self.connection.getVersion(u)}
                 print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(XapUnit(self, XAP_unit=u))
+        print("Found " + str(len(units)) + " units.")
 
 
 
@@ -34,7 +38,9 @@ class XapUnit(object):
        The following are not implemented;
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
-    
+    def __repr__(self):
+        return "XAP Unit " + str(self.device_id)
+
     def __init__(self, xap_connection,
                  mqtt_path="home/HA/AudioMixers/",
                  alt_mqtt_paths=[],
