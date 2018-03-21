@@ -4,7 +4,7 @@ class XapConnection(object):
     """Xap Serial Connection Wrapper
     """
     
-    def __init__(self, serial_path,
+    def __init__(self, serial_path="/dev/ttyUSB0",
                  baudrate=38400,
                  mqtt_path="home/HA/AudioMixers/",
                  device_type="XAP800"):
