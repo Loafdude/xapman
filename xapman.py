@@ -48,7 +48,7 @@ class XapUnit(object):
                  alt_mqtt_paths=[],
                  XAP_unit=0):
         self.connection = xap_connection
-        self.comms      = xap_connection.connection
+        self.comms      = xap_connection.comms
         self.device_id = XAP_unit
         self.mqtt_path      = mqtt_path
         self.alt_mqtt_paths = alt_mqtt_paths
