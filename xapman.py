@@ -60,7 +60,16 @@ class XapUnit(object):
         self.safety_mute = None #
         self.panel_timeout = None #
         self.panel_lockout = None #
-        getID()
+        self.getID()
+        self.getFW()
+        self.getDSP()
+        self.getSerialNumber()
+        self.getModemMode()
+        self.getModemInit()
+        self.getModemPass()
+        self.getSafetyMute()
+        self.getPanelTimeout()
+        self.getPanelLock()
     
     def getID(self):
         '''Fetch ID from XAP Unit'''
