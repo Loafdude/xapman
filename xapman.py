@@ -4,7 +4,7 @@ class XapConnection(object):
     """Xap Serial Connection Wrapper
     """
     def __repr__(self):
-        return "Connection to XAPs via " + self.serial_path
+        return "XapConnection: " + self.serial_path
 
     def __init__(self, serial_path="/dev/ttyUSB0",
                  baudrate=38400,
@@ -43,7 +43,7 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     def __repr__(self):
-        return "XAP Unit " + str(self.device_id)
+        return "XAPUnit: " + str(self.device_id)
 
     def __init__(self, xap_connection,
                  mqtt_path="",
@@ -192,7 +192,10 @@ class XapUnit(object):
 
 class OutputChannel(object):
     """XAP Output Channel Wrapper"""
-    
+
+    def __repr__(self):
+        return "Output: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " - " + self.label
+
     def __init__(self, unit,
                  XAP_channel=1):
         self.title          = None
