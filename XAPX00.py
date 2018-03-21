@@ -327,6 +327,22 @@ class XAPX00(object):
         return resp
 
     @stereo
+    def getMinGain(self, channel, group="I", unitCode=0):
+        """Get min gain setting for a channel."""
+        if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so return max
+            raise Exception('Gain not available on Expansion Bus')
+        resp = self.XAPCommand("MIN", channel, group, unitCode=unitCode)
+        return float(resp)
+
+    @stereo
+    def setMinGain(self, channel, gain, group="I", unitCode=0):
+        """Set min gain setting for a channel."""
+        if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so return max
+            raise Exception('Gain not available on Expansion Bus')
+        resp = self.XAPCommand("MIN", channel, group, gain, unitCode=unitCode)
+        return resp
+
+    @stereo
     def getPropGain(self, channel, group="I", unitCode=0):
         """Get gain level for a channel relative to that channel's maxgain setting
         Returned as linear scale of 0-1, with 1=maxgain
