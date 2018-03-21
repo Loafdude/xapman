@@ -4,7 +4,7 @@ class XapConnection(object):
     """Xap Serial Connection Wrapper
     """
     def __repr__(self):
-        return "XAP on " + self.serial_path
+        return "Connection to XAPs via " + self.serial_path
 
     def __init__(self, serial_path="/dev/ttyUSB0",
                  baudrate=38400,
@@ -16,10 +16,14 @@ class XapConnection(object):
         self.serial_path = serial_path
         self.connection = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
         self.connection.connect()
+        self.scanDevices()
 
+    def scanDevices(self):
+        '''Scan for XAP units'''
+        self.units = []
         print("Searching for devices...")
         delay = self.connection._maxrespdelay
-        self.connection._maxrespdelay = 0.1
+        self.connection._maxrespdelay = 0.1 # reduce timeout delay when searching for non-existant devices
         for u in range(8):
             uid = self.connection.getUniqueId(u)
             if uid != None:
@@ -27,11 +31,8 @@ class XapConnection(object):
                 print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(XapUnit(self, XAP_unit=u))
         print("Found " + str(len(self.units)) + " units.")
+        return self.units
 
-
-
-
-        
 
 class XapUnit(object):
     """Xap Unit Wrapper
@@ -59,6 +60,7 @@ class XapUnit(object):
         self.safety_mute = None #
         self.panel_timeout = None #
         self.panel_lockout = None #
+        getID()
     
     def getID(self):
         '''Fetch ID from XAP Unit'''
