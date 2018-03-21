@@ -26,7 +26,7 @@ class XapConnection(object):
                 unit = {'id': str(u), 'UID':uid, 'version':self.connection.getVersion(u)}
                 print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(XapUnit(self, XAP_unit=u))
-        print("Found " + str(len(units)) + " units.")
+        print("Found " + str(len(self.units)) + " units.")
 
 
 
