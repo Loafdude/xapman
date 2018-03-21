@@ -35,7 +35,7 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     
-    def __init__(self, xap_connection
+    def __init__(self, xap_connection,
                  mqtt_path="home/HA/AudioMixers/",
                  alt_mqtt_paths=[],
                  XAP_unit=0):
