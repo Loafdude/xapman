@@ -44,12 +44,14 @@ class XapUnit(object):
         return "XAP Unit " + str(self.device_id)
 
     def __init__(self, xap_connection,
-                 mqtt_path="home/HA/AudioMixers/",
+                 mqtt_path="",
+                 device_type="XAP800",
                  alt_mqtt_paths=[],
                  XAP_unit=0):
         self.connection = xap_connection
         self.comms      = xap_connection.comms
         self.device_id = XAP_unit
+        self.device_type = device_type
         self.mqtt_path      = mqtt_path
         self.alt_mqtt_paths = alt_mqtt_paths
         self.serial_number = None #
@@ -62,6 +64,15 @@ class XapUnit(object):
         self.safety_mute = None #
         self.panel_timeout = None #
         self.panel_lockout = None #
+        self.output_channels = None
+        self.input_channels = None
+        self.processing_channels = None
+        self.expansion_input_channels = None
+        self.expansion_output_channels = None
+        self.refreshData()
+
+    def refreshData(self):
+        '''Fetch all data XAP Unit'''
         self.getID()
         self.getFW()
         self.getDSP()
@@ -72,7 +83,16 @@ class XapUnit(object):
         self.getSafetyMute()
         self.getPanelTimeout()
         self.getPanelLock()
-    
+        return True
+
+    def scanOutputChannels(self):
+        '''Fetch all output channels from Unit'''
+        self.output_channels = []
+        if self.device_type == "XAP800":
+            for c in range(1,12):
+                self.output_channels.append(OutputChannel(self, XAP_channel=c))
+        return True
+
     def getID(self):
         '''Fetch ID from XAP Unit'''
         id = self.comms.getDeviceID(unitCode=self.device_id)
@@ -172,9 +192,6 @@ class OutputChannel(object):
     """XAP Output Channel Wrapper"""
     
     def __init__(self, unit,
-                 mqtt_path="home/HA/AudioMixer/Outputs/",
-                 alt_mqtt_paths=[],
-                 XAP_unit=0,
                  XAP_channel=1):
         self.title          = None
         self.unit           = unit
@@ -189,7 +206,13 @@ class OutputChannel(object):
         self.sources        = None
         self.filters        = None
         self.constant_gain  = None # Also known as Number of Mics (NOM)
-        
+
+    def refreshData(self):
+        '''Fetch all data Channel Data'''
+        self.getLabel()
+        return True
+
+
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
         label = self.unit.connection.getLabel(self.XAP_channel, "O", unitCode=self.unit.device_id)
