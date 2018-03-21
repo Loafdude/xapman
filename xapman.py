@@ -197,8 +197,8 @@ class OutputChannel(object):
                  XAP_channel=1):
         self.title          = None
         self.unit           = unit
-        self.mqtt_path      = mqtt_path
-        self.alt_mqtt_paths = alt_mqtt_paths
+        self.mqtt_path      = None
+        self.alt_mqtt_paths = None
         self.XAP_channel    = XAP_channel
         self.gain           = None
         self.gain_min       = None
