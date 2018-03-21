@@ -200,6 +200,8 @@ class OutputChannel(object):
     def __init__(self, unit,
                  XAP_channel=1):
         self.unit           = unit
+        self.connection     = unit.connection
+        self.comms          = unit.comms
         self.mqtt_path      = None
         self.alt_mqtt_paths = None
         self.XAP_channel    = XAP_channel
@@ -225,73 +227,73 @@ class OutputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.unit.connection.getLabel(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.XAP_channel, "O", unitCode=self.unit.device_id)
         self.label = label
         return label
     
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.unit.connection.setLabel(self.XAP_channel, "O", label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.XAP_channel, "O", label, unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def getMaxGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_max = self.unit.connection.getMaxGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        gain_max = self.comms.getMaxGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
         '''Set Max Gain for Channel'''
-        gain_max = self.unit.connection.setMaxGain(self.XAP_channel, "O", gain_max, unitCode=self.unit.device_id)
+        gain_max = self.comms.setMaxGain(self.XAP_channel, "O", gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_min = self.unit.connection.getMinGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        gain_min = self.comms.getMinGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
         '''Set Max Gain for Channel'''
-        gain_min = self.unit.connection.setMinGain(self.XAP_channel, "O", gain_min, unitCode=self.unit.device_id)
+        gain_min = self.comms.setMinGain(self.XAP_channel, "O", gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
         '''Fetch mute status for Channel'''
-        mute = self.unit.connection.getMute(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        mute = self.comms.getMute(self.XAP_channel, "O", unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
         '''Set mute status for Channel'''
-        mute = self.unit.connection.setMute(self.XAP_channel, "O", mute, unitCode=self.unit.device_id)
+        mute = self.comms.setMute(self.XAP_channel, "O", mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
         '''Fetch gain 0-1 proportional to max_gain for Channel'''
-        mute = self.unit.connection.getPropGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        mute = self.comms.getPropGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setProportionalGain(self, prop_gain):
         '''Set gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.unit.connection.setPropGain(self.XAP_channel, "O", prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.XAP_channel, "O", prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
         '''Fetch absolute gain for Channel'''
-        gain = self.unit.connection.getGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        gain = self.comms.getGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
         '''Set absolute gain for Channel'''
-        gain = self.unit.connection.setGain(self.XAP_channel, "O", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
+        gain = self.comms.setGain(self.XAP_channel, "O", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
 
