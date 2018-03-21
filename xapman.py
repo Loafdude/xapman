@@ -16,7 +16,9 @@ class XapConnection(object):
         self.serial_path = serial_path
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
         self.comms.connect()
+        print("Connected to device...")
         self.scanDevices()
+
 
     def scanDevices(self):
         '''Scan for XAP units'''
