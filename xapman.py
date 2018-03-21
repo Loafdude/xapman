@@ -22,7 +22,7 @@ class XapConnection(object):
             if uid != None:
                 unit = {'id': str(u), 'UID':uid, 'version':self.connection.getVersion(u)}
                 print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
-                self.units.append(unit)
+                self.units.append(XapUnit(self, XAP_unit=u))
 
 
 
@@ -35,7 +35,7 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     
-    def __init__(self, xap_connection,
+    def __init__(self, xap_connection
                  mqtt_path="home/HA/AudioMixers/",
                  alt_mqtt_paths=[],
                  XAP_unit=0):
