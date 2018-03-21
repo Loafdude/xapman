@@ -10,8 +10,23 @@ class XapConnection(object):
                  device_type="XAP800"):
         self.mqtt_path  = mqtt_path
         self.baudrate   = baudrate
+        self.units = []
         self.connection = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
         self.connection.connect()
+
+        print("Searching for devices...")
+        delay = self.connection._maxrespdelay
+        self.connection._maxrespdelay = 0.1
+        for u in range(8):
+            uid = self.connection.getUniqueId(u)
+            if uid != None:
+                unit = {'id': str(u), 'UID':uid, 'version':xap.getVersion(u)}
+                print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
+                self.units.append(unit)
+
+
+
+
         
 
 class XapUnit(object):
