@@ -601,7 +601,7 @@ class ExpansionBusAllocator(object):
             inUse = False
             inUseList = []
             for unit in self.connection.units:
-                for c in matrix_array[unit.type]:
+                for c in matrix_array[unit.device_type]:
                     if self.comms.getMatrixRouting(channel, c['c'], inGroup="E", outGroup=c['og'], unitCode=unit.device_id) != "0":
                         inUse = True
                         inUseList.append("In use at " + str(c['c']) + " - " + channel)
