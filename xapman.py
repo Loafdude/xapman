@@ -594,7 +594,7 @@ class ExpansionBusAllocator(object):
                 if channel not in self.reserved_channels:
                     if self.requestChannelUsage(channel)['inUse']:
                         self.buslist[channel] = True
-                    else
+                    else:
                         self.buslist[channel] = False
 
         def requestChannelUsage(self, channel):
