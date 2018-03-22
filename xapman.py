@@ -73,6 +73,7 @@ class XapUnit(object):
         self.expansion_output_channels = None
         self.refreshData()
         self.scanOutputChannels()
+        self.scanInputChannels()
 
     def refreshData(self):
         '''Fetch all data XAP Unit'''
@@ -97,6 +98,17 @@ class XapUnit(object):
             r = range(1, 8)  # XAP400 units have 8 output channels
         for c in r:
             self.output_channels.append(OutputChannel(self, XAP_channel=c))
+        return
+
+    def scanInputChannels(self):
+        '''Fetch all output channels from Unit'''
+        self.input_channels = []
+        if self.device_type == "XAP800":
+            r = range(1,13) # XAP800 units have 12 input channels
+        else:
+            r = range(1, 8)  # XAP400 units have 8 input channels
+        for c in r:
+            self.input_channels.append(InputChannel(self, XAP_channel=c))
         return
 
     def getID(self):
@@ -198,7 +210,7 @@ class OutputChannel(object):
     """XAP Output Channel Wrapper"""
 
     def __repr__(self):
-        return "Output: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " - " + self.label
+        return "Output: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " | " + self.label
 
     def __init__(self, unit, XAP_channel=1):
         self.unit = unit
@@ -302,7 +314,7 @@ class InputChannel(object):
     """XAP Input Channel Wrapper"""
 
     def __repr__(self):
-        return "Input: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " - " + self.label
+        return "Input: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " | " + self.label
 
     def __init__(self, unit, XAP_channel=1):
         self.unit = unit
