@@ -29,8 +29,8 @@ class XapConnection(object):
         for u in range(8):
             uid = self.comms.getUniqueId(u)
             if uid != None:
-                unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u)}
-                print("Found unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
+                unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": self.comms.getUnitType(u)}
+                print("Found " + unit['type'] + "unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(XapUnit(self, XAP_unit=u))
         print("Found " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
@@ -43,7 +43,7 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     def __repr__(self):
-        return "XAPUnit: " + str(self.device_id)
+        return self.device_type + ": " + str(self.device_id)
 
     def __init__(self, xap_connection,
                  mqtt_path="",
@@ -53,7 +53,7 @@ class XapUnit(object):
         self.connection = xap_connection
         self.comms      = xap_connection.comms
         self.device_id = XAP_unit
-        self.device_type = device_type
+        self.device_type = xap_connection.comms.getUnitType(XAP_unit)
         self.mqtt_path      = mqtt_path
         self.alt_mqtt_paths = alt_mqtt_paths
         self.serial_number = None #
@@ -333,6 +333,7 @@ class InputChannel(object):
         self.AGC_threshold      = None # -50 to 0dB
         self.AGC_attack         = None # 0.1 to 10.0s in .1 increments
         self.AGC_gain           = None # 0.0 to 18.0dB
+        self.refreshData()
 
     #         # Microphone Input Only
     #         self.gain_mic           = None
