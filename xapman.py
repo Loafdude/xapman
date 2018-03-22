@@ -55,21 +55,21 @@ class XapUnit(object):
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
         self.device_type = xap_connection.comms.getUnitType(XAP_unit)
-        self.serial_number = None  #
-        self.FW_version = None  #
-        self.DSP_version = None  #
+        self.serial_number = None
+        self.FW_version = None
+        self.DSP_version = None
         self.label = None
-        self.modem_mode = None  #
-        self.modem_pass = None  #
-        self.modem_init_string = None  #
+        self.modem_mode = None
+        self.modem_pass = None
+        self.modem_init_string = None
         self.program_strings = None
-        self.safety_mute = None  #
-        self.panel_timeout = None  #
-        self.panel_lockout = None  #
-        self.output_channels = None
-        self.input_channels = None
+        self.safety_mute = None
+        self.panel_timeout = None
+        self.panel_lockout = None
+        self.output_channels = {}
+        self.input_channels = {}
         self.processing_channels = None
-        self.expansion_busses = None
+        self.expansion_busses = {}
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
