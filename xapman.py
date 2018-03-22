@@ -586,18 +586,16 @@ class ExpansionBusAllocator(object):
         def __init__(self, connection, reserved_channels=None):
             self.connection = connection
             self.comms = connection.comms
-            self.used_channels = []
-            self.unused_channels = []
             self.reserved_channels = []
-            buslist = ["O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+            self.buslist = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
             if reserved_channels:
                 self.reserved_channels = reserved_channels
-            for b in buslist:
-                if b not in self.reserved_channels:
-                    if self.requestChannelUsage(b)['inUse']:
-                        self.used_channels.append(b)
+            for channel, status in self.buslist.items():
+                if channel not in self.reserved_channels:
+                    if self.requestChannelUsage(channel)['inUse']:
+                        self.buslist[channel] = True
                     else
-                        self.unused_channels.append(b)
+                        self.buslist[channel] = False
 
         def requestChannelUsage(self, channel):
             inUse = False
