@@ -115,7 +115,6 @@ class XapUnit(object):
     def scanExpansionBus(self):
         '''Fetch all expansion busses from Unit'''
         self.expansion_busses = {}
-        self.ExpansionBusses = []
         r = ['O', 'P' , 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         for c in r:
             self.expansion_busses[c] = ExpansionBus(self, channel=c)
