@@ -76,6 +76,7 @@ class XapConnection(object):
         self.comms.convertDb = 0
         self.comms.connect()
         self.scanDevices()
+        self.expansion_bus_allocator = ExpansionBusAllocator(self)
 
     def scanDevices(self):
         '''Scan for XAP units'''
@@ -580,7 +581,7 @@ class ExpansionBusAllocator(object):
         """XAP Input Channel Manager"""
 
         def __repr__(self):
-            return "ExpansionBus: Channel " + self.channel
+            return "ExpansionBusAllocator: "
 
         def __init__(self, connection, reserved_channels=None):
             self.connection = connection
