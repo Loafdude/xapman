@@ -55,7 +55,7 @@ XAP800_LOCATION_PREFIX = "XAP800"
 XAP800_UNIT_TYPE = 1
 EOM = "\r"
 DEVICE_MAXMICS = "Max Number of Microphones"
-matrixGeo = {'XAP800': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "0", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D", "E", "F", "G", "H")],
+matrixGeo = {'XAP800': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "0", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D", "E", "F", "G", "H"],
              'XAP400': 8}
 nogainGroups = ('E')
 
