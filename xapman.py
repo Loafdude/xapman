@@ -76,7 +76,9 @@ class XapConnection(object):
         self.comms.convertDb = 0
         self.comms.connect()
         self.scanDevices()
+        print("Scanning Expansion Bus and allocating channels...")
         self.expansion_bus_allocator = ExpansionBusAllocator(self)
+        print("Expansion Bus Status: " + self.expansion_bus_allocator.statusReport())
 
     def scanDevices(self):
         '''Scan for XAP units'''
@@ -581,7 +583,7 @@ class ExpansionBusAllocator(object):
         """XAP Input Channel Manager"""
 
         def __repr__(self):
-            return "ExpansionBusAllocator: "
+            return "ExpansionBusAllocator: " + self.statusReport()
 
         def __init__(self, connection, reserved_channels=None):
             self.connection = connection
@@ -590,12 +592,25 @@ class ExpansionBusAllocator(object):
             self.buslist = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
             if reserved_channels:
                 self.reserved_channels = reserved_channels
+                for channel in self.reserved_channels:
+                    self.buslist.pop(channel, None)
             for channel, status in self.buslist.items():
                 if channel not in self.reserved_channels:
                     if self.requestChannelUsage(channel)['inUse']:
                         self.buslist[channel] = True
                     else:
                         self.buslist[channel] = False
+
+        def statusReport(self):
+            inUse = 0
+            available = 0
+            reserved = len(self.reserved_channels)
+            for channel, status in self.buslist.items():
+                if status == False:
+                    available += 1
+                elif status == True:
+                    inUse += 1
+            print("Available: " + str(available) + " InUse: " + str(inUse) + " Reserved: " + str(reserved))
 
         def requestChannelUsage(self, channel):
             inUse = False
