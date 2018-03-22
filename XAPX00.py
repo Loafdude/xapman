@@ -1,6 +1,8 @@
 # pylint: disable=E221
 
 """
+Modified by Loafdude
+
 XAPX00 Control.
 Adapted to python and XAP 800
 Jay Love (jsloveiv@gmail.com)
