@@ -602,7 +602,6 @@ class ExpansionBusAllocator(object):
             inUseList = []
             for unit in self.connection.units:
                 for c in matrix_array[unit.device_type]:
-                    print(str(channel) + " - " + "E" + " - " + str(c['c']) + " - " + str(c['og']))
                     if channel == c['c'] and c['og'] == "E":
                         continue
                     if self.comms.getMatrixRouting(inChannel=channel, outChannel=c['c'], inGroup="E", outGroup=c['og'], unitCode=unit.device_id) != "0":
