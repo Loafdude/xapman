@@ -1,5 +1,62 @@
 import XAPX00
 
+matrix_array = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
+                        {"c": 2, "og": "O", "ig": "I"},
+                        {"c": 3, "og": "O", "ig": "I"},
+                        {"c": 4, "og": "O", "ig": "I"},
+                        {"c": 5, "og": "O", "ig": "I"},
+                        {"c": 6, "og": "O", "ig": "I"},
+                        {"c": 7, "og": "O", "ig": "I"},
+                        {"c": 8, "og": "O", "ig": "I"},
+                        {"c": 9, "og": "O", "ig": "I"},
+                        {"c": 10, "og": "O", "ig": "I"},
+                        {"c": 11, "og": "O", "ig": "I"},
+                        {"c": 12, "og": "O", "ig": "I"},
+                        {"c": "O", "og": "E", "ig": "E"},
+                        {"c": "P", "og": "E", "ig": "E"},
+                        {"c": "Q", "og": "E", "ig": "E"},
+                        {"c": "R", "og": "E", "ig": "E"},
+                        {"c": "S", "og": "E", "ig": "E"},
+                        {"c": "T", "og": "E", "ig": "E"},
+                        {"c": "U", "og": "E", "ig": "E"},
+                        {"c": "V", "og": "E", "ig": "E"},
+                        {"c": "W", "og": "E", "ig": "E"},
+                        {"c": "X", "og": "E", "ig": "E"},
+                        {"c": "Y", "og": "E", "ig": "E"},
+                        {"c": "Z", "og": "E", "ig": "E"},
+                        {"c": "A", "og": "P", "ig": "P"},
+                        {"c": "B", "og": "P", "ig": "P"},
+                        {"c": "C", "og": "P", "ig": "P"},
+                        {"c": "D", "og": "P", "ig": "P"},
+                        {"c": "E", "og": "P", "ig": "P"},
+                        {"c": "F", "og": "P", "ig": "P"},
+                        {"c": "G", "og": "P", "ig": "P"},
+                        {"c": "H", "og": "P", "ig": "P"}],
+                'XAP400': [{"c": 1, "og": "O", "ig": "I"},
+                        {"c": 2, "og": "O", "ig": "I"},
+                        {"c": 3, "og": "O", "ig": "I"},
+                        {"c": 4, "og": "O", "ig": "I"},
+                        {"c": 5, "og": "O", "ig": "I"},
+                        {"c": 6, "og": "O", "ig": "I"},
+                        {"c": 7, "og": "O", "ig": "I"},
+                        {"c": 8, "og": "O", "ig": "I"},
+                        {"c": "O", "og": "E", "ig": "E"},
+                        {"c": "P", "og": "E", "ig": "E"},
+                        {"c": "Q", "og": "E", "ig": "E"},
+                        {"c": "R", "og": "E", "ig": "E"},
+                        {"c": "S", "og": "E", "ig": "E"},
+                        {"c": "T", "og": "E", "ig": "E"},
+                        {"c": "U", "og": "E", "ig": "E"},
+                        {"c": "V", "og": "E", "ig": "E"},
+                        {"c": "W", "og": "E", "ig": "E"},
+                        {"c": "X", "og": "E", "ig": "E"},
+                        {"c": "Y", "og": "E", "ig": "E"},
+                        {"c": "Z", "og": "E", "ig": "E"},
+                        {"c": "A", "og": "P", "ig": "P"},
+                        {"c": "B", "og": "P", "ig": "P"},
+                        {"c": "C", "og": "P", "ig": "P"},
+                        {"c": "D", "og": "P", "ig": "P"}]}
+
 class XapConnection(object):
     """Xap Serial Connection Wrapper
     """
@@ -39,7 +96,6 @@ class XapConnection(object):
     def addChannelRoute(self):
         ''''''
         return
-
 
 class XapUnit(object):
     """Xap Unit Wrapper
@@ -521,17 +577,34 @@ class ExpansionBus(object):
         return label
 
 class ExpansionBusAllocator(object):
-        """XAP Input Channel Wrapper"""
+        """XAP Input Channel Manager"""
 
         def __repr__(self):
             return "ExpansionBus: Channel " + self.channel
 
-        def __init__(self, unit):
-            self.connection = unit.connection
-            self.comms = unit.comms
+        def __init__(self, connection, reserved_channels=None):
+            self.connection = connection
+            self.comms = connection.comms
             self.used_channels = []
             self.unused_channels = []
             self.reserved_channels = []
+            buslist = ["O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+            if reserved_channels:
+                self.reserved_channels = reserved_channels
+            for b in buslist:
+                if b not in self.reserved_channels:
+                    self.unused_channels.append(b)
+
+
+        def requestChannelUsage(self, channel):
+            inUse = False
+            inUseList = []
+            for unit in self.connection.units:
+                for c in matrix_array[unit.type]:
+                    if self.comms.getMatrixRouting(channel, c['c'], inGroup="E", outGroup=c['og'], unitCode=unit.device_id) != "0":
+                        inUse = True
+                        inUseList.append("In use at " + str(c['c']) + " - " channel)
+            return
 
         def requestExpChannel(self):
             return
@@ -562,10 +635,6 @@ class ExpansionBusAllocator(object):
 #     self.delay = None
 #     self.gain = None
 #
-#
-# class ExpansionChannel(object):
-#     self.input_label          = None
-#     self.output_label          = None
 #
 # class GatingGroup(object):
 #     self.max_mics = None # 1 to 64
