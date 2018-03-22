@@ -594,8 +594,10 @@ class ExpansionBusAllocator(object):
                 self.reserved_channels = reserved_channels
             for b in buslist:
                 if b not in self.reserved_channels:
-                    self.unused_channels.append(b)
-
+                    if self.requestChannelUsage(b)['inUse']:
+                        self.used_channels.append(b)
+                    else
+                        self.unused_channels.append(b)
 
         def requestChannelUsage(self, channel):
             inUse = False
@@ -606,11 +608,11 @@ class ExpansionBusAllocator(object):
                         continue
                     if self.comms.getMatrixRouting(inChannel=channel, outChannel=c['c'], inGroup="E", outGroup=c['og'], unitCode=unit.device_id) != "0":
                         inUse = True
-                        inUseList.append("Input Unit: " + str(unit.device_id) + " Channel: " + str(c['c']) + " -> ExpansionBus: " + channel)
+                        inUseList.append("Output Unit: " + str(unit.device_id) + " Channel: " + str(c['c']) + " -> ExpansionBus: " + channel)
                     if self.comms.getMatrixRouting(inChannel=c['c'], outChannel=channel, inGroup=c['ig'], outGroup="E", unitCode=unit.device_id) != "0":
                         inUse = True
-                        inUseList.append("Output Unit: " + str(unit.device_id) + " Channel: " + str(c['c']) + " -> ExpansionBus: " + channel)
-            return inUseList
+                        inUseList.append("Input Unit: " + str(unit.device_id) + " Channel: " + str(c['c']) + " -> ExpansionBus: " + channel)
+            return {'inUseList': inUseList, 'inUse': inUse}
 
         def requestExpChannel(self):
             return
