@@ -14,16 +14,16 @@ class XapConnection(object):
         self.baudrate   = baudrate
         self.units = []
         self.serial_path = serial_path
+        print("Preparing XAP devices to be interrogated")
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
         self.comms.convertDb = 0
         self.comms.connect()
-        print("Connected...")
         self.scanDevices()
 
     def scanDevices(self):
         '''Scan for XAP units'''
         self.units = []
-        print("Searching for devices...")
+        print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1 # reduce timeout delay when searching for non-existant devices
         for u in range(8):
@@ -36,6 +36,10 @@ class XapConnection(object):
         self.comms._maxrespdelay = delay
         return self.units
 
+    def addChannelRoute(self):
+        ''''''
+        return
+
 
 class XapUnit(object):
     """Xap Unit Wrapper
@@ -43,43 +47,40 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     def __repr__(self):
-        return "Unit: " + self.device_type + " at ID " + str(self.device_id)
+        return "Unit: " + self.device_type + " (ID " + str(self.device_id) + ")"
 
     def __init__(self, xap_connection,
-                 mqtt_path="",
-                 device_type="XAP800",
-                 alt_mqtt_paths=[],
                  XAP_unit=0):
         self.connection = xap_connection
-        self.comms      = xap_connection.comms
+        self.comms = xap_connection.comms
         self.device_id = XAP_unit
         self.device_type = xap_connection.comms.getUnitType(XAP_unit)
-        self.mqtt_path      = mqtt_path
-        self.alt_mqtt_paths = alt_mqtt_paths
-        self.serial_number = None #
-        self.FW_version = None #
-        self.DSP_version = None #
-        self.modem_mode  = None #
-        self.modem_pass  = None #
-        self.modem_init_string = None #
+        self.serial_number = None  #
+        self.FW_version = None  #
+        self.DSP_version = None  #
+        self.label = None
+        self.modem_mode = None  #
+        self.modem_pass = None  #
+        self.modem_init_string = None  #
         self.program_strings = None
-        self.safety_mute = None #
-        self.panel_timeout = None #
-        self.panel_lockout = None #
+        self.safety_mute = None  #
+        self.panel_timeout = None  #
+        self.panel_lockout = None  #
         self.output_channels = None
         self.input_channels = None
         self.processing_channels = None
-        self.expansion_input_channels = None
-        self.expansion_output_channels = None
+        self.expansion_busses = None
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
+        self.scanExpansionBus()
 
     def refreshData(self):
         '''Fetch all data XAP Unit'''
         self.getID()
         self.getFW()
         self.getDSP()
+        self.getLabel()
         self.getSerialNumber()
         self.getModemMode()
         self.getModemInit()
@@ -97,7 +98,7 @@ class XapUnit(object):
         else:
             r = range(1, 8)  # XAP400 units have 8 output channels
         for c in r:
-            self.output_channels.append(OutputChannel(self, XAP_channel=c))
+            self.output_channels[c] = OutputChannel(self, channel=c)
         return
 
     def scanInputChannels(self):
@@ -108,7 +109,15 @@ class XapUnit(object):
         else:
             r = range(1, 8)  # XAP400 units have 8 input channels
         for c in r:
-            self.input_channels.append(InputChannel(self, XAP_channel=c))
+            self.input_channels[c] = InputChannel(self, channel=c)
+        return
+
+    def scanExpansionBus(self):
+        '''Fetch all expansion busses from Unit'''
+        self.ExpansionBusses = []
+        r = ['O', 'P' , 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        for c in r:
+            self.expansion_busses[c] = ExpansionBus(self, channel=c)
         return
 
     def getID(self):
@@ -224,11 +233,11 @@ class OutputChannel(object):
     def __repr__(self):
         return "Output: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " | " + self.label
 
-    def __init__(self, unit, XAP_channel=1):
+    def __init__(self, unit, channel):
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
-        self.XAP_channel = XAP_channel
+        self.XAP_channel = channel
         self.gain = None #
         self.prop_gain = None #
         self.gain_min = None #
@@ -328,11 +337,11 @@ class InputChannel(object):
     def __repr__(self):
         return "Input: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " | " + self.label
 
-    def __init__(self, unit, XAP_channel=1):
+    def __init__(self, unit, channel):
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
-        self.XAP_channel = XAP_channel
+        self.XAP_channel = channel
         self.gain           = None #
         self.gain_min       = None #
         self.gain_max       = None #
@@ -464,7 +473,68 @@ class InputChannel(object):
         gain = self.comms.setGain(self.XAP_channel, "I", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
-#
+
+class ExpansionBus(object):
+    """XAP Expansion Bus Wrapper"""
+
+    def __repr__(self):
+        return "ExpansionBus: Channel " + self.channel
+
+    def __init__(self, unit, channel):
+        self.connection = unit.connection
+        self.comms = unit.comms
+        self.input_label = None
+        self.output_label = None
+        self.channel = channel
+        self.inUse = False
+        self.refreshData()
+
+    def refreshData(self):
+        '''Fetch all data Channel Data'''
+        self.getInputLabel()
+        self.getOutputLabel()
+        return True
+
+    def getInputLabel(self):
+        '''Fetch Label from XAP Unit'''
+        label = self.comms.getLabel(self.channel, "E", 1, unitCode=self.unit.device_id)
+        self.input_label = label
+        return label
+
+    def setInputLabel(self, label):
+        '''Fetch Label from XAP Unit'''
+        label = self.comms.setLabel(self.channel, "E", 1, label, unitCode=self.unit.device_id)
+        self.input_label = label
+        return label
+
+    def getOutputLabel(self):
+        '''Fetch Label from XAP Unit'''
+        label = self.comms.getLabel(self.channel, "E", 0, unitCode=self.unit.device_id)
+        self.output_label = label
+        return label
+
+    def setOutputLabel(self, label):
+        '''Fetch Label from XAP Unit'''
+        label = self.comms.setLabel(self.channel, "E", 0, label, unitCode=self.unit.device_id)
+        self.output_label = label
+        return label
+
+class ExpansionBusAllocator(object):
+        """XAP Input Channel Wrapper"""
+
+        def __repr__(self):
+            return "ExpansionBus: Channel " + self.channel
+
+        def __init__(self, unit):
+            self.connection = unit.connection
+            self.comms = unit.comms
+            self.used_channels = []
+            self.unused_channels = []
+            self.reserved_channels = []
+
+        def requestExpChannel(self):
+            return
+
 
 #
 #
