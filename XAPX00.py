@@ -55,7 +55,8 @@ XAP800_LOCATION_PREFIX = "XAP800"
 XAP800_UNIT_TYPE = 1
 EOM = "\r"
 DEVICE_MAXMICS = "Max Number of Microphones"
-matrixGeo = {'XAP800': 12, 'XAP400': 8}
+matrixGeo = {'XAP800': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "0", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D", "E", "F", "G", "H")],
+             'XAP400': 8}
 nogainGroups = ('E')
 
 def stereo(func):
@@ -483,12 +484,9 @@ class XAPX00(object):
         """Gets the routing matrix for the target channel
         Args:
             unitCode - the unit code of the target XAP800
-            inChannel - the target input channel (1-25 see
-                    page 64 of the XAP800 manual for
-                    details)
-            outChannel - a hex value specifying the output mix as a
-                 series of bit flags (again, see pg 64).
-            inGroup - input group (I-inlts, M=mics, L=line, ...
+            inChannel - the target input channel
+            outChannel - string or integer
+            inGroup - input group (I-inputs, M=mics, L=line, E=Expansion ...
             outGroup - otput group (O=all Outputs 1-12, P=processing A-H, ...
         Return:
             state: 0=off, 1=on (line inputs only), 2=toggle (line only),
@@ -501,9 +499,9 @@ class XAPX00(object):
     def getMatrixRoutingReport(self, unitCode=0):
         """Returns a matrix of levels as a list of lists"""
         routingMatrix = []
-        for x in range(0, matrixGeo[self.XAPType]):
+        for x in matrixGeo[self.XAPType]:
             routingMatrix.append([])
-            for y in range(0, matrixGeo[self.XAPType]):
+            for y in matrixGeo[self.XAPType]:
                 routingMatrix[x].append(self.getMatrixRouting(
                     x + 1, y + 1, unitCode=unitCode, stereo=0))
         return routingMatrix
