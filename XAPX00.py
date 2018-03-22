@@ -63,7 +63,7 @@ matrixGeo = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
                         {"c": 6, "og": "O", "ig": "I"},
                         {"c": 7, "og": "O", "ig": "I"},
                         {"c": 8, "og": "O", "ig": "I"},
-                        {"c": 8, "og": "O", "ig": "I"},
+                        {"c": 9, "og": "O", "ig": "I"},
                         {"c": 10, "og": "O", "ig": "I"},
                         {"c": 11, "og": "O", "ig": "I"},
                         {"c": 12, "og": "O", "ig": "I"},
@@ -87,7 +87,30 @@ matrixGeo = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
                         {"c": "F", "og": "P", "ig": "P"},
                         {"c": "G", "og": "P", "ig": "P"},
                         {"c": "H", "og": "P", "ig": "P"}],
-             'XAP400': [1, 2, 3, 4, 5, 6, 7, 8, "0", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D"]}
+            'XAP400': [{"c": 1, "og": "O", "ig": "I"},
+                        {"c": 2, "og": "O", "ig": "I"},
+                        {"c": 3, "og": "O", "ig": "I"},
+                        {"c": 4, "og": "O", "ig": "I"},
+                        {"c": 5, "og": "O", "ig": "I"},
+                        {"c": 6, "og": "O", "ig": "I"},
+                        {"c": 7, "og": "O", "ig": "I"},
+                        {"c": 8, "og": "O", "ig": "I"},
+                        {"c": "O", "og": "E", "ig": "E"},
+                        {"c": "P", "og": "E", "ig": "E"},
+                        {"c": "Q", "og": "E", "ig": "E"},
+                        {"c": "R", "og": "E", "ig": "E"},
+                        {"c": "S", "og": "E", "ig": "E"},
+                        {"c": "T", "og": "E", "ig": "E"},
+                        {"c": "U", "og": "E", "ig": "E"},
+                        {"c": "V", "og": "E", "ig": "E"},
+                        {"c": "W", "og": "E", "ig": "E"},
+                        {"c": "X", "og": "E", "ig": "E"},
+                        {"c": "Y", "og": "E", "ig": "E"},
+                        {"c": "Z", "og": "E", "ig": "E"},
+                        {"c": "A", "og": "P", "ig": "P"},
+                        {"c": "B", "og": "P", "ig": "P"},
+                        {"c": "C", "og": "P", "ig": "P"},
+                        {"c": "D", "og": "P", "ig": "P"}]}
 nogainGroups = ('E')
 
 def stereo(func):
@@ -536,14 +559,8 @@ class XAPX00(object):
                 if y['c'] == x['c'] and (y['ig'] == "E" or y['ig'] == "P"):
                     row.append("X")
                 else:
-                    print(str(y['c']) + " - " + str(x['c']) + " - " + y['ig'] + " - " +  y['og'])
                     row.append(self.getMatrixRouting(y['c'], x['c'], inGroup=y['ig'], outGroup=x['og'], unitCode=unitCode))
             routingMatrix.append(row)
-        # for x in matrixGeo[self.XAPType]:
-        #     routingMatrix.append([])
-        #     for y in matrixGeo[self.XAPType]:
-        #         routingMatrix[x].append(self.getMatrixRouting(
-        #             x + 1, y + 1, unitCode=unitCode, stereo=0))
         return routingMatrix
 
     @stereo
