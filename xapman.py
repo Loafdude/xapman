@@ -610,7 +610,7 @@ class ExpansionBusAllocator(object):
                     available += 1
                 elif status == True:
                     inUse += 1
-            print("Available: " + str(available) + " InUse: " + str(inUse) + " Reserved: " + str(reserved))
+            return "Available: " + str(available) + " InUse: " + str(inUse) + " Reserved: " + str(reserved)
 
         def requestChannelUsage(self, channel):
             inUse = False
