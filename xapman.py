@@ -608,7 +608,7 @@ class ExpansionBusAllocator(object):
                     if self.comms.getMatrixRouting(inChannel=channel, outChannel=c['c'], inGroup="E", outGroup=c['og'], unitCode=unit.device_id) != "0":
                         inUse = True
                         inUseList.append("In use at " + str(c['c']) + " - " + channel)
-            return
+            return inUseList
 
         def requestExpChannel(self):
             return
