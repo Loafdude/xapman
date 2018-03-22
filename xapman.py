@@ -498,7 +498,6 @@ class ExpansionBus(object):
 
     def getInputLabel(self):
         '''Fetch Label from XAP Unit'''
-        print(str(self.channel))
         label = self.comms.getLabel(self.channel, "E", inout=1, unitCode=self.unit.device_id)
         self.input_label = label
         return label
