@@ -98,7 +98,7 @@ class XapUnit(object):
         else:
             r = range(1, 8)  # XAP400 units have 8 output channels
         for c in r:
-            print str(c)
+            print(str(c))
             self.output_channels[c] = OutputChannel(self, channel=c)
         return
 
