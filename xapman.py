@@ -533,6 +533,29 @@ class InputChannel(object):
         self.gain = gain
         return gain
 
+class MatrixLink(object):
+    """XAP Matrix Link Manager"""
+
+    def __repr__(self):
+        return "Matrix: "
+
+    def __init__(self, connection, source, dest):
+        self.connection = connection
+        self.comms = connection.comms
+        self.source = source
+        self.dest = dest
+        self.expansion = None
+
+    def linkChannels(self):
+        if self.source.unit != self.dest.unit:
+            # Check if source is already available on expansion bus
+            # If not find free expansion bus and assign
+            # Link expansion -> Dest
+        else:
+            # Link Source -> Dest
+        return
+
+
 class ExpansionBus(object):
     """XAP Expansion Bus Wrapper"""
 
@@ -596,7 +619,7 @@ class ExpansionBusAllocator(object):
                     self.buslist.pop(channel, None)
             for channel, status in self.buslist.items():
                 if channel not in self.reserved_channels:
-                    if self.requestChannelUsage(channel)['inUse']:
+                    if self.getChannelUsage(channel)['inUse']:
                         self.buslist[channel] = True
                     else:
                         self.buslist[channel] = False
@@ -612,7 +635,7 @@ class ExpansionBusAllocator(object):
                     inUse += 1
             return "Available: " + str(available) + " InUse: " + str(inUse) + " Reserved: " + str(reserved)
 
-        def requestChannelUsage(self, channel):
+        def getChannelUsage(self, channel):
             inUse = False
             inUseList = []
             for unit in self.connection.units:
