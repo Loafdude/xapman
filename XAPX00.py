@@ -537,7 +537,7 @@ class XAPX00(object):
                     row.append("X")
                 else:
                     print(str(y['c']) + " - " + str(x['c']) + " - " + y['ig'] + " - " +  y['og'])
-                    row.append(self.getMatrixRouting(y['c'], x['c'], inGroup=y['ig'], outGroup=y['og'], unitCode=unitCode))
+                    row.append(self.getMatrixRouting(y['c'], x['c'], inGroup=y['ig'], outGroup=x['og'], unitCode=unitCode))
             routingMatrix.append(row)
         # for x in matrixGeo[self.XAPType]:
         #     routingMatrix.append([])
