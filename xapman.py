@@ -30,7 +30,7 @@ class XapConnection(object):
             uid = self.comms.getUniqueId(u)
             if uid != None:
                 unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": self.comms.getUnitType(u)}
-                print("Found " + unit['type'] + "unit " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
+                print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.units.append(XapUnit(self, XAP_unit=u))
         print("Found " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
@@ -43,7 +43,7 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     def __repr__(self):
-        return self.device_type + ": " + str(self.device_id)
+        return self.device_type + " @ ID " + str(self.device_id)
 
     def __init__(self, xap_connection,
                  mqtt_path="",
