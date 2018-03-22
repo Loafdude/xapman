@@ -536,7 +536,7 @@ class XAPX00(object):
                 if y['c'] == x['c'] and (y['ig'] == "E" or y['ig'] == "P"):
                     row.append("X")
                 else:
-                    print(str(y['c']) +" - " + str(x['c']) + " - " + inGroup=y['ig'] + " - " +  outGroup=y['og'])
+                    print(str(y['c']) + " - " + str(x['c']) + " - " + y['ig'] + " - " +  y['og'])
                     row.append(self.getMatrixRouting(y['c'], x['c'], inGroup=y['ig'], outGroup=y['og'], unitCode=unitCode))
             routingMatrix.append(row)
         # for x in matrixGeo[self.XAPType]:
