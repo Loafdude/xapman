@@ -438,12 +438,15 @@ class XAPX00(object):
 
     def getLabel(self, channel, group, inout=False, unitCode=0):
         """Retrieve the text label assigned to an inpout or ouput"""
-        resp = self.XAPCommand("LABEL", channel, group, unitCode=unitCode)
+        if inout:
+          resp = self.XAPCommand("LABEL", channel, group, inout, unitCode=unitCode)
+        else:
+          resp = self.XAPCommand("LABEL", channel, group,  unitCode=unitCode)
         return resp
 
     def setLabel(self, channel, group, label, inout=False, unitCode=0):
         """Retrieve the text label assigned to an inpout or ouput
-        inout - 0 = Output, 1 = Input
+        inout - 0 = Output, 1 = Inputxx
         label - String, up to 20 characters. Use CLEAR to clear the field
         """
         if inout:
