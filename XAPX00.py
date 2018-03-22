@@ -1232,3 +1232,4 @@ class XAPX00(object):
     def getHumanErrorDescription(self, errorMsg):
         """Translates ERROR replies from the XAP800 into a human-readable description of the problem."""
         return errorDefs.get(errorMsg, "Unknown Error")
+
