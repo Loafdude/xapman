@@ -265,16 +265,16 @@ class XAPX00(object):
     def getUnitType(self, id):
         """Get unit type based on responses"""
         self.send("#5" + str(id) + " SERECHO 1 \r")
-        if xap.readResponse() == "1":
+        if self.readResponse() == "1":
             return "XAP800"
         self.send("#7" + str(id) + " SERECHO 1 \r")
-        if xap.readResponse() == "1":
+        if self.readResponse() == "1":
             return "XAP400"
         self.send("#4" + str(id) + " SERECHO 1 \r")
-        if xap.readResponse() == "1":
+        if self.readResponse() == "1":
             return "PSR1212"
         self.send("#6" + str(id) + " SERECHO 1 \r")
-        if xap.readResponse() == "1":
+        if self.readResponse() == "1":
             return "XAPTH2"
         return "No Device Found"
 
