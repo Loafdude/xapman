@@ -436,14 +436,14 @@ class XAPX00(object):
         return float(resp)
 
 
-    def getLabel(self, channel, group, unitCode=0):
+    def getLabel(self, channel, group, inout=False, unitCode=0):
         """Retrieve the text label assigned to an inpout or ouput"""
         resp = self.XAPCommand("LABEL", channel, group, unitCode=unitCode)
         return resp
 
     def setLabel(self, channel, group, label, inout=False, unitCode=0):
         """Retrieve the text label assigned to an inpout or ouput
-        inout - String, either In or Out. Used with expansion bus labels
+        inout - 0 = Output, 1 = Input
         label - String, up to 20 characters. Use CLEAR to clear the field
         """
         if inout:
