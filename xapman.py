@@ -498,25 +498,25 @@ class ExpansionBus(object):
 
     def getInputLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.channel, "E", 1, unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, "E", inout=1, unitCode=self.unit.device_id)
         self.input_label = label
         return label
 
     def setInputLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.channel, "E", 1, label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, "E", inout=1, label, unitCode=self.unit.device_id)
         self.input_label = label
         return label
 
     def getOutputLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.channel, "E", 0, unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, "E", inout=0, unitCode=self.unit.device_id)
         self.output_label = label
         return label
 
     def setOutputLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.channel, "E", 0, label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, "E", inout=0, label, unitCode=self.unit.device_id)
         self.output_label = label
         return label
 
