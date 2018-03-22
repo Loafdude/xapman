@@ -159,7 +159,7 @@ class XAPX00(object):
             self.serial.readlines(3) #clear response
             self.serial.write(("#7%s SERECHO 1 %s" % (str(id), EOM)).encode())
             self.serial.readlines(3) #clear response
-        # uid = self.getUniqueId(0)
+        # uid = self.getUniqueId(0) # We cannot assume the unit we have is at ID 0
         # _LOGGER.info("Connected, got uniqueID %s", str(uid))
         self.connected = 1
 
@@ -261,6 +261,22 @@ class XAPX00(object):
         """Reset connection."""
         warnings.warn("Clearing Serial Connection")
         self.serial.reset_input_buffer()
+
+    def getUnitType(self, id):
+        """Get unit type based on responses"""
+        self.send("#5" + str(id) + " SERECHO 1 \r")
+        if xap.readResponse() == "1":
+            return "XAP800"
+        self.send("#7" + str(id) + " SERECHO 1 \r")
+        if xap.readResponse() == "1":
+            return "XAP400"
+        self.send("#4" + str(id) + " SERECHO 1 \r")
+        if xap.readResponse() == "1":
+            return "PSR1212"
+        self.send("#6" + str(id) + " SERECHO 1 \r")
+        if xap.readResponse() == "1":
+            return "XAPTH2"
+        return "No Device Found"
 
     @stereo
     def setDecayRate(self, channel, decayRate, unitCode=0):
