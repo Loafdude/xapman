@@ -134,6 +134,18 @@ class XapUnit(object):
         self.serial_number = serial
         return serial
         
+    def getLabel(self):
+        '''Fetch Label from XAP Unit'''
+        label = self.comms.getLabel(0, "U", unitCode=self.device_id)
+        self.label = label
+        return label
+
+    def setLabel(self, label):
+        '''Fetch Label from XAP Unit'''
+        label = self.comms.setLabel(0, "U", label, unitCode=self.device_id)
+        self.label = label
+        return label
+
     def getModemMode(self):
         '''Fetch Modem Mode from XAP Unit'''
         mode = self.comms.getModemMode(unitCode=self.device_id)
