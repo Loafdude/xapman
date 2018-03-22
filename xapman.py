@@ -66,10 +66,10 @@ class XapUnit(object):
         self.safety_mute = None
         self.panel_timeout = None
         self.panel_lockout = None
-        self.output_channels = {}
-        self.input_channels = {}
+        self.output_channels = None
+        self.input_channels = None
         self.processing_channels = None
-        self.expansion_busses = {}
+        self.expansion_busses = None
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
@@ -92,19 +92,18 @@ class XapUnit(object):
 
     def scanOutputChannels(self):
         '''Fetch all output channels from Unit'''
-        self.output_channels = []
+        self.output_channels = {}
         if self.device_type == "XAP800":
             r = range(1,13) # XAP800 units have 12 output channels
         else:
             r = range(1, 8)  # XAP400 units have 8 output channels
         for c in r:
-            print(str(c))
             self.output_channels[c] = OutputChannel(self, channel=c)
         return
 
     def scanInputChannels(self):
         '''Fetch all output channels from Unit'''
-        self.input_channels = []
+        self.input_channels = {}
         if self.device_type == "XAP800":
             r = range(1,13) # XAP800 units have 12 input channels
         else:
@@ -115,6 +114,7 @@ class XapUnit(object):
 
     def scanExpansionBus(self):
         '''Fetch all expansion busses from Unit'''
+        self.expansion_busses = {}
         self.ExpansionBusses = []
         r = ['O', 'P' , 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         for c in r:
