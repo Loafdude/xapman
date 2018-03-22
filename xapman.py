@@ -481,6 +481,7 @@ class ExpansionBus(object):
         return "ExpansionBus: Channel " + self.channel
 
     def __init__(self, unit, channel):
+        self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
         self.input_label = None
