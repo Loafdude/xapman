@@ -73,6 +73,7 @@ class XapUnit(object):
         self.expansion_input_channels = None
         self.expansion_output_channels = None
         self.refreshData()
+        self.scanOutputChannels()
 
     def refreshData(self):
         '''Fetch all data XAP Unit'''
@@ -94,7 +95,7 @@ class XapUnit(object):
         if self.device_type == "XAP800":
             for c in range(1,12):
                 self.output_channels.append(OutputChannel(self, XAP_channel=c))
-        return True
+        return
 
     def getID(self):
         '''Fetch ID from XAP Unit'''
@@ -214,6 +215,7 @@ class OutputChannel(object):
         self.sources        = None
         self.filters        = None
         self.constant_gain  = None # Also known as Number of Mics (NOM)
+        self.refreshData()
 
     def refreshData(self):
         '''Fetch all data Channel Data'''
