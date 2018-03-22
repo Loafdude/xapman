@@ -55,7 +55,38 @@ XAP800_LOCATION_PREFIX = "XAP800"
 XAP800_UNIT_TYPE = 1
 EOM = "\r"
 DEVICE_MAXMICS = "Max Number of Microphones"
-matrixGeo = {'XAP800': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "0", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D", "E", "F", "G", "H"],
+matrixGeo = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
+                        {"c": 2, "og": "O", "ig": "I"},
+                        {"c": 3, "og": "O", "ig": "I"},
+                        {"c": 4, "og": "O", "ig": "I"},
+                        {"c": 5, "og": "O", "ig": "I"},
+                        {"c": 6, "og": "O", "ig": "I"},
+                        {"c": 7, "og": "O", "ig": "I"},
+                        {"c": 8, "og": "O", "ig": "I"},
+                        {"c": 8, "og": "O", "ig": "I"},
+                        {"c": 10, "og": "O", "ig": "I"},
+                        {"c": 11, "og": "O", "ig": "I"},
+                        {"c": 12, "og": "O", "ig": "I"},
+                        {"c": "O", "og": "E", "ig": "E"},
+                        {"c": "P", "og": "E", "ig": "E"},
+                        {"c": "Q", "og": "E", "ig": "E"},
+                        {"c": "R", "og": "E", "ig": "E"},
+                        {"c": "S", "og": "E", "ig": "E"},
+                        {"c": "T", "og": "E", "ig": "E"},
+                        {"c": "U", "og": "E", "ig": "E"},
+                        {"c": "V", "og": "E", "ig": "E"},
+                        {"c": "W", "og": "E", "ig": "E"},
+                        {"c": "X", "og": "E", "ig": "E"},
+                        {"c": "Y", "og": "E", "ig": "E"},
+                        {"c": "Z", "og": "E", "ig": "E"},
+                        {"c": "A", "og": "P", "ig": "P"},
+                        {"c": "B", "og": "P", "ig": "P"},
+                        {"c": "C", "og": "P", "ig": "P"},
+                        {"c": "D", "og": "P", "ig": "P"},
+                        {"c": "E", "og": "P", "ig": "P"},
+                        {"c": "F", "og": "P", "ig": "P"},
+                        {"c": "G", "og": "P", "ig": "P"},
+                        {"c": "H", "og": "P", "ig": "P"}],
              'XAP400': [1, 2, 3, 4, 5, 6, 7, 8, "0", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D"]}
 nogainGroups = ('E')
 
@@ -500,9 +531,9 @@ class XAPX00(object):
         """Returns a matrix of levels as a list of lists"""
         routingMatrix = [[matrixGeo[self.XAPType]]]
         for y in matrixGeo[self.XAPType]:
-            row = [y]
+            row = []
             for x in matrixGeo[self.XAPType]:
-                row.append(self.getMatrixRouting(x, y, unitCode=unitCode, stereo=0))
+                row.append(self.getMatrixRouting(y['c'], x['c'], inGroup=y['ig'], outGroup=y['og'], unitCode=unitCode))
             routingMatrix.append(row)
         # for x in matrixGeo[self.XAPType]:
         #     routingMatrix.append([])
