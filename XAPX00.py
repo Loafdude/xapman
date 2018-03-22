@@ -498,12 +498,17 @@ class XAPX00(object):
 
     def getMatrixRoutingReport(self, unitCode=0):
         """Returns a matrix of levels as a list of lists"""
-        routingMatrix = []
-        for x in matrixGeo[self.XAPType]:
-            routingMatrix.append([])
-            for y in matrixGeo[self.XAPType]:
-                routingMatrix[x].append(self.getMatrixRouting(
-                    x + 1, y + 1, unitCode=unitCode, stereo=0))
+        routingMatrix = [[matrixGeo[self.XAPType]]]
+        for y in matrixGeo[self.XAPType]:
+            row = [y]
+            for x in matrixGeo[self.XAPType]:
+                row.append(self.getMatrixRouting(x, y, unitCode=unitCode, stereo=0))
+            routingMatrix.append(row)
+        # for x in matrixGeo[self.XAPType]:
+        #     routingMatrix.append([])
+        #     for y in matrixGeo[self.XAPType]:
+        #         routingMatrix[x].append(self.getMatrixRouting(
+        #             x + 1, y + 1, unitCode=unitCode, stereo=0))
         return routingMatrix
 
     @stereo
