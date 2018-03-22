@@ -43,7 +43,7 @@ class XapUnit(object):
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
     """
     def __repr__(self):
-        return self.device_type + " @ ID " + str(self.device_id)
+        return self.device_type + " at ID " + str(self.device_id)
 
     def __init__(self, xap_connection,
                  mqtt_path="",
