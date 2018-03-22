@@ -153,11 +153,14 @@ class XAPX00(object):
         self.serial = serial.Serial(self.comPort, self.baudRate,
                                     timeout=self.timeout)
         # Ensure connectivity by requesting the UID of the first unit
-        self.serial.reset_input_buffer()
-        self.serial.write(("%s0 SERECHO 1 %s" % (self.XAPCMD,EOM)).encode())
-        self.serial.readlines(3) #clear response
-        uid = self.getUniqueId(0)
-        _LOGGER.info("Connected, got uniqueID %s", str(uid))
+        for id in range(0,8):
+            self.serial.reset_input_buffer()
+            self.serial.write(("#5%s SERECHO 1 %s" % (str(id), EOM)).encode())
+            self.serial.readlines(3) #clear response
+            self.serial.write(("#7%s SERECHO 1 %s" % (str(id), EOM)).encode())
+            self.serial.readlines(3) #clear response
+        # uid = self.getUniqueId(0)
+        # _LOGGER.info("Connected, got uniqueID %s", str(uid))
         self.connected = 1
 
     def disconnect(self):
