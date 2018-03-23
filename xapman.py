@@ -850,12 +850,12 @@ class ExpansionBusAllocator(object):
                 self.reserved_channels = reserved_channels
                 for channel in self.reserved_channels:
                     self.busUsed.pop(channel, None)
-            # for channel, status in self.busUsed.items():
-            #     if channel not in self.reserved_channels:
-            #         if self.getChannelUsage(channel)['inUse']:
-            #             self.busUsed[channel] = True
-            #         else:
-            #             self.busUsed[channel] = False
+            for channel, status in self.busUsed.items():
+                if channel not in self.reserved_channels:
+                    if self.getChannelUsage(channel)['inUse']:
+                        self.busUsed[channel] = True
+                    else:
+                        self.busUsed[channel] = False
 
         def statusReport(self):
             inUse = 0
