@@ -622,7 +622,6 @@ class InputChannel(object):
 
     def refreshData(self):
         '''Fetch all data Channel Data'''
-        self.getType()
         self.getLabel()
         #self.getMaxGain()
         #self.getMinGain()
@@ -630,19 +629,6 @@ class InputChannel(object):
         #self.getProportionalGain()
         #self.getGain()
         return True
-
-    def getType(self):
-        if self.unit.device_type == "XAP800":
-            mic_channels = 8 # XAP800 has 8 Mic Channels
-        else:
-            mic_channels = 4 # XAP400 has 4 Mic Channels
-        if self.channel <= mic_channels:
-            self.type = "Mic"
-            self.mic = True
-        else:
-            self.type = "Line"
-            self.mic = False
-        return
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
