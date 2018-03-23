@@ -708,7 +708,15 @@ class MatrixLink(object):
     """XAP Matrix Link Manager"""
 
     def __repr__(self):
-        return self.source.label + "(" + str(self.source.channel) + " -> " + self.dest.label + "(" + str(self.dest.channel) + ")"
+        if self.state == "0":
+            return "Matrix: OFF"
+        elif self.state == "1":
+            return "Matrix: ON"
+        elif self.state == "3":
+            return "Matrix: ON"
+        elif self.state == "4":
+            return "Matrix: GATED-ON"
+
 
     def __init__(self, connection, source, dest, gatemode=False):
         self.connection = connection
@@ -718,6 +726,14 @@ class MatrixLink(object):
         self.gatemode = gatemode
         self.state = None
         self.enabled = False
+        self.getStatus()
+
+    def getStatus(self):
+        state = self.comms.getMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
+                                            outChannel=self.dest.channel, outGroup=self.dest.group,
+                                            unitCode=self.dest.unit.device_id)
+        self.state = state
+        return state
 
     def linkChannels(self):
         if self.source.unit != self.dest.unit:
@@ -726,14 +742,14 @@ class MatrixLink(object):
         else:
             if self.gatemode == False:
                 if self.source.type == "Mic":
-                    self.state = 3 # Gate Off
+                    self.state = "3" # Gate Off
                 else:
-                    self.state = 1
+                    self.state = "1"
             else:
                 if self.source.type == "Mic":
-                    self.state = 4 # Gate On
+                    self.state = "4" # Gate On
                 else:
-                    self.state = 1
+                    self.state = "1"
             route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                                 outChannel=self.dest.channel, outGroup=self.dest.group,
                                                 state=self.state, unitCode=self.dest.unit.device_id)
