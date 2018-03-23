@@ -499,6 +499,7 @@ class OutputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
+        print(str(self.channel) + "-" + channel_data[self.unit.device_type][self.channel]['og'])
         label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.label = label
         return label
