@@ -270,6 +270,7 @@ class XapUnit(object):
         return True
 
     def scanMatrix(self):
+        print("  Scanning Matrix Status...")
         self.matrix = copy(matrix[self.device_type])
         for inChannel, row in self.matrix.items():
             for outChannel, object in row.items():
@@ -282,6 +283,7 @@ class XapUnit(object):
 
     def scanOutputChannels(self):
         '''Fetch all output channels from Unit'''
+        print("  Scanning Output Channels...")
         self.output_channels = {}
         for channel, data in channel_data[self.device_type].items():
             self.output_channels[channel] = OutputChannel(self, channel=channel)
@@ -289,6 +291,7 @@ class XapUnit(object):
 
     def scanInputChannels(self):
         '''Fetch all output channels from Unit'''
+        print("  Scanning Input Channels...")
         self.input_channels = {}
         for channel, data in channel_data[self.device_type].items():
             self.input_channels[channel] = InputChannel(self, channel=channel)
@@ -296,6 +299,7 @@ class XapUnit(object):
 
     def scanExpansionBus(self):
         '''Fetch all expansion busses from Unit'''
+        print("  Scanning Expansion Bus Channels...")
         self.expansion_busses = {}
         r = ['O', 'P' , 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         for c in r:
