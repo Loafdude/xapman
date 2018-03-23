@@ -695,6 +695,15 @@ class InputChannel(object):
         self.gain = gain
         return gain
 
+    def getExBus(self):
+        ExBus = None
+        for channel, data in channel_data[self.unit.device_type].items():
+            if data['itype'] == "Expansion":
+                if self.unit.matrix[channel][self.channel].enabled:
+                    ExBus = channel
+                    break
+        return ExBus
+
 
 class MatrixLink(object):
     """XAP Matrix Link Manager"""
