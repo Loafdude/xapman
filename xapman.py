@@ -499,73 +499,73 @@ class OutputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.channel, "O", unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.label = label
         return label
     
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.channel, "O", label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], label, unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def getMaxGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_max = self.comms.getMaxGain(self.channel, "O", unitCode=self.unit.device_id)
+        gain_max = self.comms.getMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
         '''Set Max Gain for Channel'''
-        gain_max = self.comms.setMaxGain(self.channel, "O", gain_max, unitCode=self.unit.device_id)
+        gain_max = self.comms.setMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_min = self.comms.getMinGain(self.channel, "O", unitCode=self.unit.device_id)
+        gain_min = self.comms.getMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
         '''Set Max Gain for Channel'''
-        gain_min = self.comms.setMinGain(self.channel, "O", gain_min, unitCode=self.unit.device_id)
+        gain_min = self.comms.setMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
         '''Fetch mute status for Channel'''
-        mute = self.comms.getMute(self.channel, "O", unitCode=self.unit.device_id)
+        mute = self.comms.getMute(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
         '''Set mute status for Channel'''
-        mute = self.comms.setMute(self.channel, "O", mute, unitCode=self.unit.device_id)
+        mute = self.comms.setMute(self.channel, channel_data[self.unit.device_type][self.channel]['og'], mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
         '''Fetch gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.getPropGain(self.channel, "O", unitCode=self.unit.device_id)
+        prop_gain = self.comms.getPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def setProportionalGain(self, prop_gain):
         '''Set gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.setPropGain(self.channel, "O", prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
         '''Fetch absolute gain for Channel'''
-        gain = self.comms.getGain(self.channel, "O", unitCode=self.unit.device_id)
+        gain = self.comms.getGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
         '''Set absolute gain for Channel'''
-        gain = self.comms.setGain(self.channel, "O", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
+        gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
 
@@ -643,73 +643,73 @@ class InputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.channel, "I", unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.channel, "I", label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], label, unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def getMaxGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_max = self.comms.getMaxGain(self.channel, "I", unitCode=self.unit.device_id)
+        gain_max = self.comms.getMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
         '''Set Max Gain for Channel'''
-        gain_max = self.comms.setMaxGain(self.channel, "I", gain_max, unitCode=self.unit.device_id)
+        gain_max = self.comms.setMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_min = self.comms.getMinGain(self.channel, "I", unitCode=self.unit.device_id)
+        gain_min = self.comms.getMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
         '''Set Max Gain for Channel'''
-        gain_min = self.comms.setMinGain(self.channel, "I", gain_min, unitCode=self.unit.device_id)
+        gain_min = self.comms.setMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
         '''Fetch mute status for Channel'''
-        mute = self.comms.getMute(self.channel, "I", unitCode=self.unit.device_id)
+        mute = self.comms.getMute(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
         '''Set mute status for Channel'''
-        mute = self.comms.setMute(self.channel, "I", mute, unitCode=self.unit.device_id)
+        mute = self.comms.setMute(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
         '''Fetch gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.getPropGain(self.channel, "I", unitCode=self.unit.device_id)
+        prop_gain = self.comms.getPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def setProportionalGain(self, prop_gain):
         '''Set gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.setPropGain(self.channel, "I", prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
         '''Fetch absolute gain for Channel'''
-        gain = self.comms.getGain(self.channel, "I", unitCode=self.unit.device_id)
+        gain = self.comms.getGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
         '''Set absolute gain for Channel'''
-        gain = self.comms.setGain(self.channel, "I", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
+        gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
 
