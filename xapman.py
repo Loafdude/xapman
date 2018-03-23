@@ -787,30 +787,6 @@ class MatrixLink(object):
         self.enabled = False
         return route
 
-class MatrixLink2(object):
-    """XAP Matrix Link Manager"""
-
-    def __repr__(self):
-        return "Matrix: "
-
-    def __init__(self, connection, source, dest):
-        self.connection = connection
-        self.comms = connection.comms
-        self.source = source
-        self.dest = dest
-        self.expansion = None
-
-    def linkChannels(self):
-        if self.source.unit != self.dest.unit:
-            return
-            # Check if source is already available on expansion bus
-            # If not find free expansion bus and assign
-            # Link expansion -> Dest
-        else:
-            return
-            # Link Source -> Dest
-        return
-
 
 class ExpansionBus(object):
     """XAP Expansion Bus Wrapper"""
@@ -868,23 +844,24 @@ class ExpansionBusAllocator(object):
             self.connection = connection
             self.comms = connection.comms
             self.reserved_channels = []
-            self.buslist = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
+            self.units = connection.units
+            self.busUsed = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
             if reserved_channels:
                 self.reserved_channels = reserved_channels
                 for channel in self.reserved_channels:
-                    self.buslist.pop(channel, None)
-            for channel, status in self.buslist.items():
+                    self.busUsed.pop(channel, None)
+            for channel, status in self.busUsed.items():
                 if channel not in self.reserved_channels:
                     if self.getChannelUsage(channel)['inUse']:
-                        self.buslist[channel] = True
+                        self.busUsed[channel] = True
                     else:
-                        self.buslist[channel] = False
+                        self.busUsed[channel] = False
 
         def statusReport(self):
             inUse = 0
             available = 0
             reserved = len(self.reserved_channels)
-            for channel, status in self.buslist.items():
+            for channel, status in self.busUsed.items():
                 if status == False:
                     available += 1
                 elif status == True:
@@ -892,6 +869,19 @@ class ExpansionBusAllocator(object):
             return "Available: " + str(available) + " InUse: " + str(inUse) + " Reserved: " + str(reserved)
 
         def getChannelUsage(self, channel):
+            inUse = False
+            for id, unit in self.units.items():
+                for y_channel, data in channel_data[unit.device_type].items():
+                    if unit.matrix[y_channel][channel].enabled:
+                        inUse = True
+                    if unit.matrix[channel][y_channel].enabled:
+                        inUse = True
+            return inUse
+
+
+
+
+        def getChannelUsage_old(self, channel):
             inUse = False
             inUseList = []
             for id, unit in self.connection.units.items():
