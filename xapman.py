@@ -213,9 +213,35 @@ class XapConnection(object):
         self.comms._maxrespdelay = delay
         return self.units
 
-    def addChannelRoute(self):
-        """"""
-        return
+    def addChannelRoute(self, source, dest):
+        """Link Channels - Calculates Expansion Bus if needed"""
+        if source.unit.device_id == dest.unit.device_id:
+            source.unit.matrix[source.channel][dest.channel].linkChannels()
+            return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
+        else:
+            if source.getExBus != None:
+                exBus = source.getExBus  # Have a ExBus already
+            else:
+                exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
+                if exBus == None:
+                    raise noExpansionBusAvailable("There is no Expansion Bus Channels Available")
+                source.unit.matrix[source.channel][exBus].linkChannels()
+                dest.unit.matrix[exBus][dest.channel].linkChannels()
+                self.expansion_bus.getChannelUsage(exBus)
+            return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Via ExBus: " + str(exBus)
+
+
+    def delChannelRoute(self, source, dest):
+        """unLink Channels - Calculates Expansion Bus if needed"""
+        if source.unit.device_id == dest.unit.device_id:
+            source.unit.matrix[source.channel][dest.channel].unlinkChannels()
+            return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
+        else:
+            exBus = source.getExBus
+            source.unit.matrix[source.channel][exBus].unlinkChannels()
+            dest.unit.matrix[exBus][dest.channel].unlinkChannels()
+            self.expansion_bus.getChannelUsage(exBus)
+            return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Released ExBus: " + str(exBus)
 
 
 class XapUnit(object):
@@ -797,6 +823,10 @@ class MatrixLink(object):
         route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                             outChannel=self.dest.channel, outGroup=self.dest.group,
                                             state=self.state, unitCode=self.dest.unit.device_id)
+        if channel_data[self.source.unit.device_type][self.source.channel]['itype'] == "Expansion":
+            self.connection.expansion_bus.getChannelUsage(self.source.channel)
+        if channel_data[self.dest.unit.device_type][self.dest.channel]['otype'] == "Expansion":
+            self.connection.expansion_bus.getChannelUsage(self.dest.channel)
         self.enabled = False
         return route
 
@@ -949,3 +979,6 @@ class ExpansionBusManager(object):
 #     self.bypass = None
 #     self.phase = None
 #
+
+class noExpansionBusAvailable(Exception):
+    pass
