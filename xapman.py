@@ -492,7 +492,7 @@ class OutputChannel(object):
         self.getLabel()
         #self.getMaxGain()
         #self.getMinGain()
-        self.getMute()
+        #self.getMute()
         #self.getProportionalGain()
         #self.getGain()
         return True
@@ -626,7 +626,7 @@ class InputChannel(object):
         self.getLabel()
         #self.getMaxGain()
         #self.getMinGain()
-        self.getMute()
+        #self.getMute()
         #self.getProportionalGain()
         #self.getGain()
         return True
