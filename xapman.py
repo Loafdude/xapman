@@ -744,16 +744,6 @@ class InputChannel(object):
         return exBus
 
 
-for channel, data in channel_data['XAP800'].items():
-    if data['itype'] == "Expansion":
-        if u0.matrix[channel][1].enabled:
-
-
-            exBus = channel
-            break
-self.exBus = exBus
-
-
 class MatrixLink(object):
     """XAP Matrix Link Manager"""
 
