@@ -255,7 +255,7 @@ class XapConnection(object):
 
     def scanDevices(self):
         '''Scan for XAP units'''
-        self.units = []
+        self.units = {}
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1 # reduce timeout delay when searching for non-existant devices
