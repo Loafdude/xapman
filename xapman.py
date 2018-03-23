@@ -198,7 +198,7 @@ class XapConnection(object):
         print("Expansion Bus Status: " + self.expansion_bus.statusReport())
 
     def scanDevices(self):
-        '''Scan for XAP units'''
+        """Scan for XAP units"""
         self.units = {}
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
@@ -214,7 +214,7 @@ class XapConnection(object):
         return self.units
 
     def addChannelRoute(self):
-        ''''''
+        """"""
         return
 
 
@@ -255,7 +255,7 @@ class XapUnit(object):
         #self.scanExpansionBus()
 
     def refreshData(self):
-        '''Fetch all data XAP Unit'''
+        """Fetch all data XAP Unit"""
         self.getID()
         self.getFW()
         self.getDSP()
@@ -282,7 +282,7 @@ class XapUnit(object):
         return
 
     def scanOutputChannels(self):
-        '''Fetch all output channels from Unit'''
+        """Fetch all output channels from Unit"""
         print("  Scanning Output Channels...")
         self.output_channels = {}
         for channel, data in channel_data[self.device_type].items():
@@ -290,7 +290,7 @@ class XapUnit(object):
         return
 
     def scanInputChannels(self):
-        '''Fetch all output channels from Unit'''
+        """Fetch all output channels from Unit"""
         print("  Scanning Input Channels...")
         self.input_channels = {}
         for channel, data in channel_data[self.device_type].items():
@@ -298,7 +298,7 @@ class XapUnit(object):
         return
 
     def scanExpansionBus(self):
-        '''Fetch all expansion busses from Unit'''
+        """Fetch all expansion busses from Unit"""
         print("  Scanning Expansion Bus Channels...")
         self.expansion_busses = {}
         r = ['O', 'P' , 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -307,108 +307,108 @@ class XapUnit(object):
         return
 
     def getID(self):
-        '''Fetch ID from XAP Unit'''
-        id = self.comms.getDeviceID(unitCode=self.device_id)
-        return id
+        """Fetch ID from XAP Unit"""
+        uid = self.comms.getDeviceID(unitCode=self.device_id)
+        return uid
         
     def getFW(self):
-        '''Fetch FW Version from XAP Unit'''
+        """Fetch FW Version from XAP Unit"""
         FW = self.comms.getVersion(unitCode=self.device_id)
         self.FW_version = FW
         return FW
         
     def getDSP(self):
-        '''Fetch DSP Version from XAP Unit'''
+        """Fetch DSP Version from XAP Unit"""
         DSP = self.comms.getDSPVersion(unitCode=self.device_id)
         self.DSP_version = DSP
         return DSP
         
     def getSerialNumber(self):
-        '''Fetch Unique ID from XAP Unit'''
+        """Fetch Unique ID from XAP Unit"""
         serial = self.comms.getUniqueId(unitCode=self.device_id)
         self.serial_number = serial
         return serial
         
     def getLabel(self):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.getLabel(0, "U", unitCode=self.device_id)
         self.label = label
         return label
 
     def setLabel(self, label):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.setLabel(0, "U", label, unitCode=self.device_id)
         self.label = label
         return label
 
     def getModemMode(self):
-        '''Fetch Modem Mode from XAP Unit'''
+        """Fetch Modem Mode from XAP Unit"""
         mode = self.comms.getModemMode(unitCode=self.device_id)
         self.modem_mode = mode
         return mode
         
     def setModemMode(self, isEnabled):
-        '''Set Modem Mode to XAP Unit'''
+        """Set Modem Mode to XAP Unit"""
         mode = self.comms.setModemMode(isEnabled, unitCode=self.device_id)
         self.modem_mode = mode
         return mode
         
     def getModemInit(self):
-        '''Fetch Modem Init String from XAP Unit'''
+        """Fetch Modem Init String from XAP Unit"""
         string = self.comms.getModemInitString(unitCode=self.device_id)
         self.modem_init_string = string
         return string
         
     def setModemInit(self, string):
-        '''Set Modem Init String to XAP Unit'''
+        """Set Modem Init String to XAP Unit"""
         string = self.comms.setModemInitString(string, unitCode=self.device_id)
         self.modem_init_string = string
         return string
         
     def getModemPass(self):
-        '''Fetch Modem Init String from XAP Unit'''
+        """Fetch Modem Init String from XAP Unit"""
         string = self.comms.getModemModePassword(unitCode=self.device_id)
         self.modem_pass = string
         return string
         
     def setModemPass(self, string):
-        '''Set Modem Init String to XAP Unit'''
+        """Set Modem Init String to XAP Unit"""
         string = self.comms.setModemModePassword(string, unitCode=self.device_id)
         self.modem_pass = string
         return string
         
     def getSafetyMute(self):
-        '''Fetch safety mute status from XAP Unit'''
+        """Fetch safety mute status from XAP Unit"""
         status = self.comms.getSafetyMute(unitCode=self.device_id)
         self.safety_mute = status
         return status
         
     def setSafetyMute(self, isEnabled):
-        '''Set safety mute status to XAP Unit'''
+        """Set safety mute status to XAP Unit"""
         status = self.comms.setSafetyMute(isEnabled, unitCode=self.device_id)
         self.safety_mute = status
         return status
         
     def getPanelTimeout(self):
-        '''Fetch panel timout in min from XAP Unit'''
+        """Fetch panel timout in min from XAP Unit"""
         minutes = self.comms.getScreenTimeout(unitCode=self.device_id)
         self.panel_timeout = minutes
         return minutes
         
     def setPanelTimeout(self, minutes):
-        '''Set panel timout in min to XAP Unit'''
+        """Set panel timout in min to XAP Unit"""
         minutes = self.comms.setScreenTimeout(minutes, unitCode=self.device_id)
         self.panel_timeout = minutes
         return minutes
         
     def getPanelLock(self):
-        '''Fetch panel lock from XAP Unit'''
+        """Fetch panel lock from XAP Unit"""
         status = self.comms.getFrontPanelLock(unitCode=self.device_id)
         self.panel_lockout = status
         return status
         
     def setPanelLock(self, isEnabled):
-        '''Set panel lock to XAP Unit'''
+        """Set panel lock to XAP Unit"""
         status = self.comms.setFrontPanelLock(isEnabled, unitCode=self.device_id)
         self.panel_lockout = status
         return status
@@ -439,85 +439,105 @@ class OutputChannel(object):
         self.refreshData()
 
     def refreshData(self):
-        '''Fetch all data Channel Data'''
+        """Fetch all data Channel Data"""
         self.getLabel()
-        #self.getMaxGain()
-        #self.getMinGain()
-        #self.getMute()
-        #self.getProportionalGain()
-        #self.getGain()
+        self.getMaxGain()
+        self.getMinGain()
+        self.getMute()
+        self.getProportionalGain()
+        self.getGain()
         return True
 
     def getLabel(self):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'],
                                     unitCode=self.unit.device_id, inout=0)
         self.label = label
         return label
     
     def setLabel(self, label):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], label,
                                     unitCode=self.unit.device_id, inout=0)
         self.label = label
         return label
 
     def getMaxGain(self):
-        '''Fetch Max Gain for Channel'''
+        """Fetch Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_max = self.comms.getMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
-        '''Set Max Gain for Channel'''
+        """Set Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_max = self.comms.setMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
-        '''Fetch Max Gain for Channel'''
+        """Fetch Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_min = self.comms.getMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
-        '''Set Max Gain for Channel'''
+        """Set Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_min = self.comms.setMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
-        '''Fetch mute status for Channel'''
+        """Fetch mute status for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         mute = self.comms.getMute(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
-        '''Set mute status for Channel'''
+        """Set mute status for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         mute = self.comms.setMute(self.channel, channel_data[self.unit.device_type][self.channel]['og'], mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
-        '''Fetch gain 0-1 proportional to max_gain for Channel'''
+        """Fetch gain 0-1 proportional to max_gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         prop_gain = self.comms.getPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def setProportionalGain(self, prop_gain):
-        '''Set gain 0-1 proportional to max_gain for Channel'''
+        """Set gain 0-1 proportional to max_gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
-        '''Fetch absolute gain for Channel'''
+        """Fetch absolute gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain = self.comms.getGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
-        '''Set absolute gain for Channel'''
+        """Set absolute gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
@@ -572,85 +592,105 @@ class InputChannel(object):
     #         self.PA_adaptive        = None # True or False
 
     def refreshData(self):
-        '''Fetch all data Channel Data'''
+        """Fetch all data Channel Data"""
         self.getLabel()
-        #self.getMaxGain()
-        #self.getMinGain()
-        #self.getMute()
-        #self.getProportionalGain()
-        #self.getGain()
+        self.getMaxGain()
+        self.getMinGain()
+        self.getMute()
+        self.getProportionalGain()
+        self.getGain()
         return True
 
     def getLabel(self):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'],
                                     unitCode=self.unit.device_id, inout=1)
         self.label = label
         return label
 
     def setLabel(self, label):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], label,
                                     unitCode=self.unit.device_id, inout=1)
         self.label = label
         return label
 
     def getMaxGain(self):
-        '''Fetch Max Gain for Channel'''
+        """Fetch Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_max = self.comms.getMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
-        '''Set Max Gain for Channel'''
+        """Set Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_max = self.comms.setMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
-        '''Fetch Max Gain for Channel'''
+        """Fetch Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_min = self.comms.getMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
-        '''Set Max Gain for Channel'''
+        """Set Max Gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain_min = self.comms.setMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
-        '''Fetch mute status for Channel'''
+        """Fetch mute status for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         mute = self.comms.getMute(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
-        '''Set mute status for Channel'''
+        """Set mute status for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         mute = self.comms.setMute(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
-        '''Fetch gain 0-1 proportional to max_gain for Channel'''
+        """Fetch gain 0-1 proportional to max_gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         prop_gain = self.comms.getPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def setProportionalGain(self, prop_gain):
-        '''Set gain 0-1 proportional to max_gain for Channel'''
+        """Set gain 0-1 proportional to max_gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
-        '''Fetch absolute gain for Channel'''
+        """Fetch absolute gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain = self.comms.getGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
-        '''Set absolute gain for Channel'''
+        """Set absolute gain for Channel"""
+        if self.group == "E":  # Expansion Bus is Not Compatible with this function
+            return None
         gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
@@ -762,25 +802,25 @@ class ExpansionBus(object):
         return True
 
     def getInputLabel(self):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.getLabel(self.channel, "E", inout=1, unitCode=self.unit.device_id)
         self.input_label = label
         return label
 
     def setInputLabel(self, label):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.setLabel(self.channel, "E", label, inout=1, unitCode=self.unit.device_id)
         self.input_label = label
         return label
 
     def getOutputLabel(self):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.getLabel(self.channel, "E", inout=0, unitCode=self.unit.device_id)
         self.output_label = label
         return label
 
     def setOutputLabel(self, label):
-        '''Fetch Label from XAP Unit'''
+        """Fetch Label from XAP Unit"""
         label = self.comms.setLabel(self.channel, "E", label, inout=0, unitCode=self.unit.device_id)
         self.output_label = label
         return label
