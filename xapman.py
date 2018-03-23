@@ -1,5 +1,62 @@
 import XAPX00
-
+channel_data = {"XAP800": {1: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           2: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           3: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           4: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           5: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           6: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           7: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           8: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           9: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           10: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           11: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           12: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           "A": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "B": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "C": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "D": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "E": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "F": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "G": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "H": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "O": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "P": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "Q": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "R": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "S": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "T": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "U": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "V": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "W": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "X": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "Y": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "Z": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"}
+                },
+                "XAP400": {1: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           2: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           3: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           4: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
+                           5: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           6: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           7: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           8: {"ig": "I", "og": "O", "itype": "Line", "otype": "Output"},
+                           "A": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "B": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "C": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "D": {"ig": "P", "og": "P", "itype": "Processing", "otype": "Processing"},
+                           "O": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "P": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "Q": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "R": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "S": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "T": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "U": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "V": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "W": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "X": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "Y": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
+                           "Z": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"}
+                }}
 matrix_array = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
                         {"c": 2, "og": "O", "ig": "I"},
                         {"c": 3, "og": "O", "ig": "I"},
@@ -290,13 +347,15 @@ class OutputChannel(object):
     """XAP Output Channel Wrapper"""
 
     def __repr__(self):
-        return "Output: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " | " + self.label
+        return "Output: " + str(self.unit.device_id) + ":" + str(self.channel) + " | " + self.label
 
     def __init__(self, unit, channel):
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
-        self.XAP_channel = channel
+        self.channel = channel
+        self.group = channel_data[unit.device_type][channel]['og']
+        self.type = channel_data[unit.device_type][channel]['otype']
         self.gain = None #
         self.prop_gain = None #
         self.gain_min = None #
@@ -320,73 +379,73 @@ class OutputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, "O", unitCode=self.unit.device_id)
         self.label = label
         return label
     
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.XAP_channel, "O", label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, "O", label, unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def getMaxGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_max = self.comms.getMaxGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        gain_max = self.comms.getMaxGain(self.channel, "O", unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
         '''Set Max Gain for Channel'''
-        gain_max = self.comms.setMaxGain(self.XAP_channel, "O", gain_max, unitCode=self.unit.device_id)
+        gain_max = self.comms.setMaxGain(self.channel, "O", gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_min = self.comms.getMinGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        gain_min = self.comms.getMinGain(self.channel, "O", unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
         '''Set Max Gain for Channel'''
-        gain_min = self.comms.setMinGain(self.XAP_channel, "O", gain_min, unitCode=self.unit.device_id)
+        gain_min = self.comms.setMinGain(self.channel, "O", gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
         '''Fetch mute status for Channel'''
-        mute = self.comms.getMute(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        mute = self.comms.getMute(self.channel, "O", unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
         '''Set mute status for Channel'''
-        mute = self.comms.setMute(self.XAP_channel, "O", mute, unitCode=self.unit.device_id)
+        mute = self.comms.setMute(self.channel, "O", mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
         '''Fetch gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.getPropGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        prop_gain = self.comms.getPropGain(self.channel, "O", unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def setProportionalGain(self, prop_gain):
         '''Set gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.setPropGain(self.XAP_channel, "O", prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.channel, "O", prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
         '''Fetch absolute gain for Channel'''
-        gain = self.comms.getGain(self.XAP_channel, "O", unitCode=self.unit.device_id)
+        gain = self.comms.getGain(self.channel, "O", unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
         '''Set absolute gain for Channel'''
-        gain = self.comms.setGain(self.XAP_channel, "O", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
+        gain = self.comms.setGain(self.channel, "O", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
 
@@ -394,20 +453,21 @@ class InputChannel(object):
     """XAP Input Channel Wrapper"""
 
     def __repr__(self):
-        return "Input: " + str(self.unit.device_id) + ":" + str(self.XAP_channel) + " | " + self.label
+        return "Input: " + str(self.unit.device_id) + ":" + str(self.channel) + " | " + self.label
 
     def __init__(self, unit, channel):
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
-        self.XAP_channel = channel
+        self.channel = channel
+        self.group = channel_data[unit.device_type][channel]['ig']
+        self.type = channel_data[unit.device_type][channel]['itype']
         self.gain           = None #
         self.gain_min       = None #
         self.gain_max       = None #
         self.mute           = None #
         self.label          = None #
         self.mic            = None
-        self.type               = None # LineLevel or Microphone
         self.AGC                = None # True or False - Automatic Gain Control
         self.AGC_target         = None # -30 to 20dB
         self.AGC_threshold      = None # -50 to 0dB
@@ -453,7 +513,7 @@ class InputChannel(object):
             mic_channels = 8 # XAP800 has 8 Mic Channels
         else:
             mic_channels = 4 # XAP400 has 4 Mic Channels
-        if self.XAP_channel <= mic_channels:
+        if self.channel <= mic_channels:
             self.type = "Mic"
             self.mic = True
         else:
@@ -463,77 +523,112 @@ class InputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.XAP_channel, "I", unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, "I", unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.XAP_channel, "I", label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, "I", label, unitCode=self.unit.device_id)
         self.label = label
         return label
 
     def getMaxGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_max = self.comms.getMaxGain(self.XAP_channel, "I", unitCode=self.unit.device_id)
+        gain_max = self.comms.getMaxGain(self.channel, "I", unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def setMaxGain(self, gain_max):
         '''Set Max Gain for Channel'''
-        gain_max = self.comms.setMaxGain(self.XAP_channel, "I", gain_max, unitCode=self.unit.device_id)
+        gain_max = self.comms.setMaxGain(self.channel, "I", gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
     def getMinGain(self):
         '''Fetch Max Gain for Channel'''
-        gain_min = self.comms.getMinGain(self.XAP_channel, "I", unitCode=self.unit.device_id)
+        gain_min = self.comms.getMinGain(self.channel, "I", unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def setMinGain(self, gain_min):
         '''Set Max Gain for Channel'''
-        gain_min = self.comms.setMinGain(self.XAP_channel, "I", gain_min, unitCode=self.unit.device_id)
+        gain_min = self.comms.setMinGain(self.channel, "I", gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
     def getMute(self):
         '''Fetch mute status for Channel'''
-        mute = self.comms.getMute(self.XAP_channel, "I", unitCode=self.unit.device_id)
+        mute = self.comms.getMute(self.channel, "I", unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def setMute(self, mute):
         '''Set mute status for Channel'''
-        mute = self.comms.setMute(self.XAP_channel, "I", mute, unitCode=self.unit.device_id)
+        mute = self.comms.setMute(self.channel, "I", mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
     def getProportionalGain(self):
         '''Fetch gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.getPropGain(self.XAP_channel, "I", unitCode=self.unit.device_id)
+        prop_gain = self.comms.getPropGain(self.channel, "I", unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def setProportionalGain(self, prop_gain):
         '''Set gain 0-1 proportional to max_gain for Channel'''
-        prop_gain = self.comms.setPropGain(self.XAP_channel, "I", prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.channel, "I", prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
     def getGain(self):
         '''Fetch absolute gain for Channel'''
-        gain = self.comms.getGain(self.XAP_channel, "I", unitCode=self.unit.device_id)
+        gain = self.comms.getGain(self.channel, "I", unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
     def setGain(self, gain, isAbsolute=1):
         '''Set absolute gain for Channel'''
-        gain = self.comms.setGain(self.XAP_channel, "I", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
+        gain = self.comms.setGain(self.channel, "I", gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
 
 class MatrixLink(object):
+    """XAP Matrix Link Manager"""
+
+    def __repr__(self):
+        return "Matrix: "
+
+    def __init__(self, connection, source, dest, gatemode=False):
+        self.connection = connection
+        self.comms = connection.comms
+        self.source = source
+        self.dest = dest
+        self.gatemode = gatemode
+        self.state = None
+        self.enabled = False
+
+    def linkChannels(self):
+        if self.source.unit != self.dest.unit:
+            print("Cannot directly link channels across different units. Use another method.")
+            return None
+        else:
+            if self.gatemode == False:
+                if self.source.type == "Mic":
+                    self.state = 3 # Gate Off
+                else:
+                    self.state = 1
+            else:
+                if self.source.type == "Mic":
+                    self.state = 4 # Gate On
+                else:
+                    self.state = 1
+            route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group, outChannel=self.dest.channel, outGroup=self.dest.group, state=self.state,
+                                                unitCode=self.dest.unit.device_id)
+            self.enabled = True
+        return route
+
+class MatrixLink2(object):
     """XAP Matrix Link Manager"""
 
     def __repr__(self):
@@ -548,10 +643,12 @@ class MatrixLink(object):
 
     def linkChannels(self):
         if self.source.unit != self.dest.unit:
+            return
             # Check if source is already available on expansion bus
             # If not find free expansion bus and assign
             # Link expansion -> Dest
         else:
+            return
             # Link Source -> Dest
         return
 
