@@ -58,6 +58,7 @@ channel_data = {"XAP800": {1: {"ig": "I", "og": "O", "itype": "Mic", "otype": "O
                            "Y": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"},
                            "Z": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"}
                 }}
+
 matrix_y = {"XAP800": {1: None,
                        2: None,
                        3: None,
@@ -113,8 +114,7 @@ matrix_y = {"XAP800": {1: None,
                        "A": None,
                        "B": None,
                        "C": None,
-                       "D": None}
-            }
+                       "D": None}}
 
 matrix = {"XAP800": {1: copy(copy(matrix_y['XAP800'])),
                      2: copy(matrix_y['XAP800']),
@@ -171,8 +171,8 @@ matrix = {"XAP800": {1: copy(copy(matrix_y['XAP800'])),
                      "A": copy(matrix_y['XAP400']),
                      "B": copy(matrix_y['XAP400']),
                      "C": copy(matrix_y['XAP400']),
-                     "D": copy(matrix_y['XAP400'])}
-          }
+                     "D": copy(matrix_y['XAP400'])}}
+
 matrix_array = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
                         {"c": 2, "og": "O", "ig": "I"},
                         {"c": 3, "og": "O", "ig": "I"},
@@ -302,10 +302,11 @@ class XapUnit(object):
         self.input_channels = None
         self.processing_channels = None
         self.expansion_busses = None
+        self.matrix = None
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
-        self.scanExpansionBus()
+        #self.scanExpansionBus()
 
     def refreshData(self):
         '''Fetch all data XAP Unit'''
@@ -322,26 +323,29 @@ class XapUnit(object):
         self.getPanelLock()
         return True
 
+    def scanMatrix(self):
+        self.matrix = copy(matrix[self.device_type])
+        for inChannel, row in self.matrix.items():
+            for outChannel, object in row.items():
+                if inChannel == outChannel and channel_data[self.device_type][outChannel]['otype'] != "Output":
+                    continue
+                else:
+                    self.matrix[inChannel][outChannel] = MatrixLink(self.connection, self.input_channels[inChannel],
+                                                                    self.output_channels[outChannel])
+        return
+
     def scanOutputChannels(self):
         '''Fetch all output channels from Unit'''
         self.output_channels = {}
-        if self.device_type == "XAP800":
-            r = range(1,13) # XAP800 units have 12 output channels
-        else:
-            r = range(1, 8)  # XAP400 units have 8 output channels
-        for c in r:
-            self.output_channels[c] = OutputChannel(self, channel=c)
+        for channel, data in channel_data[self.device_type].items():
+            self.output_channels[channel] = OutputChannel(self, channel=channel)
         return
 
     def scanInputChannels(self):
         '''Fetch all output channels from Unit'''
         self.input_channels = {}
-        if self.device_type == "XAP800":
-            r = range(1,13) # XAP800 units have 12 input channels
-        else:
-            r = range(1, 8)  # XAP400 units have 8 input channels
-        for c in r:
-            self.input_channels[c] = InputChannel(self, channel=c)
+        for channel, data in channel_data[self.device_type].items():
+            self.input_channels[channel] = InputChannel(self, channel=channel)
         return
 
     def scanExpansionBus(self):
@@ -486,11 +490,11 @@ class OutputChannel(object):
     def refreshData(self):
         '''Fetch all data Channel Data'''
         self.getLabel()
-        self.getMaxGain()
-        self.getMinGain()
+        #self.getMaxGain()
+        #self.getMinGain()
         self.getMute()
-        self.getProportionalGain()
-        self.getGain()
+        #self.getProportionalGain()
+        #self.getGain()
         return True
 
     def getLabel(self):
@@ -617,11 +621,11 @@ class InputChannel(object):
         '''Fetch all data Channel Data'''
         self.getType()
         self.getLabel()
-        self.getMaxGain()
-        self.getMinGain()
+        #self.getMaxGain()
+        #self.getMinGain()
         self.getMute()
-        self.getProportionalGain()
-        self.getGain()
+        #self.getProportionalGain()
+        #self.getGain()
         return True
 
     def getType(self):
