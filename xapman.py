@@ -858,7 +858,7 @@ class ExpansionBusAllocator(object):
         def getChannelUsage(self, channel):
             inUse = False
             inUseList = []
-            for unit in self.connection.units:
+            for id, unit in self.connection.units.items():
                 for c in matrix_array[unit.device_type]:
                     if channel == c['c'] and c['og'] == "E":
                         continue
