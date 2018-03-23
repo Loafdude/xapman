@@ -237,7 +237,7 @@ class XapConnection(object):
             source.unit.matrix[source.channel][dest.channel].unlinkChannels()
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
         else:
-            exBus = source.getExBus
+            exBus = source.getExBus()
             source.unit.matrix[source.channel][exBus].unlinkChannels()
             dest.unit.matrix[exBus][dest.channel].unlinkChannels()
             self.expansion_bus.getChannelUsage(exBus)
@@ -744,6 +744,16 @@ class InputChannel(object):
         return exBus
 
 
+for channel, data in channel_data['XAP800'].items():
+    if data['itype'] == "Expansion":
+        if u0.matrix[channel][1].enabled:
+
+
+            exBus = channel
+            break
+self.exBus = exBus
+
+
 class MatrixLink(object):
     """XAP Matrix Link Manager"""
 
@@ -812,10 +822,7 @@ class MatrixLink(object):
             route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                                 outChannel=self.dest.channel, outGroup=self.dest.group,
                                                 state=self.state, unitCode=self.dest.unit.device_id)
-            if route == self.state:
-                self.enabled = True
-            else:
-                self.enabled = False
+            self.state = route
         return route
 
     def unlinkChannels(self):
