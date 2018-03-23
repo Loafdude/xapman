@@ -242,7 +242,7 @@ class XapConnection(object):
                  device_type="XAP800"):
         self.mqtt_path  = mqtt_path
         self.baudrate   = baudrate
-        self.units = []
+        self.units = {}
         self.serial_path = serial_path
         print("Preparing XAP devices to be interrogated")
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type)
@@ -264,7 +264,7 @@ class XapConnection(object):
             if uid != None:
                 unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": self.comms.getUnitType(u)}
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
-                self.units.append(XapUnit(self, XAP_unit=u))
+                self.units[u] = XapUnit(self, XAP_unit=u)
         print("Found " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
         return self.units
@@ -306,6 +306,7 @@ class XapUnit(object):
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
+        self.scanMatrix()
         #self.scanExpansionBus()
 
     def refreshData(self):
@@ -499,7 +500,6 @@ class OutputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        print(str(self.channel) + "-" + channel_data[self.unit.device_type][self.channel]['og'])
         label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'],
                                     unitCode=self.unit.device_id, inout=0)
         self.label = label
@@ -708,7 +708,7 @@ class MatrixLink(object):
     """XAP Matrix Link Manager"""
 
     def __repr__(self):
-        return "Matrix: "
+        return self.source.label + "(" + str(self.source.channel) + " -> " + self.dest.label + "(" + str(self.dest.channel) + ")"
 
     def __init__(self, connection, source, dest, gatemode=False):
         self.connection = connection
