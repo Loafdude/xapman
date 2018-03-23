@@ -500,13 +500,15 @@ class OutputChannel(object):
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
         print(str(self.channel) + "-" + channel_data[self.unit.device_type][self.channel]['og'])
-        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'],
+                                    unitCode=self.unit.device_id, inout=0)
         self.label = label
         return label
     
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], label,
+                                    unitCode=self.unit.device_id, inout=0)
         self.label = label
         return label
 
@@ -644,13 +646,15 @@ class InputChannel(object):
 
     def getLabel(self):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'],
+                                    unitCode=self.unit.device_id, inout=1)
         self.label = label
         return label
 
     def setLabel(self, label):
         '''Fetch Label from XAP Unit'''
-        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], label, unitCode=self.unit.device_id)
+        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], label,
+                                    unitCode=self.unit.device_id, inout=1)
         self.label = label
         return label
 
