@@ -725,15 +725,35 @@ class MatrixLink(object):
         self.dest = dest
         self.gatemode = gatemode
         self.state = None
+        self.attenuation = None
         self.enabled = False
         self.getStatus()
+        self.getAttenuation()
 
     def getStatus(self):
         state = self.comms.getMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                             outChannel=self.dest.channel, outGroup=self.dest.group,
                                             unitCode=self.dest.unit.device_id)
         self.state = state
+        if state != "0":
+            self.enabled = True
+        else:
+            self.enabled = False
         return state
+
+    def getAttenuation(self):
+        attn = self.comms.getMatrixLevel(inChannel=self.source.channel, inGroup=self.source.group,
+                                         outChannel=self.dest.channel, outGroup=self.dest.group,
+                                         unitCode=self.dest.unit.device_id)
+        self.attenuation = attn
+        return
+
+    def setAttenuation(self, level):
+        attn = self.comms.getMatrixLevel(inChannel=self.source.channel, inGroup=self.source.group,
+                                         outChannel=self.dest.channel, outGroup=self.dest.group,
+                                         unitCode=self.dest.unit.device_id, level=level)
+        self.attenuation = attn
+        return
 
     def linkChannels(self):
         if self.source.unit != self.dest.unit:
