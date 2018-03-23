@@ -173,62 +173,6 @@ matrix = {"XAP800": {1: copy(copy(matrix_y['XAP800'])),
                      "C": copy(matrix_y['XAP400']),
                      "D": copy(matrix_y['XAP400'])}}
 
-matrix_array = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
-                        {"c": 2, "og": "O", "ig": "I"},
-                        {"c": 3, "og": "O", "ig": "I"},
-                        {"c": 4, "og": "O", "ig": "I"},
-                        {"c": 5, "og": "O", "ig": "I"},
-                        {"c": 6, "og": "O", "ig": "I"},
-                        {"c": 7, "og": "O", "ig": "I"},
-                        {"c": 8, "og": "O", "ig": "I"},
-                        {"c": 9, "og": "O", "ig": "I"},
-                        {"c": 10, "og": "O", "ig": "I"},
-                        {"c": 11, "og": "O", "ig": "I"},
-                        {"c": 12, "og": "O", "ig": "I"},
-                        {"c": "O", "og": "E", "ig": "E"},
-                        {"c": "P", "og": "E", "ig": "E"},
-                        {"c": "Q", "og": "E", "ig": "E"},
-                        {"c": "R", "og": "E", "ig": "E"},
-                        {"c": "S", "og": "E", "ig": "E"},
-                        {"c": "T", "og": "E", "ig": "E"},
-                        {"c": "U", "og": "E", "ig": "E"},
-                        {"c": "V", "og": "E", "ig": "E"},
-                        {"c": "W", "og": "E", "ig": "E"},
-                        {"c": "X", "og": "E", "ig": "E"},
-                        {"c": "Y", "og": "E", "ig": "E"},
-                        {"c": "Z", "og": "E", "ig": "E"},
-                        {"c": "A", "og": "P", "ig": "P"},
-                        {"c": "B", "og": "P", "ig": "P"},
-                        {"c": "C", "og": "P", "ig": "P"},
-                        {"c": "D", "og": "P", "ig": "P"},
-                        {"c": "E", "og": "P", "ig": "P"},
-                        {"c": "F", "og": "P", "ig": "P"},
-                        {"c": "G", "og": "P", "ig": "P"},
-                        {"c": "H", "og": "P", "ig": "P"}],
-                'XAP400': [{"c": 1, "og": "O", "ig": "I"},
-                        {"c": 2, "og": "O", "ig": "I"},
-                        {"c": 3, "og": "O", "ig": "I"},
-                        {"c": 4, "og": "O", "ig": "I"},
-                        {"c": 5, "og": "O", "ig": "I"},
-                        {"c": 6, "og": "O", "ig": "I"},
-                        {"c": 7, "og": "O", "ig": "I"},
-                        {"c": 8, "og": "O", "ig": "I"},
-                        {"c": "O", "og": "E", "ig": "E"},
-                        {"c": "P", "og": "E", "ig": "E"},
-                        {"c": "Q", "og": "E", "ig": "E"},
-                        {"c": "R", "og": "E", "ig": "E"},
-                        {"c": "S", "og": "E", "ig": "E"},
-                        {"c": "T", "og": "E", "ig": "E"},
-                        {"c": "U", "og": "E", "ig": "E"},
-                        {"c": "V", "og": "E", "ig": "E"},
-                        {"c": "W", "og": "E", "ig": "E"},
-                        {"c": "X", "og": "E", "ig": "E"},
-                        {"c": "Y", "og": "E", "ig": "E"},
-                        {"c": "Z", "og": "E", "ig": "E"},
-                        {"c": "A", "og": "P", "ig": "P"},
-                        {"c": "B", "og": "P", "ig": "P"},
-                        {"c": "C", "og": "P", "ig": "P"},
-                        {"c": "D", "og": "P", "ig": "P"}]}
 
 class XapConnection(object):
     """Xap Serial Connection Wrapper
@@ -240,8 +184,8 @@ class XapConnection(object):
                  baudrate=38400,
                  mqtt_path="home/HA/AudioMixers/",
                  device_type="XAP800"):
-        self.mqtt_path  = mqtt_path
-        self.baudrate   = baudrate
+        self.mqtt_path = mqtt_path
+        self.baudrate = baudrate
         self.units = {}
         self.serial_path = serial_path
         print("Preparing XAP devices to be interrogated")
@@ -250,15 +194,15 @@ class XapConnection(object):
         self.comms.connect()
         self.scanDevices()
         print("Scanning Expansion Bus and allocating channels...")
-        self.expansion_bus_allocator = ExpansionBusAllocator(self)
-        print("Expansion Bus Status: " + self.expansion_bus_allocator.statusReport())
+        self.expansion_bus = ExpansionBusManager(self)
+        print("Expansion Bus Status: " + self.expansion_bus.statusReport())
 
     def scanDevices(self):
         '''Scan for XAP units'''
         self.units = {}
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
-        self.comms._maxrespdelay = 0.1 # reduce timeout delay when searching for non-existant devices
+        self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
         for u in range(8):
             uid = self.comms.getUniqueId(u)
             if uid != None:
@@ -272,6 +216,7 @@ class XapConnection(object):
     def addChannelRoute(self):
         ''''''
         return
+
 
 class XapUnit(object):
     """Xap Unit Wrapper
@@ -464,6 +409,7 @@ class XapUnit(object):
         self.panel_lockout = status
         return status
 
+
 class OutputChannel(object):
     """XAP Output Channel Wrapper"""
 
@@ -571,6 +517,7 @@ class OutputChannel(object):
         gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
+
 
 class InputChannel(object):
     """XAP Input Channel Wrapper"""
@@ -704,6 +651,7 @@ class InputChannel(object):
         self.gain = gain
         return gain
 
+
 class MatrixLink(object):
     """XAP Matrix Link Manager"""
 
@@ -716,7 +664,6 @@ class MatrixLink(object):
             return "Matrix: ON"
         elif self.state == "4":
             return "Matrix: GATED-ON"
-
 
     def __init__(self, connection, source, dest, gatemode=False):
         self.connection = connection
@@ -805,7 +752,7 @@ class ExpansionBus(object):
         self.refreshData()
 
     def refreshData(self):
-        '''Fetch all data Channel Data'''
+        """Fetch all data Channel Data"""
         self.getInputLabel()
         self.getOutputLabel()
         return True
@@ -834,8 +781,9 @@ class ExpansionBus(object):
         self.output_label = label
         return label
 
-class ExpansionBusAllocator(object):
-        """XAP Input Channel Manager"""
+
+class ExpansionBusManager(object):
+        """XAP Bus Wide Expansion Channel Manager"""
 
         def __repr__(self):
             return "ExpansionBusAllocator: " + self.statusReport()
@@ -852,7 +800,7 @@ class ExpansionBusAllocator(object):
                     self.busUsed.pop(channel, None)
             for channel, status in self.busUsed.items():
                 if channel not in self.reserved_channels:
-                    if self.getChannelUsage(channel)['inUse']:
+                    if self.getChannelUsage(channel):
                         self.busUsed[channel] = True
                     else:
                         self.busUsed[channel] = False
@@ -868,6 +816,10 @@ class ExpansionBusAllocator(object):
                     inUse += 1
             return "Available: " + str(available) + " InUse: " + str(inUse) + " Reserved: " + str(reserved)
 
+        def refreshData(self):
+            for channel, status in self.busUsed.items():
+                self.getChannelUsage(channel)
+
         def getChannelUsage(self, channel):
             inUse = False
             for id, unit in self.units.items():
@@ -878,28 +830,14 @@ class ExpansionBusAllocator(object):
                         inUse = True
                     if unit.matrix[channel][y_channel].enabled:
                         inUse = True
+            self.busUsed[channel] = inUse
             return inUse
 
-
-
-
-        def getChannelUsage_old(self, channel):
-            inUse = False
-            inUseList = []
-            for id, unit in self.connection.units.items():
-                for c in matrix_array[unit.device_type]:
-                    if channel == c['c'] and c['og'] == "E":
-                        continue
-                    if self.comms.getMatrixRouting(inChannel=channel, outChannel=c['c'], inGroup="E", outGroup=c['og'], unitCode=unit.device_id) != "0":
-                        inUse = True
-                        inUseList.append("Output Unit: " + str(unit.device_id) + " Channel: " + str(c['c']) + " -> ExpansionBus: " + channel)
-                    if self.comms.getMatrixRouting(inChannel=c['c'], outChannel=channel, inGroup=c['ig'], outGroup="E", unitCode=unit.device_id) != "0":
-                        inUse = True
-                        inUseList.append("Input Unit: " + str(unit.device_id) + " Channel: " + str(c['c']) + " -> ExpansionBus: " + channel)
-            return {'inUseList': inUseList, 'inUse': inUse}
-
         def requestExpChannel(self):
-            return
+            for channel, status in self.busUsed.items():
+                if status == False:
+                    return channel
+            return False
 
 
 
