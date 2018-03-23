@@ -427,14 +427,15 @@ class OutputChannel(object):
         self.channel = channel
         self.group = channel_data[unit.device_type][channel]['og']
         self.type = channel_data[unit.device_type][channel]['otype']
-        self.gain = None #
-        self.prop_gain = None #
-        self.gain_min = None #
-        self.gain_max = None #
-        self.mute = None #
-        self.label = None #
+        self.gain = None  #
+        self.prop_gain = None  #
+        self.gain_min = None  #
+        self.gain_max = None  #
+        self.mute = None  #
+        self.label = None  #
         self.sources = None
         self.filters = None
+        self.exBus = None
         self.constant_gain = None # Also known as Number of Mics (NOM)
         self.refreshData()
 
@@ -542,6 +543,16 @@ class OutputChannel(object):
         self.gain = gain
         return gain
 
+    def getExBus(self):
+        exBus = None
+        for channel, data in channel_data[self.unit.device_type].items():
+            if data['otype'] == "Expansion":
+                if self.unit.matrix[channel][self.channel].enabled:
+                    exBus = channel
+                    break
+        self.exBus = exBus
+        return exBus
+
 
 class InputChannel(object):
     """XAP Input Channel Wrapper"""
@@ -556,17 +567,18 @@ class InputChannel(object):
         self.channel = channel
         self.group = channel_data[unit.device_type][channel]['ig']
         self.type = channel_data[unit.device_type][channel]['itype']
-        self.gain           = None #
-        self.gain_min       = None #
-        self.gain_max       = None #
-        self.mute           = None #
-        self.label          = None #
-        self.mic            = None
-        self.AGC                = None # True or False - Automatic Gain Control
-        self.AGC_target         = None # -30 to 20dB
-        self.AGC_threshold      = None # -50 to 0dB
-        self.AGC_attack         = None # 0.1 to 10.0s in .1 increments
-        self.AGC_gain           = None # 0.0 to 18.0dB
+        self.gain = None
+        self.gain_min = None
+        self.gain_max = None
+        self.mute = None
+        self.label = None
+        self.mic = None
+        self.exBus = None
+        self.AGC = None  # True or False - Automatic Gain Control
+        self.AGC_target = None  # -30 to 20dB
+        self.AGC_threshold = None  # -50 to 0dB
+        self.AGC_attack = None  # 0.1 to 10.0s in .1 increments
+        self.AGC_gain = None  # 0.0 to 18.0dB
         self.refreshData()
 
     #         # Microphone Input Only
@@ -696,13 +708,14 @@ class InputChannel(object):
         return gain
 
     def getExBus(self):
-        ExBus = None
+        exBus = None
         for channel, data in channel_data[self.unit.device_type].items():
             if data['itype'] == "Expansion":
                 if self.unit.matrix[channel][self.channel].enabled:
-                    ExBus = channel
+                    exBus = channel
                     break
-        return ExBus
+        self.exBus = exBus
+        return exBus
 
 
 class MatrixLink(object):
