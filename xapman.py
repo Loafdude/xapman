@@ -298,8 +298,11 @@ class XapUnit(object):
     def clearMatrix(self):
         for inChannel, row in self.matrix.items():
             for outChannel, object in row.items():
-                if object.state != 0:
-                    object.unlinkChannels()
+                if channel_data[self.device_type][outChannel]['otype'] == "Expansion" and inChannel == outChannel:
+                    continue
+                else:
+                    if object.state != 0:
+                        object.unlinkChannels()
         return
 
     def scanMatrix(self):
