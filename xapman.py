@@ -739,7 +739,7 @@ class InputChannel(object):
         exBus = None
         for channel, data in channel_data[self.unit.device_type].items():
             if data['itype'] == "Expansion":
-                if self.unit.matrix[channel][self.channel] != None
+                if self.unit.matrix[channel][self.channel] != None:
                     if self.unit.matrix[self.channel][channel].enabled:
                         exBus = channel
                         break
