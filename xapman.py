@@ -295,6 +295,13 @@ class XapUnit(object):
         self.getPanelLock()
         return True
 
+    def clearMatrix(self):
+        for inChannel, row in self.matrix.items():
+            for outChannel, object in row.items():
+                if object.state != 0:
+                    object.unlinkChannels()
+        return
+
     def scanMatrix(self):
         print("  Scanning Matrix Status...")
         self.matrix = copy(matrix[self.device_type])
@@ -568,7 +575,7 @@ class OutputChannel(object):
             return None
         gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
-        return gain
+        return gain_
 
     def getExBus(self):
         exBus = None
@@ -806,12 +813,12 @@ class MatrixLink(object):
         else:
             if self.gatemode == False:
                 if self.source.type == "Mic":
-                    self.state = "3" # Gate Off
+                    self.state = "3"  # Gate Off
                 else:
                     self.state = "1"
             else:
                 if self.source.type == "Mic":
-                    self.state = "4" # Gate On
+                    self.state = "4"  # Gate On
                 else:
                     self.state = "1"
             route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
@@ -821,10 +828,10 @@ class MatrixLink(object):
         return route
 
     def unlinkChannels(self):
-        self.state = 0
         route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                             outChannel=self.dest.channel, outGroup=self.dest.group,
                                             state=self.state, unitCode=self.dest.unit.device_id)
+        self.state = '0'
         if channel_data[self.source.unit.device_type][self.source.channel]['itype'] == "Expansion":
             self.connection.expansion_bus.getChannelUsage(self.source.channel)
         if channel_data[self.dest.unit.device_type][self.dest.channel]['otype'] == "Expansion":
