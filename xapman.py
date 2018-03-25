@@ -581,7 +581,7 @@ class OutputChannel(object):
             return None
         gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
-        return gain_
+        return gain
 
     def getExBus(self):
         exBus = None
@@ -830,11 +830,7 @@ class MatrixLink(object):
             route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                                 outChannel=self.dest.channel, outGroup=self.dest.group,
                                                 state=self.state, unitCode=self.dest.unit.device_id)
-            self.state = route
-            if self.source.type == "Expansion":
-                self.connection.expansion_bus.getChannelUsage(self.source.channel)
-            if self.dest.type == "Expansion":
-                self.connection.expansion_bus.getChannelUsage(self.dest.channel)
+        self.recalcuateExBusUsage()
         return route
 
     def unlinkChannels(self):
@@ -847,7 +843,15 @@ class MatrixLink(object):
         if channel_data[self.dest.unit.device_type][self.dest.channel]['otype'] == "Expansion":
             self.connection.expansion_bus.getChannelUsage(self.dest.channel)
         self.enabled = False
+        self.recalcuateExBusUsage()
         return route
+
+    def recalcuateExBusUsage(self):
+        if self.source.type == "Expansion":
+            self.connection.expansion_bus.getChannelUsage(self.source.channel)
+        if self.dest.type == "Expansion":
+            self.connection.expansion_bus.getChannelUsage(self.dest.channel)
+        return
 
 
 class ExpansionBus(object):
