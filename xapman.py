@@ -220,14 +220,13 @@ class XapConnection(object):
             return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
         else:
             if source.getExBus() is not None:
-                print('hi')
+                print("Already had exbus")
                 exBus = source.getExBus()  # Have a ExBus already
             else:
-                print('boo')
+                print("get an exbus")
                 exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
                 if exBus == None:
                     raise noExpansionBusAvailable("There is no Expansion Bus Channels Available")
-                print(str(exBus))
                 source.unit.matrix[source.channel][exBus].linkChannels()
                 dest.unit.matrix[exBus][dest.channel].linkChannels()
                 self.expansion_bus.getChannelUsage(exBus)
