@@ -224,7 +224,7 @@ class XapConnection(object):
                 exBus = source.getExBus()  # Have a ExBus already
             elif dest.getExBus() is not None:
                 print("Already had dest exbus")
-                exBus = source.getExBus()  # Have a ExBus already
+                exBus = dest.getExBus()  # Have a ExBus already
 
             else:
                 print("get an exbus")
@@ -591,7 +591,6 @@ class OutputChannel(object):
         exBus = None
         for channel, data in channel_data[self.unit.device_type].items():
             if data['otype'] == "Expansion":
-                print(str(channel) + str(self.channel))
                 if self.unit.matrix[channel][self.channel] is not None:
                     if self.unit.matrix[channel][self.channel].enabled:
                         exBus = channel
