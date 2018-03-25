@@ -831,6 +831,10 @@ class MatrixLink(object):
                                                 outChannel=self.dest.channel, outGroup=self.dest.group,
                                                 state=self.state, unitCode=self.dest.unit.device_id)
             self.state = route
+            if self.source.type == "Expansion":
+                self.connection.expansion_bus.getChannelUsage(self.source.channel)
+            if self.dest.type == "Expansion":
+                self.connection.expansion_bus.getChannelUsage(self.dest.channel)
         return route
 
     def unlinkChannels(self):
