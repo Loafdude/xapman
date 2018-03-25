@@ -830,6 +830,7 @@ class MatrixLink(object):
             route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                                 outChannel=self.dest.channel, outGroup=self.dest.group,
                                                 state=self.state, unitCode=self.dest.unit.device_id)
+            self.enabled = True
         self.recalcuateExBusUsage()
         return route
 
@@ -838,6 +839,7 @@ class MatrixLink(object):
                                             outChannel=self.dest.channel, outGroup=self.dest.group,
                                             state=self.state, unitCode=self.dest.unit.device_id)
         self.state = '0'
+        self.enabled = False
         if channel_data[self.source.unit.device_type][self.source.channel]['itype'] == "Expansion":
             self.connection.expansion_bus.getChannelUsage(self.source.channel)
         if channel_data[self.dest.unit.device_type][self.dest.channel]['otype'] == "Expansion":
