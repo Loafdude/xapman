@@ -1,5 +1,5 @@
 import XAPX00
-from copy import copy
+from copy import deepcopy
 channel_data = {"XAP800": {1: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
                            2: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
                            3: {"ig": "I", "og": "O", "itype": "Mic", "otype": "Output"},
@@ -219,7 +219,7 @@ class XapConnection(object):
             source.unit.matrix[source.channel][dest.channel].linkChannels()
             return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
         else:
-            if source.getExBus != None:
+            if source.getExBus() is not None:
                 print('hi')
                 exBus = source.getExBus()  # Have a ExBus already
             else:
@@ -311,7 +311,7 @@ class XapUnit(object):
 
     def scanMatrix(self):
         print("  Scanning Matrix Status...")
-        self.matrix = copy(matrix[self.device_type])
+        self.matrix = deepcopy(matrix[self.device_type])
         for inChannel, row in self.matrix.items():
             for outChannel, object in row.items():
                 if inChannel == outChannel and channel_data[self.device_type][outChannel]['otype'] != "Output":
