@@ -225,7 +225,7 @@ class XapConnection(object):
             else:
                 print("get an exbus")
                 exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
-                if exBus == None:
+                if exBus is False:
                     raise noExpansionBusAvailable("There is no Expansion Bus Channels Available")
                 source.unit.matrix[source.channel][exBus].linkChannels()
                 dest.unit.matrix[exBus][dest.channel].linkChannels()
