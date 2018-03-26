@@ -952,7 +952,7 @@ class ExpansionBusManager(object):
                 for y_channel, data in channel_data[unit.device_type].items():
                     if y_channel == channel:
                         continue
-                    if OutputOnly:
+                    if not OutputOnly:
                         if unit.matrix[y_channel][channel].enabled:
                             inUse = True
                     if unit.matrix[channel][y_channel].enabled:
