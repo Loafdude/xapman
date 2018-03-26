@@ -490,7 +490,7 @@ class OutputChannel(object):
         self.getMute()
         self.getProportionalGain()
         self.getGain()
-        self.getExBus()
+        #self.getExBus()
         return True
 
     def getLabel(self):
