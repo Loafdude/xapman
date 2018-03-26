@@ -244,7 +244,8 @@ class XapConnection(object):
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
         else:
             exBus = source.getExBus()
-            source.unit.matrix[source.channel][exBus].unlinkChannels()
+            if self.expansion_bus.getChannelUsage(exBus) is False:
+                source.unit.matrix[source.channel][exBus].unlinkChannels()
             dest.unit.matrix[exBus][dest.channel].unlinkChannels()
             self.expansion_bus.getChannelUsage(exBus)
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Released ExBus: " + str(exBus)
@@ -591,7 +592,6 @@ class OutputChannel(object):
         exBus = None
         for channel, data in channel_data[self.unit.device_type].items():
             if data['otype'] == "Expansion":
-                print(str(channel) + "-" + str(self.channel))
                 if self.unit.matrix[channel][self.channel] is not None:
                     if self.unit.matrix[channel][self.channel].enabled:
                         exBus = channel
