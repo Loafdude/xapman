@@ -490,7 +490,7 @@ class OutputChannel(object):
         self.getMute()
         self.getProportionalGain()
         self.getGain()
-        #self.getExBus()
+        self.getExBus()
         return True
 
     def getLabel(self):
@@ -588,11 +588,10 @@ class OutputChannel(object):
         return gain
 
     def getExBus(self):
-        print(str(self.channel))
         exBus = None
         for channel, data in channel_data[self.unit.device_type].items():
-            print(str(channel))
             if data['otype'] == "Expansion":
+                print(str(channel) + "-" + str(self.channel))
                 if self.unit.matrix[channel][self.channel] is not None:
                     if self.unit.matrix[channel][self.channel].enabled:
                         exBus = channel
