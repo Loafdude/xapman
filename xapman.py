@@ -322,6 +322,7 @@ class XapUnit(object):
                 else:
                     self.matrix[inChannel][outChannel] = MatrixLink(self.connection, self.input_channels[inChannel],
                                                                     self.output_channels[outChannel])
+        # Need to scan channels for their ExBus here
         return
 
     def scanOutputChannels(self):
