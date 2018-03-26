@@ -946,14 +946,15 @@ class ExpansionBusManager(object):
             for channel, status in self.busUsed.items():
                 self.getChannelUsage(channel)
 
-        def getChannelUsage(self, channel):
+        def getChannelUsage(self, channel, OutputOnly=False):
             inUse = False
             for id, unit in self.units.items():
                 for y_channel, data in channel_data[unit.device_type].items():
                     if y_channel == channel:
                         continue
-                    if unit.matrix[y_channel][channel].enabled:
-                        inUse = True
+                    if OutputOnly:
+                        if unit.matrix[y_channel][channel].enabled:
+                            inUse = True
                     if unit.matrix[channel][y_channel].enabled:
                         inUse = True
             self.busUsed[channel] = inUse
