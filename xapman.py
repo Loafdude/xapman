@@ -231,9 +231,9 @@ class XapConnection(object):
                 exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
                 if exBus is False:
                     raise noExpansionBusAvailable("There is no Expansion Bus Channels Available")
-                source.unit.matrix[source.channel][exBus].linkChannels()
-                dest.unit.matrix[exBus][dest.channel].linkChannels()
-                self.expansion_bus.getChannelUsage(exBus)
+            source.unit.matrix[source.channel][exBus].linkChannels()
+            dest.unit.matrix[exBus][dest.channel].linkChannels()
+            self.expansion_bus.getChannelUsage(exBus)
             return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Via ExBus: " + str(exBus)
 
 
@@ -490,7 +490,7 @@ class OutputChannel(object):
         self.getMute()
         self.getProportionalGain()
         self.getGain()
-        #self.getExBus()
+        self.getExBus()
         return True
 
     def getLabel(self):
@@ -656,7 +656,7 @@ class InputChannel(object):
         self.getMute()
         self.getProportionalGain()
         self.getGain()
-        #self.getExBus()
+        self.getExBus()
         return True
 
     def getLabel(self):
