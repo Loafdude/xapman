@@ -243,12 +243,14 @@ class XapConnection(object):
             source.unit.matrix[source.channel][dest.channel].unlinkChannels()
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
         else:
+            released = ""
             exBus = source.getExBus()
             if self.expansion_bus.getChannelUsage(exBus) is False:
                 source.unit.matrix[source.channel][exBus].unlinkChannels()
+                released = "Released ExBus: " + str(exBus)
             dest.unit.matrix[exBus][dest.channel].unlinkChannels()
             self.expansion_bus.getChannelUsage(exBus)
-            return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Released ExBus: " + str(exBus)
+            return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " " + released
 
 
 class XapUnit(object):
