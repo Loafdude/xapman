@@ -241,12 +241,12 @@ class connect(object):
                         break
             if usable_bus is None:
                 print("get an exbus")
-                exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
-                if exBus is False:
+                usable_bus = self.expansion_bus.requestExpChannel()  # Get a ExBus
+                if usable_bus is False:
                     raise noExpansionBusAvailable("There is no Expansion Bus Channels Available")
-            source.unit.matrix[source.channel][exBus].linkChannels()
-            dest.unit.matrix[exBus][dest.channel].linkChannels()
-            self.expansion_bus.getChannelUsage(exBus)
+            source.unit.matrix[source.channel][usable_bus].linkChannels()
+            dest.unit.matrix[usable_bus][dest.channel].linkChannels()
+            self.expansion_bus.getChannelUsage(usable_bus)
             return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Via ExBus: " + str(exBus)
 
 
