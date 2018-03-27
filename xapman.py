@@ -231,16 +231,13 @@ class connect(object):
             for exbus in source.getExBus():
                 if self.expansion_bus.getChannelUsage(exbus)['input'] == 1:
                     usable_bus = exbus
-                    print("Already had source exbus")
                     break
             if usable_bus is None:
                 for exbus in dest.getExBus():
                     if self.expansion_bus.getChannelUsage(exbus)['output'] == 1:
                         usable_bus = exbus
-                        print("Already had dest exbus")
                         break
             if usable_bus is None:
-                print("get an exbus")
                 usable_bus = self.expansion_bus.requestExpChannel()  # Get a ExBus
                 if usable_bus is False:
                     raise noExpansionBusAvailable("There is no Expansion Bus Channels Available")
@@ -300,7 +297,6 @@ class XapUnit(object):
         self.scanOutputChannels()
         self.scanInputChannels()
         self.scanMatrix()
-        #self.scanExpansionBus()
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
@@ -338,7 +334,6 @@ class XapUnit(object):
                 else:
                     self.matrix[inChannel][outChannel] = MatrixLink(self.connection, self.input_channels[inChannel],
                                                                     self.output_channels[outChannel])
-        # Need to scan channels for their ExBus here
         return
 
     def scanOutputChannels(self):
