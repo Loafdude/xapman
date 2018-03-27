@@ -222,10 +222,9 @@ class XapConnection(object):
             if source.getExBus() is not None:
                 print("Already had source exbus")
                 exBus = source.getExBus()  # Have a ExBus already
-            elif dest.getExBus() is not None:
-                if self.expansion_bus.getChannelUsage(dest.getExBus())['output'] <= 1:
-                    exBus = dest.getExBus()  # Have a ExBus already
-                    print("Already had dest exbus")
+            elif dest.getExBus() is not None and self.expansion_bus.getChannelUsage(dest.getExBus())['output'] <= 1:
+                exBus = dest.getExBus()  # Have a ExBus already
+                print("Already had dest exbus")
             else:
                 print("get an exbus")
                 exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
