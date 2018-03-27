@@ -174,7 +174,7 @@ matrix = {"XAP800": {1: deepcopy(deepcopy(matrix_y['XAP800'])),
                      "D": deepcopy(matrix_y['XAP400'])}}
 
 
-class XapConnection(object):
+class connect(object):
     """Xap Serial Connection Wrapper
     """
     def __repr__(self):
@@ -214,18 +214,32 @@ class XapConnection(object):
         return self.units
 
     def addChannelRoute(self, source, dest):
-        """Link Channels - Calculates Expansion Bus if needed"""
+        """Link Channels - Calculates Expansion Bus if needed
+        Tries to use Expansion Bus Efficiently
+
+        Logic:
+        Unit 0 Channel 1 to Unit 1 Channel 2
+        If source channel is connected to ExBus alone, use that existing channel
+        If destination channel is connected to only 1 output, use that existing channel
+        Otherwise procure a new channel if available
+        """
         if source.unit.device_id == dest.unit.device_id:
             source.unit.matrix[source.channel][dest.channel].linkChannels()
             return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
         else:
-            if source.getExBus() is not None:
-                print("Already had source exbus")
-                exBus = source.getExBus()  # Have a ExBus already
-            elif dest.getExBus() is not None and self.expansion_bus.getChannelUsage(dest.getExBus())['output'] <= 1:
-                exBus = dest.getExBus()  # Have a ExBus already
-                print("Already had dest exbus")
-            else:
+            usable_bus = None
+            for exbus in source.getExBus():
+                if self.expansion_bus.getChannelUsage(exbus)['input'] == 1:
+                    usable_bus = exbus
+                    print("Already had source exbus")
+                    break
+            if usable_bus is None:
+                for exbus in dest.getExBus():
+                    if self.expansion_bus.getChannelUsage(exbus)['output'] == 1:
+                        usable_bus = exbus
+                        print("Already had dest exbus")
+                        break
+            if usable_bus is None:
                 print("get an exbus")
                 exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
                 if exBus is False:
@@ -590,13 +604,12 @@ class OutputChannel(object):
         return gain
 
     def getExBus(self):
-        exBus = None
+        exBus = []
         for channel, data in channel_data[self.unit.device_type].items():
             if data['otype'] == "Expansion":
                 if self.unit.matrix[channel][self.channel] is not None:
                     if self.unit.matrix[channel][self.channel].enabled:
-                        exBus = channel
-                        break
+                        exBus.append(channel)
         self.exBus = exBus
         return exBus
 
@@ -755,13 +768,12 @@ class InputChannel(object):
         return gain
 
     def getExBus(self):
-        exBus = None
+        exBus = []
         for channel, data in channel_data[self.unit.device_type].items():
             if data['itype'] == "Expansion":
                 if self.unit.matrix[self.channel][channel] is not None:
                     if self.unit.matrix[self.channel][channel].enabled:
-                        exBus = channel
-                        break
+                        exBus.append(channel)
         self.exBus = exBus
         return exBus
 
