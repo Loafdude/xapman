@@ -842,7 +842,7 @@ class MatrixLink(object):
     def unlinkChannels(self):
         route = self.comms.setMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
                                             outChannel=self.dest.channel, outGroup=self.dest.group,
-                                            state=self.state, unitCode=self.dest.unit.device_id)
+                                            state="0", unitCode=self.dest.unit.device_id)
         self.state = '0'
         self.enabled = False
         if channel_data[self.source.unit.device_type][self.source.channel]['itype'] == "Expansion":
