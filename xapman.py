@@ -223,9 +223,9 @@ class XapConnection(object):
                 print("Already had source exbus")
                 exBus = source.getExBus()  # Have a ExBus already
             elif dest.getExBus() is not None:
-                print("Already had dest exbus")
-                exBus = dest.getExBus()  # Have a ExBus already
-
+                if self.expansion_bus.getChannelUsage(dest.getExBus())['output'] <= 1:
+                    exBus = dest.getExBus()  # Have a ExBus already
+                    print("Already had dest exbus")
             else:
                 print("get an exbus")
                 exBus = self.expansion_bus.requestExpChannel()  # Get a ExBus
@@ -959,7 +959,7 @@ class ExpansionBusManager(object):
                             input += 1
                     if unit.matrix[channel][y_channel].enabled:
                         inUse = True
-                        output += 1
+                        output  += 1
             self.busUsed[channel] = inUse
             return {'inUse':inUse, "input": input, "output": output}
 
