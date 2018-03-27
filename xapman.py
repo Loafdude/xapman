@@ -247,7 +247,7 @@ class connect(object):
             source.unit.matrix[source.channel][usable_bus].linkChannels()
             dest.unit.matrix[usable_bus][dest.channel].linkChannels()
             self.expansion_bus.getChannelUsage(usable_bus)
-            return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Via ExBus: " + str(exBus)
+            return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Via ExBus: " + str(usable_bus)
 
 
     def delChannelRoute(self, source, dest):
