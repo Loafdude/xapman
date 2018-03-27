@@ -245,7 +245,7 @@ class XapConnection(object):
         else:
             released = ""
             exBus = source.getExBus()
-            if self.expansion_bus.getChannelUsage(exBus, OutputOnly=True)['output'] <= 1:
+            if self.expansion_bus.getChannelUsage(exBus)['output'] <= 1:
                 source.unit.matrix[source.channel][exBus].unlinkChannels()
                 released = " Released ExBus: " + str(exBus)
             dest.unit.matrix[exBus][dest.channel].unlinkChannels()
@@ -956,10 +956,10 @@ class ExpansionBusManager(object):
                     if not OutputOnly:
                         if unit.matrix[y_channel][channel].enabled:
                             inUse = True
-                            output += 1
+                            input += 1
                     if unit.matrix[channel][y_channel].enabled:
                         inUse = True
-                        input += 1
+                        output += 1
             self.busUsed[channel] = inUse
             return {'inUse':inUse, "input": input, "output": output}
 
