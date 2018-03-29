@@ -668,18 +668,20 @@ class InputChannel(object):
         self.getGain()
         self.getAGC()
         self.getAGCLevels()
+        if self.type == "Mic":
+            self.getPhantomPower()
         return True
 
     def getLabel(self):
         """Fetch Label from XAP Unit"""
-        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'],
+        label = self.comms.getLabel(self.channel, self.group,
                                     unitCode=self.unit.device_id, inout=1)
         self.label = label
         return label
 
     def setLabel(self, label):
         """Fetch Label from XAP Unit"""
-        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], label,
+        label = self.comms.setLabel(self.channel, self.group, label,
                                     unitCode=self.unit.device_id, inout=1)
         self.label = label
         return label
@@ -688,7 +690,7 @@ class InputChannel(object):
         """Fetch Max Gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        gain_max = self.comms.getMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        gain_max = self.comms.getMaxGain(self.channel, self.group, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
@@ -696,7 +698,7 @@ class InputChannel(object):
         """Set Max Gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        gain_max = self.comms.setMaxGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain_max, unitCode=self.unit.device_id)
+        gain_max = self.comms.setMaxGain(self.channel, self.group, gain_max, unitCode=self.unit.device_id)
         self.gain_max = gain_max
         return gain_max
 
@@ -704,7 +706,7 @@ class InputChannel(object):
         """Fetch Max Gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        gain_min = self.comms.getMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        gain_min = self.comms.getMinGain(self.channel, self.group, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
@@ -712,7 +714,7 @@ class InputChannel(object):
         """Set Max Gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        gain_min = self.comms.setMinGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain_min, unitCode=self.unit.device_id)
+        gain_min = self.comms.setMinGain(self.channel, self.group, gain_min, unitCode=self.unit.device_id)
         self.gain_min = gain_min
         return gain_min
 
@@ -720,7 +722,7 @@ class InputChannel(object):
         """Fetch mute status for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        mute = self.comms.getMute(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        mute = self.comms.getMute(self.channel, self.group, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
@@ -728,7 +730,7 @@ class InputChannel(object):
         """Set mute status for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        mute = self.comms.setMute(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], mute, unitCode=self.unit.device_id)
+        mute = self.comms.setMute(self.channel, self.group, mute, unitCode=self.unit.device_id)
         self.mute = mute
         return mute
 
@@ -736,7 +738,7 @@ class InputChannel(object):
         """Fetch gain 0-1 proportional to max_gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        prop_gain = self.comms.getPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        prop_gain = self.comms.getPropGain(self.channel, self.group, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
@@ -744,7 +746,7 @@ class InputChannel(object):
         """Set gain 0-1 proportional to max_gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.channel, self.group, prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
 
@@ -752,7 +754,7 @@ class InputChannel(object):
         """Fetch absolute gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        gain = self.comms.getGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        gain = self.comms.getGain(self.channel, self.group, unitCode=self.unit.device_id)
         self.gain = gain
         return gain
 
@@ -760,7 +762,7 @@ class InputChannel(object):
         """Set absolute gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
+        gain = self.comms.setGain(self.channel, self.group, gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
 
@@ -768,7 +770,7 @@ class InputChannel(object):
         """Fetch Automatic Gain Control for Channel"""
         if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
             return None
-        AGC = self.comms.getAutoGainControl(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        AGC = self.comms.getAutoGainControl(self.channel, group=self.group, unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
 
@@ -776,7 +778,7 @@ class InputChannel(object):
         """Set Automatic Gain Control for Channel"""
         if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
             return None
-        AGC = self.comms.setAutoGainControl(self.channel, AGC, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        AGC = self.comms.setAutoGainControl(self.channel, AGC, group=self.group, unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
 
@@ -784,7 +786,7 @@ class InputChannel(object):
         """Fetch Automatic Gain Control for Channel"""
         if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
             return None
-        AGC = self.comms.getAutoGainControlLevel(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        AGC = self.comms.getAutoGainControlLevel(self.channel, group=self.group, unitCode=self.unit.device_id)
         self.AGC_target = AGC['target']
         self.AGC_threshold = AGC['threshold']
         self.AGC_attack = AGC['attack']
@@ -795,7 +797,7 @@ class InputChannel(object):
         """Set Automatic Gain Control for Channel"""
         if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
             return None
-        AGC = self.comms.setAutoGainControlLevel(self.channel, threshold, target, attack, gain, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        AGC = self.comms.setAutoGainControlLevel(self.channel, threshold, target, attack, gain, group=self.group, unitCode=self.unit.device_id)
         self.AGC_target = AGC['target']
         self.AGC_threshold = AGC['threshold']
         self.AGC_attack = AGC['attack']
@@ -822,7 +824,7 @@ class InputChannel(object):
         """Fetch Noise Cancellation for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        nc = self.comms.getNoiseCancellation(self.channel, unitCode=self.unit.device_id)
+        nc = self.comms.getNoiseCancellation(self.channel, self.group, unitCode=self.unit.device_id)
         self.NC = nc
         return nc
 
@@ -830,7 +832,7 @@ class InputChannel(object):
         """Set Noise Cancellation for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        nc = self.comms.setNoiseCancellation(self.channel, isEnabled, unitCode=self.unit.device_id)
+        nc = self.comms.setNoiseCancellation(self.channel, self.group, isEnabled, unitCode=self.unit.device_id)
         self.NC = nc
         return nc
 
@@ -838,7 +840,7 @@ class InputChannel(object):
         """Fetch Noise Cancellation for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        nc = self.comms.getNoiseCancellationDepth(self.channel, unitCode=self.unit.device_id)
+        nc = self.comms.getNoiseCancellationDepth(self.channel, self.group, unitCode=self.unit.device_id)
         self.NC_depth = nc
         return nc
 
@@ -848,7 +850,7 @@ class InputChannel(object):
         """
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        nc = self.comms.setNoiseCancellationDepth(self.channel, depth, unitCode=self.unit.device_id)
+        nc = self.comms.setNoiseCancellationDepth(self.channel, self.group, depth, unitCode=self.unit.device_id)
         self.NC_depth = nc
         return nc
 
