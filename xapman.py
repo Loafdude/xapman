@@ -636,7 +636,7 @@ class InputChannel(object):
         self.AGC_gain = None  # 0.0 to 18.0dB
         self.refreshData()
 
-    #         # Microphone Input Only
+    # Microphone Input Only
     #         self.gain_mic           = None
     #         self.phantom_power      = None
     #         self.NC                 = None # True or False - Noise Cancellation
@@ -666,6 +666,8 @@ class InputChannel(object):
         self.getMute()
         self.getProportionalGain()
         self.getGain()
+        self.getAGC()
+        self.getAGCLevels()
         return True
 
     def getLabel(self):
@@ -776,6 +778,28 @@ class InputChannel(object):
             raise notSupported("Only MIC channels support this function")
         AGC = self.comms.setAutoGainControl(self.channel, AGC, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
+        return AGC
+
+    def getAGCLevels(self):
+        """Fetch Automatic Gain Control for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        AGC = self.comms.getAutoGainControlLevel(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        self.AGC_target = AGC['target']
+        self.AGC_threshold = AGC['threshold']
+        self.AGC_attack = AGC['attack']
+        self.AGC_gain = AGC['gain']
+        return AGC
+
+    def setAGCLevels(self, threshold, target, attack, gain):
+        """Set Automatic Gain Control for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        AGC = self.comms.setAutoGainControlLevel(self.channel, threshold, target, attack, gain, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        self.AGC_target = AGC['target']
+        self.AGC_threshold = AGC['threshold']
+        self.AGC_attack = AGC['attack']
+        self.AGC_gain = AGC['gain']
         return AGC
 
     def getExBus(self):
