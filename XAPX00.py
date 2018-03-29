@@ -1239,7 +1239,7 @@ class XAPX00(object):
         resp = self.XAPCommand('SFTYMUTE', isEnabled, unitCode=unitCode)
         return bool(int(resp))
 
-    def getAutoGainControl(self, channel, group, unitCode=0):
+    def getAutoGainControlLevel(self, channel, group, unitCode=0):
         """Request the settings of the AGC on an input channel
         unitCode - the unit code of the target XAP800
         channel   - 1-12
@@ -1256,7 +1256,7 @@ class XAPX00(object):
                 "gain": db2linear(resp[3]) if self.convertDb else float(resp[3]),
                 }
 
-    def setAutoGainControl(self, channel, group, threshold, target, attack, gain, unitCode=0):
+    def setAutoGainControlLevel(self, channel, group, threshold, target, attack, gain, unitCode=0):
         """Set the settings of the AGC on an input channel
         unitCode - the unit code of the target XAP800
         channel   - 1-12
