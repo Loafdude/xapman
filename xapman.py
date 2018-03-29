@@ -248,7 +248,7 @@ class connect(object):
 
 
     def delChannelRoute(self, source, dest):
-        """unLink Channels - Calculates Expansion Bus if needed"""
+        """unLink Channels - Releases Expansion Bus if possible"""
         if source.unit.device_id == dest.unit.device_id:
             source.unit.matrix[source.channel][dest.channel].unlinkChannels()
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel)
@@ -761,6 +761,22 @@ class InputChannel(object):
         gain = self.comms.setGain(self.channel, channel_data[self.unit.device_type][self.channel]['ig'], gain, unitCode=self.unit.device_id, isAbsolute=isAbsolute)
         self.gain = gain
         return gain
+
+    def getAGC(self):
+        """Fetch Automatic Gain Control for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['ig'] != "Mic":  # Only Mics are Compatable with this function
+            raise NotImplemented("Only MIC channels support this function")
+        AGC = self.comms.getAutoGainControl(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        self.AGC = AGC
+        return AGC
+
+    def setAGC(self, AGC):
+        """Set Automatic Gain Control for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['ig'] != "Mic":  # Only Mics are Compatable with this function
+            raise NotImplemented("Only MIC channels support this function")
+        AGC = self.comms.setAutoGainControl(self.channel, AGC, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
+        self.AGC = AGC
+        return AGC
 
     def getExBus(self):
         exBus = []
