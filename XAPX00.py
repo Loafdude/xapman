@@ -362,17 +362,14 @@ class XAPX00(object):
         return int(res)
 
     @stereo
-    def setEchoCanceller(self, channel, isEnabled=True, unitCode=0):
+    def setEchoCanceller(self, channel, isEnabled, unitCode=0):
         """Enable/Disable the echo canceller.
         unitCode - the unit code of the target XAP800
         channel - the target channel (1-8, or * for all)
         isEnabled - true to enable the channel, false to disable
         """
-        if self.XAPType == XAP800Type: ec="AEC"
-        else: ec = "EC"
-        res = self.XAPCommand(ec, channel, "1" if isEnabled else "0", unitCode=unitCode)
-        return int(res)
-
+        res = self.XAPCommand("AEC", channel, "1" if isEnabled else "0", unitCode=unitCode)
+        return bool(int(res))
 
     @stereo
     def getEchoCanceller(self, channel, unitCode=0):
@@ -381,10 +378,8 @@ class XAPX00(object):
         channel - the target channel (1-8, or * for all)
         isEnabled - true to enable the channel, false to disable
         """
-        if self.XAPType == XAP800Type: ec="AEC"
-        else: ec = "EC"
-        res = self.XAPCommand(ec, channel, unitCode=unitCode)
-        return int(res)
+        res = self.XAPCommand("AEC", channel, unitCode=unitCode)
+        return bool(int(res))
 
     @stereo
     def getMaxGain(self, channel, group="I", unitCode=0):
@@ -645,8 +640,7 @@ class XAPX00(object):
         resp = self.XAPCommand("Ramp", channel, group, rate, target, unitCode=unitCode)
         return int(resp)
 
-#  below here not tested very much ###
-    def setAdaptiveAmbient(self, channel, group="M", isEnabled=1, unitCode=0):
+    def setAdaptiveAmbient(self, channel, isEnabled, group="M", unitCode=0):
         """Modifies the state of the adaptive ambient for the specified microphone(s).
         Args:
             unitCode - the unit code of the target XAP800
@@ -722,7 +716,7 @@ class XAPX00(object):
             res = rateBaudCode.get(res, 0)
         return res
 
-    def setChairmanOverride(self, channel, isEnabled=0, unitCode=0):
+    def setChairmanOverride(self, channel, isEnabled, unitCode=0):
         """Modifies the state of the chairman override for the specified microphone(s).
         unitCode - the unit code of the target XAP800
         channel - 1-8 for specific mic channel, or * for all mics
@@ -731,7 +725,7 @@ class XAPX00(object):
         resp = self.XAPCommand('CHAIRO', channel, (1 if isEnabled else 0), unitCode=unitCode)
         return int(resp)
 
-    def getChairmanOverride(self, channel, isEnabled=0, unitCode=0):
+    def getChairmanOverride(self, channel, unitCode=0):
         """Modifies the state of the chairman override a microphone(s).
         unitCode - the unit code of the target XAP800
         channel - 1-8 for specific mic channel, or * for all mics
@@ -859,8 +853,6 @@ class XAPX00(object):
                1 = AUTO
                2 = MANUAL ON
                3 = MANUAL OFF
-               4 = OVERRIDE ON
-               5 = OVERRIDE OFF
         """
         resp = self.XAPCommand('GMODE', channel, mode, unitCode=unitCode)
         return int(resp)
@@ -872,6 +864,56 @@ class XAPX00(object):
         """
         resp = self.XAPCommand('GMODE', channel, unitCode=unitCode)
         return int(resp)
+
+    def setGatingGroup(self, channel, group, unitCode=0):
+        """Set the gating mode on the specified channel for the specified XAP800.
+        unitCode - the unit code of the target XAP800
+        channel - the target channel (1-8, or * for all)
+        group - the gating group. A-D or 1-4
+        """
+        resp = self.XAPCommand('GRPSEL', channel, group, unitCode=unitCode)
+        return resp
+
+    def getGatingGroup(self, channel, unitCode=0):
+        """Request the gating mode on the specified channel for the specified XAP800.
+        unitCode - the unit code of the target XAP800
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('GRPSEL', channel, unitCode=unitCode)
+        return resp
+
+    def setGatingOverride(self, channel, isEnabled, unitCode=0):
+        """Set the gating override on the specified channel for the specified XAP800.
+        unitCode - the unit code of the target XAP800
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('GOVER', channel, (1 if isEnabled else 0), unitCode=unitCode)
+        return bool(int(resp))
+
+    def getGatingOverride(self, channel, unitCode=0):
+        """Request the gating override on the specified channel for the specified XAP800.
+        unitCode - the unit code of the target XAP800
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('GOVER', channel, unitCode=unitCode)
+        return bool(int(resp))
+
+    def setGatingHold(self, channel, time, unitCode=0):
+        """Set the gating mode on the specified channel for the specified XAP800.
+        unitCode - the unit code of the target XAP800
+        channel - the target channel (1-8, or * for all)
+        time - the gating hold time. 0.10s - 8.00s
+        """
+        resp = self.XAPCommand('GHOLD', channel, time, unitCode=unitCode)
+        return float(resp)
+
+    def getGatingHold(self, channel, unitCode=0):
+        """Request the gating mode on the specified channel for the specified XAP800.
+        unitCode - the unit code of the target XAP800
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('GHOLD', channel, unitCode=unitCode)
+        return float(resp)
 
     def setGateRatio(self, gateRatioInDb, unitCode=0):
         """Set the gating ratio for the specified XAP800.
@@ -1156,8 +1198,7 @@ class XAPX00(object):
 
     def getNoiseCancellation(self, channel, group, unitCode=0):
         """Request the enable status of noise cancellation.
-        channel - the target channel (1-8, or * for all)
-        There is a TYPO in the ClearOne documentation for this function. Group is required
+        channel - the target channel (1-8, or * for all)function. Group is required
         """
         resp = self.XAPCommand('NCSEL', channel, group, unitCode=unitCode)
         return bool(int(resp))
@@ -1179,21 +1220,18 @@ class XAPX00(object):
         resp = self.XAPCommand('NCD', channel, group, unitCode=unitCode)
         return int(resp)
 
-    def setMicEchoCancellerReferenceOutput(self, ecRef, output, unitCode=0):
+    def setMicEchoCancellerReferenceOutput(self, input, group, output, unitCode=0):
         """Set the microphone echo canceller reference output
         unitCode - the unit code of the target XAP800
-        ecRef - the desired reference channel
-                                  1 = EC Ref 1
-                                  2 = EC Ref 2
-                                  3 = G-Link EC Ref bus
+        input - 1-8 mic inputs
         output - the output channel to reference
         (1-8, A-D, E to select G-Link Ref Bus, or F
               to select NONE)
         """
-        resp = self.XAPCommand('REFSEL', ecRef, output, unitCode=unitCode)
+        resp = self.XAPCommand('REFSEL', input, group, output, unitCode=unitCode)
         return resp
 
-    def getMicEchoCancellerReferenceOutput(self, ecRef, unitCode=0):
+    def getMicEchoCancellerReferenceOutput(self, input, unitCode=0):
         """Request the microphone echo canceller reference output.
         unitCode - the unit code of the target XAP800
         ecRef - the desired reference channel
@@ -1201,7 +1239,7 @@ class XAPX00(object):
                                   2 = EC Ref 2
                                   3 = G-Link EC Ref bus
         """
-        resp = self.XAPCommand('REFSEL', ecRef, unitCode=unitCode)
+        resp = self.XAPCommand('REFSEL', input, unitCode=unitCode)
         return int(resp)
 
     def setScreenTimeout(self, timeInMinutes, unitCode=0):
