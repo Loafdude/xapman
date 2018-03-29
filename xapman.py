@@ -637,26 +637,26 @@ class InputChannel(object):
         self.refreshData()
 
     # Microphone Input Only
-        self.gain_mic           = None
-        self.phantom_power      = None
-        self.NC                 = None # True or False - Noise Cancellation
-        self.NC_depth           = None # 6 to 15dB
-        self.AEC                = None # True or False - Acoutstic Echo Canceller
-        self.AEC_PA_reference   = None # None or OutputChannel
-        self.NLP                = None # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
-        self.filters            = None # Max 4. List of filters?
-        self.bypass_filters     = None # True or False
-        self.gating             = None # False, Manual On, Manual Off
-        self.gate_holdtime      = None # 0.10 - 8.00s
-        self.gate_override      = None # True or False
-        self.gate_ratio         = None # 0-50dB
-        self.gate_group         = None # 1-4 and A-D (gate group)
-        self.gate_chairman      = None # True or False
-        self.gate_attenuation   = None # 0-60dB
-        self.gate_decay         = None # Slow, Medium, Fast
-        self.adaptive_ambient   = None # True or False
-        self.ambient_level      = None # -80.0 to 0.0dB
-        self.PA_adaptive        = None # True or False
+        # self.gain_mic           = None
+        self.phantom_power = None
+        self.NC = None  # True or False - Noise Cancellation
+        self.NC_depth = None  # 6 to 15dB
+        self.AEC = None  # True or False - Acoutstic Echo Canceller
+        self.AEC_PA_reference = None  # None or OutputChannel
+        self.NLP = None  # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
+        self.filters = None  # Max 4. List of filters?
+        self.bypass_filters = None  # True or False
+        self.gating = None  # False, Manual On, Manual Off
+        self.gate_holdtime = None  # 0.10 - 8.00s
+        self.gate_override = None  # True or False
+        self.gate_ratio = None  # 0-50dB
+        self.gate_group = None  # 1-4 and A-D (gate group)
+        self.gate_chairman = None  # True or False
+        self.gate_attenuation = None  # 0-60dB
+        self.gate_decay = None  # Slow, Medium, Fast
+        self.adaptive_ambient = None  # True or False
+        self.ambient_level = None  # -80.0 to 0.0dB
+        self.PA_adaptive = None  # True or False
 
     def refreshData(self):
         """Fetch all data Channel Data"""
@@ -809,6 +809,40 @@ class InputChannel(object):
         pp = self.comms.setPhantomPower(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.phantom_power = pp
         return pp
+
+    def getNoiseCancellation(self):
+        """Fetch Noise Cancellation for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        nc = self.comms.getNoiseCancellation(self.channel, unitCode=self.unit.device_id)
+        self.NC = nc
+        return nc
+
+    def setNoiseCancellation(self, isEnabled):
+        """Set Noise Cancellation for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        nc = self.comms.setNoiseCancellation(self.channel, isEnabled, unitCode=self.unit.device_id)
+        self.NC = nc
+        return nc
+
+    def getNoiseCancellationDepth(self):
+        """Fetch Noise Cancellation for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        nc = self.comms.getNoiseCancellationDepth(self.channel, unitCode=self.unit.device_id)
+        self.NC_depth = nc
+        return nc
+
+    def setNoiseCancellationDepth(self, depth):
+        """Set Noise Cancellation for Channel
+        depth - 6-15dB
+        """
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        nc = self.comms.setNoiseCancellationDepth(self.channel, depth, unitCode=self.unit.device_id)
+        self.NC_depth = nc
+        return nc
 
     def getExBus(self):
         exBus = []
