@@ -1149,6 +1149,35 @@ class XAPX00(object):
         resp = self.XAPCommand('PP', channel, unitCode=unitCode)
         return bool(int(resp))
 
+    def setNoiseCancellation(self, channel, isEnabled, unitCode=0):
+        """Enable or disable noise cancellation for the target channel.
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('NCSEL', channel, (1 if isEnabled else 0), unitCode=unitCode)
+        return bool(int(resp))
+
+    def getNoiseCancellation(self, channel, unitCode=0):
+        """Request the enable status of noise cancellation.
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('NCSEL', channel, unitCode=unitCode)
+        return bool(int(resp))
+
+    def setNoiseCancellationDepth(self, channel, depth, unitCode=0):
+        """Set noise cancellation amount
+        channel - the target channel (1-8, or * for all)
+        depth - cancellation depth (6-15dB)
+        """
+        resp = self.XAPCommand('NCD', channel, depth, unitCode=unitCode)
+        return int(resp)
+
+    def getNoiseCancellationDepth(self, channel, unitCode=0):
+        """Get noise cancellation amount
+        channel - the target channel (1-8, or * for all)
+        """
+        resp = self.XAPCommand('NCD', channel, unitCode=unitCode)
+        return int(resp)
+
     def setMicEchoCancellerReferenceOutput(self, ecRef, output, unitCode=0):
         """Set the microphone echo canceller reference output
         unitCode - the unit code of the target XAP800
