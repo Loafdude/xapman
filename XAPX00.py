@@ -487,9 +487,6 @@ class XAPX00(object):
         self.send(XAP800_CMD + str(unitCode) + " LVL " + str(channel) + " " +
                   group + " " + stage + " " + EOM)
         return float(self.readResponse())
-        resp = self.XAPCommand("LVL", channel, group, stage, unitCode=unitCode)
-        return float(resp)
-
 
     def getLabel(self, channel, group, inout=None, unitCode=0):
         """Retrieve the text label assigned to an inpout or ouput
@@ -1149,33 +1146,37 @@ class XAPX00(object):
         resp = self.XAPCommand('PP', channel, unitCode=unitCode)
         return bool(int(resp))
 
-    def setNoiseCancellation(self, channel, isEnabled, unitCode=0):
+    def setNoiseCancellation(self, channel, group, isEnabled, unitCode=0):
         """Enable or disable noise cancellation for the target channel.
         channel - the target channel (1-8, or * for all)
+        There is a TYPO in the ClearOne documentation for this function. Group is required
         """
-        resp = self.XAPCommand('NCSEL', channel, (1 if isEnabled else 0), unitCode=unitCode)
+        resp = self.XAPCommand('NCSEL', channel, group, (1 if isEnabled else 0), unitCode=unitCode)
         return bool(int(resp))
 
-    def getNoiseCancellation(self, channel, unitCode=0):
+    def getNoiseCancellation(self, channel, group, unitCode=0):
         """Request the enable status of noise cancellation.
         channel - the target channel (1-8, or * for all)
+        There is a TYPO in the ClearOne documentation for this function. Group is required
         """
-        resp = self.XAPCommand('NCSEL', channel, unitCode=unitCode)
+        resp = self.XAPCommand('NCSEL', channel, group, unitCode=unitCode)
         return bool(int(resp))
 
-    def setNoiseCancellationDepth(self, channel, depth, unitCode=0):
+    def setNoiseCancellationDepth(self, channel, group, depth, unitCode=0):
         """Set noise cancellation amount
         channel - the target channel (1-8, or * for all)
         depth - cancellation depth (6-15dB)
+        There is a TYPO in the ClearOne documentation for this function. Group is required
         """
-        resp = self.XAPCommand('NCD', channel, depth, unitCode=unitCode)
+        resp = self.XAPCommand('NCD', channel, group, depth, unitCode=unitCode)
         return int(resp)
 
-    def getNoiseCancellationDepth(self, channel, unitCode=0):
+    def getNoiseCancellationDepth(self, channel, group, unitCode=0):
         """Get noise cancellation amount
         channel - the target channel (1-8, or * for all)
+        There is a TYPO in the ClearOne documentation for this function. Group is required
         """
-        resp = self.XAPCommand('NCD', channel, unitCode=unitCode)
+        resp = self.XAPCommand('NCD', channel, group, unitCode=unitCode)
         return int(resp)
 
     def setMicEchoCancellerReferenceOutput(self, ecRef, output, unitCode=0):
