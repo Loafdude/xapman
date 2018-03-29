@@ -637,26 +637,26 @@ class InputChannel(object):
         self.refreshData()
 
     # Microphone Input Only
-    #         self.gain_mic           = None
-    #         self.phantom_power      = None
-    #         self.NC                 = None # True or False - Noise Cancellation
-    #         self.NC_depth           = None # 6 to 15dB
-    #         self.AEC                = None # True or False - Acoutstic Echo Canceller
-    #         self.AEC_PA_reference   = None # None or OutputChannel
-    #         self.NLP                = None # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
-    #         self.filters            = None # Max 4. List of filters?
-    #         self.bypass_filters     = None # True or False
-    #         self.gating             = None # False, Manual On, Manual Off
-    #         self.gate_holdtime      = None # 0.10 - 8.00s
-    #         self.gate_override      = None # True or False
-    #         self.gate_ratio         = None # 0-50dB
-    #         self.gate_group         = None # 1-4 and A-D (gate group)
-    #         self.gate_chairman      = None # True or False
-    #         self.gate_attenuation   = None # 0-60dB
-    #         self.gate_decay         = None # Slow, Medium, Fast
-    #         self.adaptive_ambient   = None # True or False
-    #         self.ambient_level      = None # -80.0 to 0.0dB
-    #         self.PA_adaptive        = None # True or False
+        self.gain_mic           = None
+        self.phantom_power      = None
+        self.NC                 = None # True or False - Noise Cancellation
+        self.NC_depth           = None # 6 to 15dB
+        self.AEC                = None # True or False - Acoutstic Echo Canceller
+        self.AEC_PA_reference   = None # None or OutputChannel
+        self.NLP                = None # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
+        self.filters            = None # Max 4. List of filters?
+        self.bypass_filters     = None # True or False
+        self.gating             = None # False, Manual On, Manual Off
+        self.gate_holdtime      = None # 0.10 - 8.00s
+        self.gate_override      = None # True or False
+        self.gate_ratio         = None # 0-50dB
+        self.gate_group         = None # 1-4 and A-D (gate group)
+        self.gate_chairman      = None # True or False
+        self.gate_attenuation   = None # 0-60dB
+        self.gate_decay         = None # Slow, Medium, Fast
+        self.adaptive_ambient   = None # True or False
+        self.ambient_level      = None # -80.0 to 0.0dB
+        self.PA_adaptive        = None # True or False
 
     def refreshData(self):
         """Fetch all data Channel Data"""
@@ -766,24 +766,18 @@ class InputChannel(object):
 
     def getAGC(self):
         """Fetch Automatic Gain Control for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
-            raise notSupported("Only MIC channels support this function")
         AGC = self.comms.getAutoGainControl(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
 
     def setAGC(self, AGC):
         """Set Automatic Gain Control for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
-            raise notSupported("Only MIC channels support this function")
         AGC = self.comms.setAutoGainControl(self.channel, AGC, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
 
     def getAGCLevels(self):
         """Fetch Automatic Gain Control for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
-            raise notSupported("Only MIC channels support this function")
         AGC = self.comms.getAutoGainControlLevel(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC_target = AGC['target']
         self.AGC_threshold = AGC['threshold']
@@ -793,14 +787,28 @@ class InputChannel(object):
 
     def setAGCLevels(self, threshold, target, attack, gain):
         """Set Automatic Gain Control for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
-            raise notSupported("Only MIC channels support this function")
         AGC = self.comms.setAutoGainControlLevel(self.channel, threshold, target, attack, gain, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC_target = AGC['target']
         self.AGC_threshold = AGC['threshold']
         self.AGC_attack = AGC['attack']
         self.AGC_gain = AGC['gain']
         return AGC
+
+    def getPhantomPower(self):
+        """Fetch Phantom Power for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        pp = self.comms.getPhantomPower(self.channel, unitCode=self.unit.device_id)
+        self.phantom_power = pp
+        return pp
+
+    def setPhantomPower(self, isEnabled):
+        """Set Phantom Power for Channel"""
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+            raise notSupported("Only MIC channels support this function")
+        pp = self.comms.setPhantomPower(self.channel, isEnabled, unitCode=self.unit.device_id)
+        self.phantom_power = pp
+        return pp
 
     def getExBus(self):
         exBus = []
