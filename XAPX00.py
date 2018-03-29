@@ -1132,7 +1132,7 @@ class XAPX00(object):
         resp = self.XAPCommand('PAA', channel, unitCode=unitCode)
         return bool(int(resp))
 
-    def enablePhantomPower(self, channel, isEnabled=True, unitCode=0):
+    def setPhantomPower(self, channel, isEnabled, unitCode=0):
         """Enable or disable phantom power for the target channel.
         unitCode - the unit code of the target XAP800
         channel - the target channel (1-8, or * for all)
