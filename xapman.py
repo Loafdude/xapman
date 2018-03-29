@@ -765,7 +765,7 @@ class InputChannel(object):
     def getAGC(self):
         """Fetch Automatic Gain Control for Channel"""
         if channel_data[self.unit.device_type][self.channel]['ig'] != "Mic":  # Only Mics are Compatable with this function
-            raise NotImplemented("Only MIC channels support this function")
+            raise notSupported("Only MIC channels support this function")
         AGC = self.comms.getAutoGainControl(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
@@ -773,7 +773,7 @@ class InputChannel(object):
     def setAGC(self, AGC):
         """Set Automatic Gain Control for Channel"""
         if channel_data[self.unit.device_type][self.channel]['ig'] != "Mic":  # Only Mics are Compatable with this function
-            raise NotImplemented("Only MIC channels support this function")
+            raise notSupported("Only MIC channels support this function")
         AGC = self.comms.setAutoGainControl(self.channel, AGC, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
@@ -1037,4 +1037,7 @@ class ExpansionBusManager(object):
 #
 
 class noExpansionBusAvailable(Exception):
+    pass
+
+class notSupported(Exception):
     pass
