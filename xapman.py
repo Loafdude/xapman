@@ -766,18 +766,24 @@ class InputChannel(object):
 
     def getAGC(self):
         """Fetch Automatic Gain Control for Channel"""
+        if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
+            return None
         AGC = self.comms.getAutoGainControl(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
 
     def setAGC(self, AGC):
         """Set Automatic Gain Control for Channel"""
+        if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
+            return None
         AGC = self.comms.setAutoGainControl(self.channel, AGC, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC = AGC
         return AGC
 
     def getAGCLevels(self):
         """Fetch Automatic Gain Control for Channel"""
+        if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
+            return None
         AGC = self.comms.getAutoGainControlLevel(self.channel, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC_target = AGC['target']
         self.AGC_threshold = AGC['threshold']
@@ -787,6 +793,8 @@ class InputChannel(object):
 
     def setAGCLevels(self, threshold, target, attack, gain):
         """Set Automatic Gain Control for Channel"""
+        if self.group == "E" or self.group == "P":  # Expansion Bus & Processing are Not Compatible with this function
+            return None
         AGC = self.comms.setAutoGainControlLevel(self.channel, threshold, target, attack, gain, group=channel_data[self.unit.device_type][self.channel]['ig'], unitCode=self.unit.device_id)
         self.AGC_target = AGC['target']
         self.AGC_threshold = AGC['threshold']
