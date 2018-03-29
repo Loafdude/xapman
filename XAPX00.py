@@ -1269,7 +1269,7 @@ class XAPX00(object):
         threshold = linear2db(threshold) if self.convertDb else threshold
         target = linear2db(target) if self.convertDb else target
         gain = linear2db(gain) if self.convertDb else gain
-        resp = self.XAPCommand('AGCSET', 1, "M", unitCode=unitCode, rtnCount=4)
+        resp = self.XAPCommand('AGCSET', 1, "M", threshold, target, attack, gain, unitCode=unitCode, rtnCount=4)
         return {"threshold": db2linear(resp[0]) if self.convertDb else float(resp[0]),
                 "target": db2linear(resp[1]) if self.convertDb else float(resp[1]),
                 "attack": float(resp[2]),
