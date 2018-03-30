@@ -368,7 +368,7 @@ class XAPX00(object):
         channel - the target channel (1-8, or * for all)
         isEnabled - true to enable the channel, false to disable
         """
-        res = self.XAPCommand("AEC", channel, "1" if isEnabled else "0", unitCode=unitCode)
+        res = self.XAPCommand("AEC", channel, (1 if isEnabled else 0), unitCode=unitCode)
         return bool(int(res))
 
     @stereo
@@ -640,23 +640,23 @@ class XAPX00(object):
         resp = self.XAPCommand("Ramp", channel, group, rate, target, unitCode=unitCode)
         return int(resp)
 
-    def setAdaptiveAmbient(self, channel, isEnabled, group="M", unitCode=0):
+    def setAdaptiveAmbient(self, channel, isEnabled, unitCode=0):
         """Modifies the state of the adaptive ambient for the specified microphone(s).
         Args:
             unitCode - the unit code of the target XAP800
             channel - 1-8 for specific mic channel, or * for all mics
-            group:  "M"ike, "O"utput, "I"nput, etc
+            group:  "M"ic, "O"utput, "I"nput, etc
             isEnabled - 1 to enable, 0 to disable
         """
-        resp = self.XAPCommand("AAMB", channel, group, ("1" if isEnabled else "0"), unitCode=unitCode)
+        resp = self.XAPCommand("AAMB", channel, ("1" if isEnabled else "0"), unitCode=unitCode)
         return int(resp)
 
-    def getAdaptiveAmbient(self, channel, group="M", unitCode=0):
+    def getAdaptiveAmbient(self, channel, unitCode=0):
         """Requests the state of the adaptive ambient for the specified mic(s).
         unitCode - the unit code of the target XAP800
         channel - 1-8 for specific mic channel, or * for all mics
         """
-        resp = self.XAPCommand("AAMB", channel, group, unitCode=unitCode)
+        resp = self.XAPCommand("AAMB", channel, unitCode=unitCode)
         return int(resp)
 
     def setAutoGainControl(self, channel, isEnabled, group="I", unitCode=0):
@@ -937,7 +937,7 @@ class XAPX00(object):
         resp = self.XAPCommand('GRATIO', unitCode=unitCode)
         return float(resp)
 
-    def setHoldTime(self, holdTimeInMs, unitCode=0):
+    def setHoldTime(self, channel, time, unitCode=0):
         """Set the hold time for the specified XAP800.
         The value is limited to 100-8000 values outside the boundary
         will be anchored to the boundaries.
@@ -945,18 +945,18 @@ class XAPX00(object):
         holdTimeInMs - the hold time in milliseconds (100-8000)
         """
         # Ensure compliance with level boundary conditions
-        holdTimeInMs  = max(min(holdTimeInMs, 8000), 100)
-        resp = self.XAPCommand('HOLD', holdTimeInMs, unitCode=unitCode)
+
+        resp = self.XAPCommand('GHOLD', channel, time, unitCode=unitCode)
         return float(resp)
 
-    def getHoldTime(self, unitCode=0):
+    def getHoldTime(self, channel, unitCode=0):
         """Set the hold time for the specified XAP800.
         The value is limited to 100-8000 values outside the boundary
         will be anchored to the boundaries.
         unitCode - the unit code of the target XAP800
         holdTimeInMs - the hold time in milliseconds (100-8000)
         """
-        resp = self.XAPCommand('HOLD', unitCode=unitCode)
+        resp = self.XAPCommand('GHOLD', channel, unitCode=unitCode)
         return float(resp)
 
     def setFrontPanelLock(self, isLocked=True, unitCode=0):
@@ -1241,7 +1241,7 @@ class XAPX00(object):
         resp = self.XAPCommand('REFSEL', input, group, output, unitCode=unitCode)
         return resp
 
-    def getMicEchoCancellerReferenceOutput(self, input, group, unitCode=0):
+    def getMicEchoCancellerReferenceOutput(self, input, unitCode=0):
         """Request the microphone echo canceller reference output.
         unitCode - the unit code of the target XAP800
         ecRef - the desired reference channel
@@ -1249,7 +1249,7 @@ class XAPX00(object):
                                   2 = EC Ref 2
                                   3 = G-Link EC Ref bus
         """
-        resp = self.XAPCommand('REFSEL', input, group, unitCode=unitCode)
+        resp = self.XAPCommand('REFSEL', input, unitCode=unitCode)
         return int(resp)
 
     def setScreenTimeout(self, timeInMinutes, unitCode=0):
