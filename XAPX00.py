@@ -720,10 +720,10 @@ class XAPX00(object):
         """Modifies the state of the chairman override for the specified microphone(s).
         unitCode - the unit code of the target XAP800
         channel - 1-8 for specific mic channel, or * for all mics
-        isEnabled - 0=off, 1=om, 2=toggle
+        isEnabled - 0=off, 1=on, 2=toggle
         """
         resp = self.XAPCommand('CHAIRO', channel, (1 if isEnabled else 0), unitCode=unitCode)
-        return int(resp)
+        return bool(int(resp))
 
     def getChairmanOverride(self, channel, unitCode=0):
         """Modifies the state of the chairman override a microphone(s).
@@ -732,7 +732,7 @@ class XAPX00(object):
         isEnabled - 0=off, 1=om, 2=toggle
         """
         resp = self.XAPCommand('CHAIRO', channel, unitCode=unitCode)
-        return int(resp)
+        return bool(int(resp))
 
     def setPreset(self, preset, state=1, unitCode=0):
         """Run the preset.
@@ -915,7 +915,7 @@ class XAPX00(object):
         resp = self.XAPCommand('GHOLD', channel, unitCode=unitCode)
         return float(resp)
 
-    def setGateRatio(self, gateRatioInDb, unitCode=0):
+    def setGateRatio(self, channel, gateRatioInDb, unitCode=0):
         """Set the gating ratio for the specified XAP800.
         The ratio is limited to 0-50 values outside the boundary
         will be anchored to the boundaries.
@@ -927,7 +927,15 @@ class XAPX00(object):
             gateRatioInDb = 0
         elif gateRatioInDb > 50:
             gateRatioInDb = 50
-        resp = self.XAPCommand('GRATIO', gateRatioInDb, unitCode=unitCode)
+        resp = self.XAPCommand('GRATIO', channel, gateRatioInDb, unitCode=unitCode)
+        return float(resp)
+
+    def getGateRatio(self, channel, unitCode=0):
+        """Get the gating ratio for the specified XAP800.
+        gateRatioInDb - the gating ratio in dB (0-50)
+        """
+        s
+        resp = self.XAPCommand('GRATIO', channel, unitCode=unitCode)
         return float(resp)
 
     def requestGateRatio(self, unitCode=0):
