@@ -352,15 +352,6 @@ class XapUnit(object):
             self.input_channels[channel] = InputChannel(self, channel=channel)
         return
 
-    def scanExpansionBus(self):
-        """Fetch all expansion busses from Unit"""
-        print("  Scanning Expansion Bus Channels...")
-        self.expansion_busses = {}
-        r = ['O', 'P' , 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-        for c in r:
-            self.expansion_busses[c] = ExpansionBus(self, channel=c)
-        return
-
     def getID(self):
         """Fetch ID from XAP Unit"""
         uid = self.comms.getDeviceID(unitCode=self.device_id)
@@ -890,7 +881,7 @@ class InputChannel(object):
             self.AEC_PA_reference = self.unit.output_channels[int(rc)]
         except KeyError:
             self.AEC_PA_reference = self.unit.output_channels[rc]
-        return self.unit.output_channels[rc]
+        return self.AEC_PA_reference
 
     def getNLP(self):
         """Fetch NLP for Channel"""
@@ -958,7 +949,7 @@ class InputChannel(object):
         self.PA_adaptive = paa
         return paa
 
-    def getGateMode(self): # !!!!!!!!!!!!!!1 broke
+    def getGateMode(self):
         """Fetch Gate Mode for Channel"""
         if self.type != "Mic":  # Only Mics are Compatable with this function  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -1014,11 +1005,11 @@ class InputChannel(object):
         """Fetch Gate Ratio for Channel"""
         if self.type != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        ratio = self.comms.getGatingOverride(self.channel, unitCode=self.unit.device_id)
+        ratio = self.comms.getGateRatio(self.channel, unitCode=self.unit.device_id)
         self.gate_ratio = ratio
         return ratio
 
-    def setGateRatio(self, ratio): ## !!!! BROKE
+    def setGateRatio(self, ratio):
         """Set Gate Ratio for Channel"""
         if self.type != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -1180,53 +1171,6 @@ class MatrixLink(object):
         if self.dest.type == "Expansion":
             self.connection.expansion_bus.getChannelUsage(self.dest.channel)
         return
-
-
-class ExpansionBus(object):
-    """XAP Expansion Bus Wrapper"""
-
-    def __repr__(self):
-        return "ExpansionBus: Channel " + self.channel
-
-    def __init__(self, unit, channel):
-        self.unit = unit
-        self.connection = unit.connection
-        self.comms = unit.comms
-        self.input_label = None
-        self.output_label = None
-        self.channel = channel
-        self.inUse = False
-        self.refreshData()
-
-    def refreshData(self):
-        """Fetch all data Channel Data"""
-        self.getInputLabel()
-        self.getOutputLabel()
-        return True
-
-    def getInputLabel(self):
-        """Fetch Label from XAP Unit"""
-        label = self.comms.getLabel(self.channel, "E", inout=1, unitCode=self.unit.device_id)
-        self.input_label = label
-        return label
-
-    def setInputLabel(self, label):
-        """Fetch Label from XAP Unit"""
-        label = self.comms.setLabel(self.channel, "E", label, inout=1, unitCode=self.unit.device_id)
-        self.input_label = label
-        return label
-
-    def getOutputLabel(self):
-        """Fetch Label from XAP Unit"""
-        label = self.comms.getLabel(self.channel, "E", inout=0, unitCode=self.unit.device_id)
-        self.output_label = label
-        return label
-
-    def setOutputLabel(self, label):
-        """Fetch Label from XAP Unit"""
-        label = self.comms.setLabel(self.channel, "E", label, inout=0, unitCode=self.unit.device_id)
-        self.output_label = label
-        return label
 
 
 class ExpansionBusManager(object):
