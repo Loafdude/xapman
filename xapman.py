@@ -863,7 +863,7 @@ class InputChannel(object):
         self.AEC = aec
         return aec
 
-    def setAutoEchoCanceller(self, isEnabled): #broke
+    def setAutoEchoCanceller(self, isEnabled):
         """Set AEC for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -875,7 +875,7 @@ class InputChannel(object):
         """Fetch Reference Channel - Used for AEC and PA"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        rc = self.comms.getMicEchoCancellerReferenceOutput(self.channel, self.group, unitCode=self.unit.device_id)
+        rc = self.comms.getMicEchoCancellerReferenceOutput(self.channel, unitCode=self.unit.device_id)
         self.AEC_PA_reference = self.unit.output_channels[rc]
         return self.unit.output_channels[rc]
 
@@ -885,7 +885,7 @@ class InputChannel(object):
             raise notSupported("Only MIC channels support this function")
         if ref_channel.unit.device_id != self.unit.device_id:
             raise notSupported("Cannot reference channel on another unit")
-        rc = self.comms.setMicEchoCancellerReferenceOutput(self.channel, self.group, ref_channel.channel, unitCode=self.unit.device_id)
+        rc = self.comms.setMicEchoCancellerReferenceOutput(self.channel, ref_channel.group, ref_channel.channel, unitCode=self.unit.device_id)
         self.AEC_PA_reference = self.unit.output_channels[rc]
         return self.unit.output_channels[rc]
 
@@ -947,7 +947,7 @@ class InputChannel(object):
         self.PA_adaptive = paa
         return paa
 
-    def setPAAdaptive(self, level): #broke
+    def setPAAdaptive(self, level):
         """Set PA Adaptive Mode for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -967,6 +967,8 @@ class InputChannel(object):
         """Set Gate Mode for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
+        if str(mode) not in ['1', '2', '3']:
+            raise notSupported("Invalid Mode")
         gmode = self.comms.setGatingMode(self.channel, mode, unitCode=self.unit.device_id)
         self.gating = gmode
         return gmode
