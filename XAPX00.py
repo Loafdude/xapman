@@ -934,7 +934,6 @@ class XAPX00(object):
         """Get the gating ratio for the specified XAP800.
         gateRatioInDb - the gating ratio in dB (0-50)
         """
-        s
         resp = self.XAPCommand('GRATIO', channel, unitCode=unitCode)
         return float(resp)
 
