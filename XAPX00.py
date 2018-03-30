@@ -947,7 +947,17 @@ class XAPX00(object):
         # Ensure compliance with level boundary conditions
         holdTimeInMs  = max(min(holdTimeInMs, 8000), 100)
         resp = self.XAPCommand('HOLD', holdTimeInMs, unitCode=unitCode)
-        return int(resp)
+        return float(resp)
+
+    def getHoldTime(self, unitCode=0):
+        """Set the hold time for the specified XAP800.
+        The value is limited to 100-8000 values outside the boundary
+        will be anchored to the boundaries.
+        unitCode - the unit code of the target XAP800
+        holdTimeInMs - the hold time in milliseconds (100-8000)
+        """
+        resp = self.XAPCommand('HOLD', unitCode=unitCode)
+        return float(resp)
 
     def setFrontPanelLock(self, isLocked=True, unitCode=0):
         """Lock or unlock the front panel of the specifid XAP800
@@ -1154,7 +1164,7 @@ class XAPX00(object):
         resp = self.XAPCommand('OFFA', unitCode=unitCode)
         return int(resp)
 
-    def enablePaAdaptiveMode(self, channel, isEnabled=True, unitCode=0):
+    def setPaAdaptiveMode(self, channel, isEnabled, unitCode=0):
         """Enable or disable PA adaptive mode.
         unitCode - the unit code of the target XAP800
         channel - the target channel (1-8, or * for all)
@@ -1231,7 +1241,7 @@ class XAPX00(object):
         resp = self.XAPCommand('REFSEL', input, group, output, unitCode=unitCode)
         return resp
 
-    def getMicEchoCancellerReferenceOutput(self, input, unitCode=0):
+    def getMicEchoCancellerReferenceOutput(self, input, group, unitCode=0):
         """Request the microphone echo canceller reference output.
         unitCode - the unit code of the target XAP800
         ecRef - the desired reference channel
@@ -1239,7 +1249,7 @@ class XAPX00(object):
                                   2 = EC Ref 2
                                   3 = G-Link EC Ref bus
         """
-        resp = self.XAPCommand('REFSEL', input, unitCode=unitCode)
+        resp = self.XAPCommand('REFSEL', input, group, unitCode=unitCode)
         return int(resp)
 
     def setScreenTimeout(self, timeInMinutes, unitCode=0):

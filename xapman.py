@@ -637,7 +637,6 @@ class InputChannel(object):
         self.refreshData()
 
     # Microphone Input Only
-        # self.gain_mic           = None
         self.phantom_power = None
         self.NC = None  # True or False - Noise Cancellation
         self.NC_depth = None  # 6 to 15dB
@@ -655,6 +654,7 @@ class InputChannel(object):
         self.gate_chairman = None  # True or False
         self.gate_decay = None  # Slow, Medium, Fast
 
+        #self.gain_mic           = None
         #self.gate_attenuation = None  # 0-60dB
         #self.bypass_filters = None  # True or False Doesn't really exists. Have to turn filters on and off
         #self.filters = None  # Max 4. List of filters?
@@ -863,15 +863,15 @@ class InputChannel(object):
         self.AEC = aec
         return aec
 
-    def setAutoEchoCanceller(self, isEnabled):
+    def setAutoEchoCanceller(self, isEnabled): #broke
         """Set AEC for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        aec = self.comms.getEchoCanceller(self.channel, isEnabled, unitCode=self.unit.device_id)
+        aec = self.comms.setEchoCanceller(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.AEC = aec
         return aec
 
-    def getReferenceChannel(self):
+    def getReferenceChannel(self): # broke
         """Fetch Reference Channel - Used for AEC and PA"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -879,7 +879,7 @@ class InputChannel(object):
         self.AEC_PA_reference = self.unit.output_channels[rc]
         return self.unit.output_channels[rc]
 
-    def setReferenceChannel(self, ref_channel):
+    def setReferenceChannel(self, ref_channel): #broke
         """Set Reference Channel - Used for AEC and PA"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -907,7 +907,7 @@ class InputChannel(object):
         self.NLP = nlp
         return nlp
 
-    def getAdaptiveAmbient(self):
+    def getAdaptiveAmbient(self): #broke
         """Fetch Adaptive Ambient for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -915,7 +915,7 @@ class InputChannel(object):
         self.adaptive_ambient = aa
         return aa
 
-    def setAdaptiveAmbient(self, isEnabled):
+    def setAdaptiveAmbient(self, isEnabled): #broke
         """Set Adaptive Ambient for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -947,7 +947,7 @@ class InputChannel(object):
         self.PA_adaptive = paa
         return paa
 
-    def setPAAdaptive(self, level):
+    def setPAAdaptive(self, level): #broke
         """Set PA Adaptive Mode for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -963,7 +963,7 @@ class InputChannel(object):
         self.gating = gmode
         return gmode
 
-    def setGateMode(self, mode):
+    def setGateMode(self, mode): #broke
         """Set Gate Mode for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
@@ -971,21 +971,21 @@ class InputChannel(object):
         self.gating = gmode
         return gmode
 
-    def getGateHoldTime(self):
+    def getGateHoldTime(self): #broke
         """Fetch Gate Hold Time for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
-        gmode = self.comms.getPaAdaptiveMode(self.channel, unitCode=self.unit.device_id)
+        gmode = self.comms.getHoldTime(self.channel, unitCode=self.unit.device_id)
         self.gate_holdtime = gmode
         return gmode
 
-    def setGateHoldTime(self, time):
+    def setGateHoldTime(self, time): #broke
         """Set Gate Hold Time for Channel"""
         if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
             raise notSupported("Only MIC channels support this function")
         if float(time) > 8 or float(time) < 0.1:
             raise notSupported("Time must be between 0.10 and 8.00s")
-        hold = self.comms.setGatingMode(self.channel, time, unitCode=self.unit.device_id)
+        hold = self.comms.setHoldTime(self.channel, time, unitCode=self.unit.device_id)
         self.gate_holdtime = hold
         return hold
 
