@@ -681,7 +681,7 @@ class InputChannel(object):
             self.getGateGroup()
             self.getChairmanOverride()
             self.getGateDecay()
-            self.getMicInputGain()
+            self.getCoarseGain()
         return True
 
     def getLabel(self):
@@ -1099,9 +1099,9 @@ class InputChannel(object):
             return {"unit": "dB", 'type': "replacement", 0: "0", 1: "55", 2: "25"}
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
-        decay = self.comms.getMicInputGain(self.channel, unitCode=self.unit.device_id)
-        self.gate_decay = decay
-        return decay
+        gain_coarse = self.comms.getMicInputGain(self.channel, unitCode=self.unit.device_id)
+        self.gain_coarse = gain_coarse
+        return gain_coarse
 
     def setCoarseGain(self, mode, help=False, translation=False):
         if help:
@@ -1115,9 +1115,9 @@ class InputChannel(object):
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['0', '1', '2']:
             raise NotSupported("Invalid Mode")
-        decay = self.comms.setMicInputGain(self.channel, mode, unitCode=self.unit.device_id)
-        self.gate_decay = decay
-        return decay
+        gain_coarse = self.comms.setMicInputGain(self.channel, mode, unitCode=self.unit.device_id)
+        self.gain_coarse = gain_coarse
+        return gain_coarse
 
     def getExBus(self):
         exBus = []
