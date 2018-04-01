@@ -1066,7 +1066,7 @@ class XAPX00(object):
                                  3 = 0dB (line level)
         """
         resp = self.XAPCommand('MLINE', channel, gain, unitCode=unitCode)
-        return float(resp)
+        return int(resp)
 
     def getMicInputGain(self, channel, unitCode=0):
         """Request the microphone input gain for the target channel.
@@ -1074,7 +1074,7 @@ class XAPX00(object):
         channel - the target channel (1-8, or * for all)
         """
         resp = self.XAPCommand('MLINE', channel, unitCode=unitCode)
-        return float(resp)
+        return int(resp)
 
     def setMaxActiveMics(self, maxMics, unitCode=0):
         """Set the maxmimum number of active microphones.
@@ -1150,7 +1150,7 @@ class XAPX00(object):
         resp = self.XAPCommand('NOM', channel, unitCode=unitCode)
         return float(resp)
 
-    def setOffAttenuation(self, attenuation, unitCode=0):
+    def setOffAttenuation(self, channel, attenuation, unitCode=0):
         """Set the off attenuation for the specified XAP800.
         The value is limited to 0-50 values outside the boundary
         will be anchored to the boundaries.
@@ -1161,14 +1161,14 @@ class XAPX00(object):
             attenuation = 0
         elif attenuation > 50:
             attenuation = 50
-        resp = self.XAPCommand('OFFA', attenuation, unitCode=unitCode)
+        resp = self.XAPCommand('OFFA', channel, attenuation, unitCode=unitCode)
         return int(resp)
 
-    def getOffAttenuation(self, unitCode=0):
+    def getOffAttenuation(self, channel, unitCode=0):
         """Request the off attenuation for the specified XAP800.
         unitCode - the unit code of the target XAP800
         """
-        resp = self.XAPCommand('OFFA', unitCode=unitCode)
+        resp = self.XAPCommand('OFFA', channel, unitCode=unitCode)
         return int(resp)
 
     def setPaAdaptiveMode(self, channel, isEnabled, unitCode=0):

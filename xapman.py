@@ -1127,7 +1127,7 @@ class InputChannel(object):
         self.gate_attenuation = gate_attenuation
         return gate_attenuation
 
-    def setGateAttenuation(self, value, help=False, translation=False):
+    def setGateAttenuation(self, value):
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if value > 50 or value < 0:
