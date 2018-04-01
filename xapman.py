@@ -649,8 +649,7 @@ class InputChannel(object):
         self.gate_group = None  # 1-4 and A-D (gate group)
         self.gate_chairman = None  # True or False
         self.gate_decay = None  # Slow, Medium, Fast
-
-        #self.gain_mic           = None
+        self.gain_coarse = None
         #self.gate_attenuation = None  # 0-60dB
         #self.bypass_filters = None  # True or False Doesn't really exists. Have to turn filters on and off
         #self.filters = None  # Max 4. List of filters?
@@ -816,7 +815,7 @@ class InputChannel(object):
 
     def getPhantomPower(self):
         """Fetch Phantom Power for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         pp = self.comms.getPhantomPower(self.channel, unitCode=self.unit.device_id)
         self.phantom_power = pp
@@ -824,7 +823,7 @@ class InputChannel(object):
 
     def setPhantomPower(self, isEnabled):
         """Set Phantom Power for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         pp = self.comms.setPhantomPower(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.phantom_power = pp
@@ -832,7 +831,7 @@ class InputChannel(object):
 
     def getNoiseCancellation(self):
         """Fetch Noise Cancellation for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         nc = self.comms.getNoiseCancellation(self.channel, self.group, unitCode=self.unit.device_id)
         self.NC = nc
@@ -840,7 +839,7 @@ class InputChannel(object):
 
     def setNoiseCancellation(self, isEnabled):
         """Set Noise Cancellation for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         nc = self.comms.setNoiseCancellation(self.channel, self.group, isEnabled, unitCode=self.unit.device_id)
         self.NC = nc
@@ -848,7 +847,7 @@ class InputChannel(object):
 
     def getNoiseCancellationDepth(self):
         """Fetch Noise Cancellation for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         nc = self.comms.getNoiseCancellationDepth(self.channel, self.group, unitCode=self.unit.device_id)
         self.NC_depth = nc
@@ -858,7 +857,7 @@ class InputChannel(object):
         """Set Noise Cancellation for Channel
         depth - 6-15dB
         """
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         nc = self.comms.setNoiseCancellationDepth(self.channel, self.group, depth, unitCode=self.unit.device_id)
         self.NC_depth = nc
@@ -866,7 +865,7 @@ class InputChannel(object):
 
     def getAutoEchoCanceller(self):
         """Fetch AEC for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         aec = self.comms.getEchoCanceller(self.channel, unitCode=self.unit.device_id)
         self.AEC = aec
@@ -874,7 +873,7 @@ class InputChannel(object):
 
     def setAutoEchoCanceller(self, isEnabled):
         """Set AEC for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         aec = self.comms.setEchoCanceller(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.AEC = aec
@@ -882,7 +881,7 @@ class InputChannel(object):
 
     def getReferenceChannel(self):
         """Fetch Reference Channel - Used for AEC and PA"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         rc = self.comms.getMicEchoCancellerReferenceOutput(self.channel, unitCode=self.unit.device_id)
         self.AEC_PA_reference = self.unit.output_channels[rc]
@@ -890,7 +889,7 @@ class InputChannel(object):
 
     def setReferenceChannel(self, ref_channel):
         """Set Reference Channel - Used for AEC and PA"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if ref_channel.unit.device_id != self.unit.device_id:
             raise NotSupported("Cannot reference channel on another unit")
@@ -903,7 +902,7 @@ class InputChannel(object):
 
     def getNLP(self):
         """Fetch NLP for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         nlp = self.comms.getNonlinearProcessingMode(self.channel, unitCode=self.unit.device_id)
         self.NLP = nlp
@@ -911,7 +910,7 @@ class InputChannel(object):
 
     def setNLP(self, mode):
         """Set NLP for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['0', '1', '2', '3']:
             raise NotSupported("Invalid Mode (" + str(mode) + ")")
@@ -921,7 +920,7 @@ class InputChannel(object):
 
     def getAdaptiveAmbient(self):
         """Fetch Adaptive Ambient for Channel"""
-        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatable with this function
+        if channel_data[self.unit.device_type][self.channel]['itype'] != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         aa = self.comms.getAdaptiveAmbient(self.channel, unitCode=self.unit.device_id)
         self.adaptive_ambient = aa
@@ -929,7 +928,7 @@ class InputChannel(object):
 
     def setAdaptiveAmbient(self, isEnabled):
         """Set Adaptive Ambient for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         aa = self.comms.setAdaptiveAmbient(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.adaptive_ambient = aa
@@ -937,7 +936,7 @@ class InputChannel(object):
 
     def getAmbientLevel(self):
         """Fetch Ambient Level for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         aa = self.comms.getAmbientLevel(self.channel, unitCode=self.unit.device_id)
         self.ambient_level = aa
@@ -945,7 +944,7 @@ class InputChannel(object):
 
     def setAmbientLevel(self, level):
         """Set Ambient Level for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         aa = self.comms.setAmbientLevel(self.channel, level, unitCode=self.unit.device_id)
         self.ambient_level = aa
@@ -953,7 +952,7 @@ class InputChannel(object):
 
     def getPAAdaptive(self):
         """Fetch PA Adaptive Mode for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         paa = self.comms.getPaAdaptiveMode(self.channel, unitCode=self.unit.device_id)
         self.PA_adaptive = paa
@@ -961,7 +960,7 @@ class InputChannel(object):
 
     def setPAAdaptive(self, level):
         """Set PA Adaptive Mode for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         paa = self.comms.setPaAdaptiveMode(self.channel, level, unitCode=self.unit.device_id)
         self.PA_adaptive = paa
@@ -969,7 +968,7 @@ class InputChannel(object):
 
     def getGateMode(self):
         """Fetch Gate Mode for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         gmode = self.comms.getGatingMode(self.channel, unitCode=self.unit.device_id)
         self.gating = gmode
@@ -977,7 +976,7 @@ class InputChannel(object):
 
     def setGateMode(self, mode):
         """Set Gate Mode for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['1', '2', '3']:
             raise NotSupported("Invalid Mode")
@@ -987,7 +986,7 @@ class InputChannel(object):
 
     def getGateHoldTime(self):
         """Fetch Gate Hold Time for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         gmode = self.comms.getHoldTime(self.channel, unitCode=self.unit.device_id)
         self.gate_holdtime = gmode
@@ -995,7 +994,7 @@ class InputChannel(object):
 
     def setGateHoldTime(self, time):
         """Set Gate Hold Time for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if float(time) > 8 or float(time) < 0.1:
             raise NotSupported("Time must be between 0.10 and 8.00s")
@@ -1005,7 +1004,7 @@ class InputChannel(object):
 
     def getGateOverride(self):
         """Fetch Gate Override for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         override = self.comms.getGatingOverride(self.channel, unitCode=self.unit.device_id)
         self.gate_override = override
@@ -1013,7 +1012,7 @@ class InputChannel(object):
 
     def setGateOverride(self, isEnabled):
         """Set Gate Override for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         ratio = self.comms.setGatingOverride(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.gate_override = ratio
@@ -1021,7 +1020,7 @@ class InputChannel(object):
 
     def getGateRatio(self):
         """Fetch Gate Ratio for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         ratio = self.comms.getGateRatio(self.channel, unitCode=self.unit.device_id)
         self.gate_ratio = ratio
@@ -1029,7 +1028,7 @@ class InputChannel(object):
 
     def setGateRatio(self, ratio):
         """Set Gate Ratio for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         ratio = self.comms.setGateRatio(self.channel, ratio, unitCode=self.unit.device_id)
         self.gate_ratio = ratio
@@ -1037,7 +1036,7 @@ class InputChannel(object):
 
     def getGateGroup(self):
         """Fetch Gate Group for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         group = self.comms.getGatingGroup(self.channel, unitCode=self.unit.device_id)
         self.gate_group = group
@@ -1045,7 +1044,7 @@ class InputChannel(object):
 
     def setGateGroup(self, group):
         """Set Gate Group for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if str(group) not in ['1', '2', '3', '4', 'A', 'B', 'C', 'D']:
             raise NotSupported("Invalid Group")
@@ -1055,7 +1054,7 @@ class InputChannel(object):
 
     def getChairmanOverride(self):
         """Fetch Chairman Override for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         chairman = self.comms.getChairmanOverride(self.channel, unitCode=self.unit.device_id)
         self.gate_chairman = chairman
@@ -1063,7 +1062,7 @@ class InputChannel(object):
 
     def setChairmanOverride(self, isEnabled):
         """Set Chairman Override for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         chairman = self.comms.setChairmanOverride(self.channel, isEnabled, unitCode=self.unit.device_id)
         self.gate_chairman = chairman
@@ -1071,7 +1070,7 @@ class InputChannel(object):
 
     def getGateDecay(self):
         """Fetch Gate Decay for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         decay = self.comms.getDecayRate(self.channel, unitCode=self.unit.device_id)
         self.gate_decay = decay
@@ -1079,9 +1078,39 @@ class InputChannel(object):
 
     def setGateDecay(self, mode):
         """Set Gate Decay for Channel"""
-        if self.type != "Mic":  # Only Mics are Compatable with this function
+        if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['1', '2', '3']:
+            raise NotSupported("Invalid Mode")
+        decay = self.comms.setDecayRate(self.channel, mode, unitCode=self.unit.device_id)
+        self.gate_decay = decay
+        return decay
+
+    def getMicInputGain(self, help=False, translation=False):
+        if help:
+            return ("Coarse Gain\n"
+                    "Only supported by Mic channels\n"
+                    "This command sets the coarse gain adjustment on the input channels 1-8.\n"
+                    "The three returns are (0) 0dB, (2) 25dB, and (1) 55dB.")
+        if translation:
+            return {"unit": "dB", 'type': "replacement", 0: "0", 1: "55", 2: "25"}
+        if self.type != "Mic":  # Only Mics are Compatible with this function
+            raise NotSupported("Only MIC channels support this function")
+        decay = self.comms.getDecayRate(self.channel, unitCode=self.unit.device_id)
+        self.gate_decay = decay
+        return decay
+
+    def setMicInputGain(self, mode, help=False, translation=False):
+        if help:
+            return ("Coarse Gain\n"
+                    "Only supported by Mic channels\n"
+                    "This command sets the coarse gain adjustment on the input channels 1-8.\n"
+                    "The three modes are (0) 0dB, (2) 25dB, and (1) 55dB.")
+        if translation:
+            return {"unit": "dB", 'type': "replacement", 0: "0", 1: "55", 2: "25"}
+        if self.type != "Mic":  # Only Mics are Compatible with this function
+            raise NotSupported("Only MIC channels support this function")
+        if str(mode) not in ['0', '1', '2']:
             raise NotSupported("Invalid Mode")
         decay = self.comms.setDecayRate(self.channel, mode, unitCode=self.unit.device_id)
         self.gate_decay = decay
