@@ -650,7 +650,8 @@ class InputChannel(object):
         self.gate_chairman = None  # True or False
         self.gate_decay = None  # Slow, Medium, Fast
         self.gain_coarse = None
-        #self.gate_attenuation = None  # 0-60dB
+        self.gate_attenuation = None  # 0-60dB
+
         #self.bypass_filters = None  # True or False Doesn't really exists. Have to turn filters on and off
         #self.filters = None  # Max 4. List of filters?
 
@@ -1104,13 +1105,6 @@ class InputChannel(object):
         return gain_coarse
 
     def setCoarseGain(self, mode, help=False, translation=False):
-        if help:
-            return ("Coarse Gain\n"
-                    "Only supported by Mic channels\n"
-                    "This command sets the coarse gain adjustment on the input channels 1-8.\n"
-                    "The three modes are (0) 0dB, (2) 25dB, and (1) 55dB.")
-        if translation:
-            return {"unit": "dB", 'type': "replacement", 0: "0", 1: "55", 2: "25"}
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['0', '1', '2']:
@@ -1118,6 +1112,29 @@ class InputChannel(object):
         gain_coarse = self.comms.setMicInputGain(self.channel, mode, unitCode=self.unit.device_id)
         self.gain_coarse = gain_coarse
         return gain_coarse
+
+    def getGateAttenuation(self, help=False, translation=False):
+        if help:
+            return ("Gate Attenuation\n"
+                    "Only supported by Mic channels\n"
+                    "This command reports the gated off attenuation value for a mic channel.\r"
+                    "Valid values range from 0dB to 50dB")
+        if translation:
+            return {"unit": "dB", 'type': "value", "min": 0, 'max': 50, 'increments': 1}
+        if self.type != "Mic":  # Only Mics are Compatible with this function
+            raise NotSupported("Only MIC channels support this function")
+        gate_attenuation = self.comms.getOffAttenuation(self.channel, unitCode=self.unit.device_id)
+        self.gate_attenuation = gate_attenuation
+        return gate_attenuation
+
+    def setGateAttenuation(self, value, help=False, translation=False):
+        if self.type != "Mic":  # Only Mics are Compatible with this function
+            raise NotSupported("Only MIC channels support this function")
+        if value > 50 or value < 0:
+            raise NotSupported("Value must range between 0 and 50")
+        gate_attenuation = self.comms.setOffAttenuation(self.channel, value, unitCode=self.unit.device_id)
+        self.gate_attenuation = gate_attenuation
+        return gate_attenuation
 
     def getExBus(self):
         exBus = []

@@ -1056,7 +1056,7 @@ class XAPX00(object):
         resp = self.XAPCommand('MINIT', unitCode=unitCode)
         return resp
 
-    def setMicInputGain(self, unitCode, channel, gain):
+    def setMicInputGain(self, channel, gain, unitCode=0):
         """Set the microphone input gain for the target channel.
         unitCode - the unit code of the target XAP800
         channel - the target channel (1-8, or * for all)
