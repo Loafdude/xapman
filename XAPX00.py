@@ -1162,14 +1162,14 @@ class XAPX00(object):
         elif attenuation > 50:
             attenuation = 50
         resp = self.XAPCommand('OFFA', channel, attenuation, unitCode=unitCode)
-        return int(resp)
+        return int(float(resp))
 
     def getOffAttenuation(self, channel, unitCode=0):
         """Request the off attenuation for the specified XAP800.
         unitCode - the unit code of the target XAP800
         """
         resp = self.XAPCommand('OFFA', channel, unitCode=unitCode)
-        return int(resp)
+        return int(float(resp))
 
     def setPaAdaptiveMode(self, channel, isEnabled, unitCode=0):
         """Enable or disable PA adaptive mode.
