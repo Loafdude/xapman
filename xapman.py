@@ -678,7 +678,10 @@ class InputChannel(object):
             self.getGateHoldTime()
             self.getGateOverride()
             self.getGateRatio()
-
+            self.getGateGroup()
+            self.getChairmanOverride()
+            self.getGateDecay()
+            self.getMicInputGain()
         return True
 
     def getLabel(self):
@@ -1096,7 +1099,7 @@ class InputChannel(object):
             return {"unit": "dB", 'type': "replacement", 0: "0", 1: "55", 2: "25"}
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
-        decay = self.comms.getDecayRate(self.channel, unitCode=self.unit.device_id)
+        decay = self.comms.getMicInputGain(self.channel, unitCode=self.unit.device_id)
         self.gate_decay = decay
         return decay
 
@@ -1112,7 +1115,7 @@ class InputChannel(object):
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['0', '1', '2']:
             raise NotSupported("Invalid Mode")
-        decay = self.comms.setDecayRate(self.channel, mode, unitCode=self.unit.device_id)
+        decay = self.comms.setMicInputGain(self.channel, mode, unitCode=self.unit.device_id)
         self.gate_decay = decay
         return decay
 
