@@ -1089,7 +1089,7 @@ class InputChannel(object):
         self.gate_decay = decay
         return decay
 
-    def getMicInputGain(self, help=False, translation=False):
+    def getCoarseGain(self, help=False, translation=False):
         if help:
             return ("Coarse Gain\n"
                     "Only supported by Mic channels\n"
@@ -1103,7 +1103,7 @@ class InputChannel(object):
         self.gate_decay = decay
         return decay
 
-    def setMicInputGain(self, mode, help=False, translation=False):
+    def setCoarseGain(self, mode, help=False, translation=False):
         if help:
             return ("Coarse Gain\n"
                     "Only supported by Mic channels\n"
@@ -1318,16 +1318,27 @@ class ExpansionBusManager(object):
 #     self.last_mic_mode = None # True, False
 #     self.last_mic_group = None # 1-8
 #
+#     set first mic priority
 #
-#
-# class Filter(object):
-#     self.type = None # All Pass, High Pass, Low Pass, Notch, PEQ
-#     self.frequency = None
-#     self.gain = None
-#     self.Q = None
-#     self.bandwidth = None
-#     self.bypass = None
-#     self.phase = None
+class Filter(object):
+
+    def __repr__(self):
+        return "Input: " + str(self.unit.device_id) + ":" + str(self.channel) + " | " + self.label
+
+    def __init__(self, unit, channel):
+        self.unit = unit
+        self.connection = unit.connection
+        self.comms = unit.comms
+        self.channel = channel
+        self.type = None # All Pass, High Pass, Low Pass, Notch, PEQ
+        self.frequency = None
+        self.gain = None
+        self.bandwidth = None
+        self.enabled = None
+
+
+        self.Q = None
+        self.phase = None
 #
 
 class NoExpansionBusAvailable(Exception):
