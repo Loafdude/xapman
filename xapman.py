@@ -1377,60 +1377,60 @@ class ExpansionBusManager(object):
         # get gate reports
 
 
- class GatingGroup(object):
+class GatingGroup(object):
 
-     def __repr__(self):
-         return "GatingGroup: " + str(self.group)
+    def __repr__(self):
+        return "GatingGroup: " + str(self.group)
 
-     def __init__(self, group, comms, unit):
-         self.group = group
-         self.comms = comms
-         self.unit = unit
-         self.max_mics = None # 1 to 8
-         self.first_mic_priority = None # True or False
-         self.last_mic = None # True, False
+    def __init__(self, group, comms, unit):
+        self.group = group
+        self.comms = comms
+        self.unit = unit
+        self.max_mics = None # 1 to 8
+        self.first_mic_priority = None # True or False
+        self.last_mic = None # True, False
 
-     def getFirstMicPriority(self):
-         fmp = self.comms.getFirstMicPriorityMode(self.group, unitCode=self.unit.device_id)
-         self.first_mic_priority = fmp
-         return fmp
+    def getFirstMicPriority(self):
+        fmp = self.comms.getFirstMicPriorityMode(self.group, unitCode=self.unit.device_id)
+        self.first_mic_priority = fmp
+        return fmp
 
-     def setFirstMicPriority(self, isEnabled):
-         if self.group in local_gating_groups:
-             fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=self.unit.device_id)
-         else:
-             for id, unit in self.comms.units.items():
-                 fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=unit.device_id)
-         self.first_mic_priority = fmp
-         return fmp
+    def setFirstMicPriority(self, isEnabled):
+        if self.group in local_gating_groups:
+            fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=self.unit.device_id)
+        else:
+            for id, unit in self.comms.units.items():
+                fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=unit.device_id)
+        self.first_mic_priority = fmp
+        return fmp
 
-     def getLastMicOn(self):
-         lmo = self.comms.getLastMicOnMode(self.group, unitCode=self.unit.device_id)
-         self.last_mic = lmo
-         return lmo
+    def getLastMicOn(self):
+        lmo = self.comms.getLastMicOnMode(self.group, unitCode=self.unit.device_id)
+        self.last_mic = lmo
+        return lmo
 
-     def setLastMicOn(self, mode):
-         if self.group in local_gating_groups:
-             lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
-         else:
-             for id, unit in self.comms.units.items():
-                lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=unit.device_id)
-         self.last_mic = lmo
-         return lmo
+    def setLastMicOn(self, mode):
+        if self.group in local_gating_groups:
+            lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
+        else:
+            for id, unit in self.comms.units.items():
+               lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=unit.device_id)
+        self.last_mic = lmo
+        return lmo
 
-     def getMaxMics(self):
-         maxmics = self.comms.getMaxActiveMics(self.group, unitCode=self.unit.device_id)
-         self.max_mics = maxmics
-         return maxmics
+    def getMaxMics(self):
+        maxmics = self.comms.getMaxActiveMics(self.group, unitCode=self.unit.device_id)
+        self.max_mics = maxmics
+        return maxmics
 
-     def setMaxMics(self, maxmics):
-         if self.group in local_gating_groups:
-             maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=self.unit.device_id)
-         else:
-             for id, unit in self.comms.units.items():
-                 maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=unit.device_id)
-         self.last_mic = maxmics
-         return maxmics
+    def setMaxMics(self, maxmics):
+        if self.group in local_gating_groups:
+            maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=self.unit.device_id)
+        else:
+            for id, unit in self.comms.units.items():
+                maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=unit.device_id)
+        self.last_mic = maxmics
+        return maxmics
 
 
 class Filter(object):
