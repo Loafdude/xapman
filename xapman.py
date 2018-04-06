@@ -59,6 +59,17 @@ channel_data = {"XAP800": {1: {"ig": "M", "og": "O", "itype": "Mic", "otype": "O
                            "Z": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"}
                 }}
 
+gating_groups = {1: None,
+                 2: None,
+                 3: None,
+                 4: None,
+                 "A": None,
+                 "B": None,
+                 "C": None,
+                 "D": None}
+
+local_gating_groups = [1, 2, 3, 4]
+
 filter_data = {"Mic": {1: None,
                        2: None,
                        3: None,
@@ -338,6 +349,9 @@ class XapUnit(object):
         self.scanOutputChannels()
         self.scanInputChannels()
         self.scanMatrix()
+        self.gating_groups = deepcopy(gating_groups)
+        for group, data in self.gating_groups.items():
+            self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
@@ -1340,15 +1354,6 @@ class ExpansionBusManager(object):
                     return channel
             return False
 
-
-
-#
-#
-#
-#
-#
-#
-#
 #
 #
 # class ProcessingChannel(object):
@@ -1366,15 +1371,63 @@ class ExpansionBusManager(object):
 #     self.delay = None
 #     self.gain = None
 #
-#
-# class GatingGroup(object):
-#     self.max_mics = None # 1 to 64
-#     self.first_mic_priority = None # True or False
-#     self.last_mic_mode = None # True, False
-#     self.last_mic_group = None # 1-8
-#
-#     set first mic priority
-#
+
+ class GatingGroup(object):
+
+     def __repr__(self):
+         return "GatingGroup: " + str(self.group)
+
+     def __init__(self, group, comms, unit):
+         self.group = group
+         self.comms = comms
+         self.unit = unit
+         self.max_mics = None # 1 to 8
+         self.first_mic_priority = None # True or False
+         self.last_mic = None # True, False
+
+     def getFirstMicPriority(self):
+         fmp = self.comms.getFirstMicPriorityMode(self.group, unitCode=self.unit.device_id)
+         self.first_mic_priority = fmp
+         return fmp
+
+     def setFirstMicPriority(self, isEnabled):
+         if self.group in local_gating_groups:
+             fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=self.unit.device_id)
+         else:
+             for id, unit in self.comms.units.items():
+                 fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=unit.device_id)
+         self.first_mic_priority = fmp
+         return fmp
+
+     def getLastMicOn(self):
+         lmo = self.comms.getLastMicOnMode(self.group, unitCode=self.unit.device_id)
+         self.last_mic = lmo
+         return lmo
+
+     def setLastMicOn(self, mode):
+         if self.group in local_gating_groups:
+             lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
+         else:
+             for id, unit in self.comms.units.items():
+                lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=unit.device_id)
+         self.last_mic = lmo
+         return lmo
+
+     def getMaxMics(self):
+         maxmics = self.comms.getMaxActiveMics(self.group, unitCode=self.unit.device_id)
+         self.max_mics = maxmics
+         return maxmics
+
+     def setMaxMics(self, maxmics):
+         if self.group in local_gating_groups:
+             maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=self.unit.device_id)
+         else:
+             for id, unit in self.comms.units.items():
+                 maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=unit.device_id)
+         self.last_mic = maxmics
+         return maxmics
+
+
 class Filter(object):
 
     def __repr__(self):
