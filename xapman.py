@@ -703,7 +703,6 @@ class InputChannel(object):
         if self.filters:
             for node, filter in self.filters.items():
                 self.filters[node] = Filter(self.unit, self, node)
-                self.filters[node].refreshData()
         if self.type == "Mic":
             self.getPhantomPower()
             self.getNoiseCancellation()
