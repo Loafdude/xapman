@@ -998,14 +998,14 @@ class XAPX00(object):
                                  * = Last Microphone On
         """
         resp = self.XAPCommand('LMO', channel, mode, unitCode=unitCode)
-        return int(resp)
+        return str(resp)
 
     def getLastMicOnMode(self, channel, unitCode=0):
         """Request the last microphone on mode of the specified XAP800
         unitCode - the unit code of the target XAP800
         """
         resp = self.XAPCommand('LMO', channel, unitCode=unitCode)
-        return int(resp)
+        return str(resp)
 
     def setMasterMode(self, mode, unitCode=0):
         """Set the master mode of the specified XAP800.
