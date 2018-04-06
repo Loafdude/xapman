@@ -1399,7 +1399,7 @@ class GatingGroup(object):
         if self.group in local_gating_groups:
             fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=self.unit.device_id)
         else:
-            for id, unit in self.comms.units.items():
+            for id, unit in self.unit.connection.items():
                 fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=unit.device_id)
         self.first_mic_priority = fmp
         return fmp
@@ -1413,7 +1413,7 @@ class GatingGroup(object):
         if self.group in local_gating_groups:
             lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
         else:
-            for id, unit in self.comms.units.items():
+            for id, unit in self.unit.connection.items():
                lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=unit.device_id)
         self.last_mic = lmo
         return lmo
@@ -1427,7 +1427,7 @@ class GatingGroup(object):
         if self.group in local_gating_groups:
             maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=self.unit.device_id)
         else:
-            for id, unit in self.comms.units.items():
+            for id, unit in self.unit.connection.items():
                 maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=unit.device_id)
         self.last_mic = maxmics
         return maxmics
