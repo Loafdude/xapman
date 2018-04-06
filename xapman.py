@@ -702,7 +702,7 @@ class InputChannel(object):
         self.getAGCLevels()
         if self.filters:
             for node, filter in self.filters.items():
-                self.filters[node] = Filter(self.unit, self.channel, node)
+                self.filters[node] = Filter(self.unit, self, node)
                 self.filters[node].refreshData()
         if self.type == "Mic":
             self.getPhantomPower()
@@ -1379,7 +1379,7 @@ class ExpansionBusManager(object):
 class Filter(object):
 
     def __repr__(self):
-        return "Filter: " + str(self.unit.device_id) + ":" + str(self.channel) + " | Filter Node " + str(self.node)
+        return "Filter: " + str(self.unit.device_id) + ":" + str(self.channel.channel) + " | Filter Node " + str(self.node)
 
     def __init__(self, unit, channel, node):
         self.unit = unit
