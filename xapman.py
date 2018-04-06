@@ -666,7 +666,7 @@ class InputChannel(object):
         self.AGC_threshold = None  # -50 to 0dB
         self.AGC_attack = None  # 0.1 to 10.0s in .1 increments
         self.AGC_gain = None  # 0.0 to 18.0dB
-        self.filters = filter_data[self.type]
+        self.filters = deepcopy(filter_data[self.type])
 
     # Microphone Input Only
         self.phantom_power = None
@@ -701,9 +701,9 @@ class InputChannel(object):
         self.getAGC()
         self.getAGCLevels()
         if self.filters:
-            for key, filter in self.filters.items():
-                self.filters[key] = Filter(self.unit, self.channel, key)
-                self.filters[key].refreshData()
+            for node, filter in self.filters.items():
+                self.filters[node] = Filter(self.unit, self.channel, node)
+                self.filters[node].refreshData()
         if self.type == "Mic":
             self.getPhantomPower()
             self.getNoiseCancellation()
@@ -1379,7 +1379,7 @@ class ExpansionBusManager(object):
 class Filter(object):
 
     def __repr__(self):
-        return "Filter: " + str(self.unit.device_id) + ":" + str(self.channel) + " | Filter Node " + self.node
+        return "Filter: " + str(self.unit.device_id) + ":" + str(self.channel) + " | Filter Node " + str(self.node)
 
     def __init__(self, unit, channel, node):
         self.unit = unit
