@@ -1371,6 +1371,11 @@ class ExpansionBusManager(object):
 #     self.delay = None
 #     self.gain = None
 #
+        #
+        # ramps
+        # get gate status
+        # get gate reports
+
 
  class GatingGroup(object):
 
