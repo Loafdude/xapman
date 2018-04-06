@@ -1393,6 +1393,7 @@ class Filter(object):
         self.gain = None
         self.bandwidth = None
         self.enabled = None
+        self.getFilter()
 
         self.Q = None
         self.phase = None
@@ -1400,7 +1401,7 @@ class Filter(object):
     def refreshData(self):
         pass
 
-    def getFilterSettings(self):
+    def getFilter(self):
         filter = self.comms.getFilter(self.channel.channel, self.channel.group, self.node, unitCode=self.unit.device_id)
         self.type = filter["type"]
         self.type_string = filter_types[filter["type"]]
