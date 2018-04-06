@@ -807,20 +807,20 @@ class XAPX00(object):
         resp = self.XAPCommand('FLOW', unitCode=unitCode)
         return int(resp)
 
-    def enableFirstMicPriorityMode(self, isEnabled=True, unitCode=0):
+    def setFirstMicPriorityMode(self, gategroup, isEnabled, unitCode=0):
         """Enable or disable first microphone priority mode.
         unitCode - the unit code of the target XAP800
         isEnabled - true to enable the channel, false to disable
         """
-        resp = self.XAPCommand('FMP', ("1" if isEnabled else "0"), unitCode=unitCode)
+        resp = self.XAPCommand('FMP', gategroup, ("1" if isEnabled else "0"), unitCode=unitCode)
         return int(resp)
 
-    def getFirstMicPriorityMode(self, unitCode=0):
+    def getFirstMicPriorityMode(self, gategroup, unitCode=0):
         """Request the first microphone priority mode.
         unitCode - the unit code of the target XAP800
         isEnabled - true to enable the channel, false to disable
         """
-        resp = self.XAPCommand('FMP', unitCode=unitCode)
+        resp = self.XAPCommand('FMP', gategroup, unitCode=unitCode)
         return int(resp)
 
     def setFrontPanelPasscode(self, passcode, unitCode=0):
@@ -989,22 +989,22 @@ class XAPX00(object):
         resp = self.XAPCommand('LFP', unitCode=unitCode)
         return bool(int(resp))
 
-    def setLastMicOnMode(self, mode, unitCode=0):
+    def setLastMicOnMode(self, channel, mode, unitCode=0):
         """Set the last microphone on mode of the specified XAP800
         unitCode - the unit code of the target XAP800
         mode - the last mic on mode
                                  0 = OFF
-                                 1 = Microphone #1
-                                 2 = Last Microphone On
+                                 1-8 = Microphone #1-8
+                                 * = Last Microphone On
         """
-        resp = self.XAPCommand('LMO', mode, unitCode=unitCode)
+        resp = self.XAPCommand('LMO', channel, mode, unitCode=unitCode)
         return int(resp)
 
-    def getLastMicOnMode(self, unitCode=0):
+    def getLastMicOnMode(self, channel, unitCode=0):
         """Request the last microphone on mode of the specified XAP800
         unitCode - the unit code of the target XAP800
         """
-        resp = self.XAPCommand('LMO', unitCode=unitCode)
+        resp = self.XAPCommand('LMO', channel, unitCode=unitCode)
         return int(resp)
 
     def setMasterMode(self, mode, unitCode=0):
@@ -1089,11 +1089,11 @@ class XAPX00(object):
         resp = self.XAPCommand('MMAX', maxMics, unitCode=unitCode)
         return int(resp)
 
-    def getMaxActiveMics(self, unitCode=0):
+    def getMaxActiveMics(self, gategroup, unitCode=0):
         """Request the maxmimum number of active microphones
         unitCode - the unit code of the target XAP800
         """
-        resp = self.XAPCommand('MMAX', unitCode=unitCode)
+        resp = self.XAPCommand('MMAX', gategroup, unitCode=unitCode)
         return int(resp)
 
     def setModemModePassword(self, modemPassword, unitCode=0):
@@ -1378,10 +1378,28 @@ class XAPX00(object):
                     2 = Low Pass, 3 = High Pass (Type 8-10)
         """
         resp = self.XAPCommand('FILTER', channel, group, node, type, frequency, gain, bandwidth, unitCode=unitCode, rtnCount=4)
-        return {"node": int(resp[0]),
-                "frequency": int(resp[1]),
-                "gain": float(resp[2]),
-                "bandwidth": float(resp[3]),
+        type = None
+        freq = None
+        gain = None
+        bandwidth = None
+        if int(resp[5]) is not 0:
+            type = int(resp[5])
+            freq = float(resp[6])
+            if type is 4 or type is 5:
+                gain = float(resp[7])
+            elif type is 6:
+                gain = float(resp[7])
+                bandwidth = float(resp[8])
+            elif type is 8 or type is 9 or type is 10:
+                gain = int(resp[7])
+                bandwidth = int(resp[8])
+            elif type is 11:
+                gain = float(resp[7])
+                bandwidth = float(resp[8])
+        return {"type": type,
+                "frequency": freq,
+                "gain": gain,
+                "bandwidth": bandwidth,
                 }
 
     def getFilter(self, channel, group, node, unitCode=0):
