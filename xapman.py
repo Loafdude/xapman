@@ -1379,7 +1379,7 @@ class ExpansionBusManager(object):
 class Filter(object):
 
     def __repr__(self):
-        return "Filter: " + str(self.unit.device_id) + ":" + str(self.channel.channel) + " | Filter Node " + str(self.node)
+        return "Filter: " + self.type_string + " | Node " + str(self.node)
 
     def __init__(self, unit, channel, node):
         self.unit = unit
@@ -1398,9 +1398,6 @@ class Filter(object):
         self.Q = None
         self.phase = None
 
-    def refreshData(self):
-        pass
-
     def getFilter(self):
         filter = self.comms.getFilter(self.channel.channel, self.channel.group, self.node, unitCode=self.unit.device_id)
         self.type = filter["type"]
@@ -1408,6 +1405,15 @@ class Filter(object):
         self.frequency = filter["frequency"]
         self.gain = filter["gain"]
         self.bandwidth = filter["bandwidth"]
+
+    def setFilter(self):
+        pass
+
+    def getEnabled(self):
+        pass
+
+    def setEnabled(self):
+        pass
 
 class NoExpansionBusAvailable(Exception):
     pass
