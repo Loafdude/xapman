@@ -1409,6 +1409,7 @@ class Filter(object):
         return filter
 
     def setFilter(self):
+        print("Not Yet Implemented")
         pass
 
     def getEnabled(self):

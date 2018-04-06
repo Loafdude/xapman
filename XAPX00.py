@@ -1321,7 +1321,7 @@ class XAPX00(object):
         isEnabled - True turns safety mute on
         unitCode - the unit code of the target XAP800
         """
-        resp = self.XAPCommand('SFTYMUTE', isEnabled, unitCode=unitCode)
+        resp = self.XAPCommand('SFTYMUTE', (1 if isEnabled else 0), unitCode=unitCode)
         return bool(int(resp))
 
     def getAutoGainControlLevel(self, channel, group, unitCode=0):
@@ -1424,6 +1424,18 @@ class XAPX00(object):
                 "gain": gain,
                 "bandwidth": bandwidth,
                 }
+
+    def getFilterEnabled(self, channel, group, node, unitCode=0):
+        """Request Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('FILTSEL', channel, group, node, unitCode=unitCode)
+        return bool(int(resp))
+
+    def setFilterEnabled(self, channel, group, node, isEnabled, unitCode=0):
+        """Set the Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('FILTSEL', channel, group, node, (1 if isEnabled else 0), unitCode=unitCode)
+        return bool(int(resp))
 
     errorDefs = {"ERROR 1": "Out of Memory",
                  "ERROR 2": "Could not extract a command from\
