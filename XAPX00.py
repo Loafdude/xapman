@@ -1400,11 +1400,29 @@ class XAPX00(object):
                     .05 to 5.00 (Type 6, 11)
                     2 = Low Pass, 3 = High Pass (Type 8-10)
         """
-        resp = self.XAPCommand('FILTER', channel, group, node, unitCode=unitCode, rtnCount=4)
-        return {"type": int(resp[0]),
-                "frequency": int(resp[1]),
-                "gain": float(resp[2]),
-                "bandwidth": float(resp[3]),
+        resp = self.XAPCommand('FILTER', channel, group, node, unitCode=unitCode, rtnCount=9)
+        type = None
+        freq = None
+        gain = None
+        bandwidth = None
+        if int(resp[5]) is not 0:
+            type = int(resp[5])
+            freq = int(resp[6])
+            if type is 4 or type is 5:
+                gain = float(resp[7])
+            elif type is 6:
+                gain = float(resp[7])
+                bandwidth = float(resp[8])
+            elif type is 8 or type is 9 or type is 10:
+                gain = int(resp[7])
+                bandwidth = int(resp[8])
+            elif type is 11:
+                gain = float(resp[7])
+                bandwidth = float(resp[8])
+        return {"type": type,
+                "frequency": freq,
+                "gain": gain,
+                "bandwidth": bandwidth,
                 }
 
     errorDefs = {"ERROR 1": "Out of Memory",
