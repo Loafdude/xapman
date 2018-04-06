@@ -1394,6 +1394,7 @@ class Filter(object):
         self.bandwidth = None
         self.enabled = None
         self.getFilter()
+        self.getEnabled()
 
         self.Q = None
         self.phase = None
@@ -1405,15 +1406,20 @@ class Filter(object):
         self.frequency = filter["frequency"]
         self.gain = filter["gain"]
         self.bandwidth = filter["bandwidth"]
+        return filter
 
     def setFilter(self):
         pass
 
     def getEnabled(self):
-        pass
+        enabled = self.comms.getFilterEnabled(self.channel.channel, self.channel.group, self.node)
+        self.enabled = enabled
+        return enabled
 
-    def setEnabled(self):
-        pass
+    def setEnabled(self, isEnabled):
+        enabled = self.comms.setFilterEnabled(self.channel.channel, self.channel.group, self.node, isEnabled)
+        self.enabled = enabled
+        return enabled
 
 class NoExpansionBusAvailable(Exception):
     pass
