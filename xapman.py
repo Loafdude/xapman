@@ -1411,10 +1411,10 @@ class GatingGroup(object):
 
     def setLastMicOn(self, mode):
         if self.group in local_gating_groups:
-            lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
+            lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
         else:
             for id, unit in self.comms.units.items():
-               lmo = self.comms.getLastMicOnMode(self.group, mode, unitCode=unit.device_id)
+               lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=unit.device_id)
         self.last_mic = lmo
         return lmo
 

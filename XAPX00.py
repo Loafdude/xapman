@@ -813,7 +813,7 @@ class XAPX00(object):
         isEnabled - true to enable the channel, false to disable
         """
         resp = self.XAPCommand('FMP', gategroup, ("1" if isEnabled else "0"), unitCode=unitCode)
-        return int(resp)
+        return bool(int(resp))
 
     def getFirstMicPriorityMode(self, gategroup, unitCode=0):
         """Request the first microphone priority mode.
@@ -821,7 +821,7 @@ class XAPX00(object):
         isEnabled - true to enable the channel, false to disable
         """
         resp = self.XAPCommand('FMP', gategroup, unitCode=unitCode)
-        return int(resp)
+        return bool(int(resp))
 
     def setFrontPanelPasscode(self, passcode, unitCode=0):
         """Set the front panel passcode for the specified XAP800.
@@ -1076,7 +1076,7 @@ class XAPX00(object):
         resp = self.XAPCommand('MLINE', channel, unitCode=unitCode)
         return int(resp)
 
-    def setMaxActiveMics(self, maxMics, unitCode=0):
+    def setMaxActiveMics(self, group, maxMics, unitCode=0):
         """Set the maxmimum number of active microphones.
         unitCode - the unit code of the target XAP800
         maxMics - the maximum number of mics that will be active
@@ -1086,7 +1086,7 @@ class XAPX00(object):
             maxMics = 0
         elif maxMics > 8:
             maxMics = 8
-        resp = self.XAPCommand('MMAX', maxMics, unitCode=unitCode)
+        resp = self.XAPCommand('MMAX', group, maxMics, unitCode=unitCode)
         return int(resp)
 
     def getMaxActiveMics(self, gategroup, unitCode=0):
