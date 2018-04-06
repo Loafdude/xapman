@@ -59,6 +59,42 @@ channel_data = {"XAP800": {1: {"ig": "M", "og": "O", "itype": "Mic", "otype": "O
                            "Z": {"ig": "E", "og": "E", "itype": "Expansion", "otype": "Expansion"}
                 }}
 
+filter_data = {"Mic": {1: None,
+                       2: None,
+                       3: None,
+                       4: None},
+               "Processing": {1: None,
+                              2: None,
+                              3: None,
+                              4: None,
+                              5: None,
+                              6: None,
+                              7: None,
+                              8: None,
+                              9: None,
+                              10: None,
+                              11: None,
+                              12: None,
+                              13: None,
+                              14: None,
+                              15: None},
+               "Line": None,
+               "Expansion": None
+               }
+
+filter_types = {0: None,
+                1: "All Pass",
+                2: "Low Pass",
+                3: "High Pass",
+                4: "Low Shelving",
+                5: "High Shelving",
+                6: "Parametric EQ",
+                7: "CD Horn",
+                8: "Bessel Crossover",
+                9: "Butterworth Crossover",
+                10: "Linkwitz-Riley Crossover",
+                11: "Notch"}
+
 matrix_y = {"XAP800": {1: None,
                        2: None,
                        3: None,
@@ -630,7 +666,7 @@ class InputChannel(object):
         self.AGC_threshold = None  # -50 to 0dB
         self.AGC_attack = None  # 0.1 to 10.0s in .1 increments
         self.AGC_gain = None  # 0.0 to 18.0dB
-        self.refreshData()
+        self.filters = filter_data[self.type]
 
     # Microphone Input Only
         self.phantom_power = None
@@ -652,8 +688,7 @@ class InputChannel(object):
         self.gain_coarse = None
         self.gate_attenuation = None  # 0-60dB
 
-        #self.bypass_filters = None  # True or False Doesn't really exists. Have to turn filters on and off
-        #self.filters = None  # Max 4. List of filters?
+        self.refreshData()
 
     def refreshData(self):
         """Fetch all data Channel Data"""
@@ -665,6 +700,10 @@ class InputChannel(object):
         self.getGain()
         self.getAGC()
         self.getAGCLevels()
+        if self.filters:
+            for key, filter in self.filters.items():
+                self.filters[key] = Filter(self.unit, self.channel, key)
+                self.filters[key].refreshData()
         if self.type == "Mic":
             self.getPhantomPower()
             self.getNoiseCancellation()
@@ -1340,23 +1379,34 @@ class ExpansionBusManager(object):
 class Filter(object):
 
     def __repr__(self):
-        return "Input: " + str(self.unit.device_id) + ":" + str(self.channel) + " | " + self.label
+        return "Filter: " + str(self.unit.device_id) + ":" + str(self.channel) + " | Filter Node " + self.node
 
-    def __init__(self, unit, channel):
+    def __init__(self, unit, channel, node):
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
+        self.node = node
         self.channel = channel
-        self.type = None # All Pass, High Pass, Low Pass, Notch, PEQ
+        self.type = None
+        self.type_string = None
         self.frequency = None
         self.gain = None
         self.bandwidth = None
         self.enabled = None
 
-
         self.Q = None
         self.phase = None
-#
+
+    def refreshData(self):
+        pass
+
+    def getFilterSettings(self):
+        filter = self.comms.getFilter(self.channel.channel, self.channel.group, self.node, unitCode=self.unit.device_id)
+        self.type = filter["type"]
+        self.type_string = filter_types[filter["type"]]
+        self.frequency = filter["frequency"]
+        self.gain = filter["gain"]
+        self.bandwidth = filter["bandwidth"]
 
 class NoExpansionBusAvailable(Exception):
     pass

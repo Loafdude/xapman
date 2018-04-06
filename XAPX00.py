@@ -1354,11 +1354,57 @@ class XAPX00(object):
         threshold = linear2db(threshold) if self.convertDb else threshold
         target = linear2db(target) if self.convertDb else target
         gain = linear2db(gain) if self.convertDb else gain
-        resp = self.XAPCommand('AGCSET', 1, "M", threshold, target, attack, gain, unitCode=unitCode, rtnCount=4)
+        resp = self.XAPCommand('AGCSET', channel, group, threshold, target, attack, gain, unitCode=unitCode, rtnCount=4)
         return {"threshold": db2linear(resp[0]) if self.convertDb else float(resp[0]),
                 "target": db2linear(resp[1]) if self.convertDb else float(resp[1]),
                 "attack": float(resp[2]),
                 "gain": db2linear(resp[3]) if self.convertDb else float(resp[3]),
+                }
+
+    def setFilter(self, channel, group, node, type, frequency, gain, bandwidth, unitCode=0):
+        """Set the settings of the AGC on an input channel
+        unitCode - the unit code of the target XAP800
+        channel   - 1-12
+        group     - M or P
+        node      - 1-4 for Mic, 1-15 for Processing
+        frequency - 20 to 20000 (Type 1-6, 8-11)
+                    500 to 5000 (Type 7)
+        gain      - 0 for (Type 0-3, 7, 11)
+                    -15 to 15 (Type 4-6)
+                    12, 18, 24 (Type 8-9)
+                    12, 24 (Type 10)
+        bandwidth - 0 (Type 0-5, 7)
+                    .05 to 5.00 (Type 6, 11)
+                    2 = Low Pass, 3 = High Pass (Type 8-10)
+        """
+        resp = self.XAPCommand('FILTER', channel, group, node, type, frequency, gain, bandwidth, unitCode=unitCode, rtnCount=4)
+        return {"node": int(resp[0]),
+                "frequency": int(resp[1]),
+                "gain": float(resp[2]),
+                "bandwidth": float(resp[3]),
+                }
+
+    def getFilter(self, channel, group, node, unitCode=0):
+        """Set the settings of the AGC on an input channel
+        unitCode - the unit code of the target XAP800
+        channel   - 1-12
+        group     - M or P
+        node      - 1-4 for Mic, 1-15 for Processing
+        frequency - 20 to 20000 (Type 1-6, 8-11)
+                    500 to 5000 (Type 7)
+        gain      - 0 for (Type 0-3, 7, 11)
+                    -15 to 15 (Type 4-6)
+                    12, 18, 24 (Type 8-9)
+                    12, 24 (Type 10)
+        bandwidth - 0 (Type 0-5, 7)
+                    .05 to 5.00 (Type 6, 11)
+                    2 = Low Pass, 3 = High Pass (Type 8-10)
+        """
+        resp = self.XAPCommand('FILTER', channel, group, node, unitCode=unitCode, rtnCount=4)
+        return {"type": int(resp[0]),
+                "frequency": int(resp[1]),
+                "gain": float(resp[2]),
+                "bandwidth": float(resp[3]),
                 }
 
     errorDefs = {"ERROR 1": "Out of Memory",
