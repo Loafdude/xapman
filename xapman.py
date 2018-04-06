@@ -82,7 +82,7 @@ filter_data = {"Mic": {1: None,
                "Expansion": None
                }
 
-filter_types = {0: None,
+filter_types = {None: "Not Configured",
                 1: "All Pass",
                 2: "Low Pass",
                 3: "High Pass",
