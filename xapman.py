@@ -637,7 +637,7 @@ class OutputChannel(object):
         return ramp
 
     def rampToPercent(self, targetPercent, rate=False):
-        """Ramp Gain to specified % of max gain"""
+        """Ramp Gain to specified % between min and max gain"""
         if not rate:
             rate = self.ramp_rate
         if targetPercent < 0 or targetPercent > 1:
