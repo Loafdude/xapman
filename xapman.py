@@ -629,13 +629,20 @@ class OutputChannel(object):
         self.prop_gain = prop_gain
         return prop_gain
 
-    def rampToDb(self, targetDb, rate=self.ramp_rate):
+    def rampToDb(self, targetDb, rate=False):
         """Ramp Gain to specified DB"""
+        if not rate:
+            rate = self.ramp_rate
         ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
         return ramp
 
-    def rampToPercent(self, targetPercent, rate=self.ramp_rate):
+    def rampToPercent(self, targetPercent, rate=False):
         """Ramp Gain to specified % of max gain"""
+        if not rate:
+            rate = self.ramp_rate
+        if targetPercent < 0 or targetPercent > 1:
+            raise NotSupported("Percentage must be between 0 and 1")
+        targetDb = (self.gain_max - self.gain_min) * targetPercent
         ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
         return ramp
 
