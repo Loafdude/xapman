@@ -1492,6 +1492,18 @@ class XAPX00(object):
         resp = self.XAPCommand('COMPSEL', channel, (1 if isEnabled else 0), unitCode=unitCode)
         return bool(int(resp))
 
+    def getCompressorGroup(self, channel, unitCode=0):
+        """Get the Compressor Group of the Channel
+        """
+        resp = self.XAPCommand('CGROUP', channel, unitCode=unitCode)
+        return int(resp)
+
+    def setCompressorGroup(self, channel, group, unitCode=0):
+        """Set the Compressor Group of the Channel
+        """
+        resp = self.XAPCommand('CGROUP', channel, group, unitCode=unitCode)
+        return int(resp)
+
     def getCompressor(self, channel, unitCode=0):
         """Get the Compressor settings of the channel
         """
