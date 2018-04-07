@@ -1497,9 +1497,9 @@ class XAPX00(object):
         """
         resp = self.XAPCommand('COMPRESS', channel, unitCode=unitCode, rtnCount=5)
         return {"threshold": float(resp[0]),
-                "ratio": int(resp[1]),
+                "ratio": float(resp[1]),
                 "attack": float(resp[2]),
-                "release": int(resp[3]),
+                "release": float(resp[3]),
                 "gain": float(resp[4])}
 
     def setCompressor(self, channel, threshold, ratio, attack, release, gain, unitCode=0):
@@ -1507,9 +1507,9 @@ class XAPX00(object):
         """
         resp = self.XAPCommand('COMPRESS', channel, threshold, ratio, attack, release, gain, unitCode=unitCode)
         return {"threshold": float(resp[0]),
-                "ratio": int(resp[1]),
+                "ratio": float(resp[1]),
                 "attack": float(resp[2]),
-                "release": int(resp[3]),
+                "release": float(resp[3]),
                 "gain": float(resp[4])}
 
     errorDefs = {"ERROR 1": "Out of Memory",
