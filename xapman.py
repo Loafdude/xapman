@@ -702,6 +702,16 @@ class InputChannel(object):
         self.gain_coarse = None
         self.gate_attenuation = None  # 0-60dB
 
+    # Processing Input Only
+        self.delay = None
+        self.compressor = None # True or False
+        self.compressor_group = None #
+        self.compressor_post_gain = None #
+        self.compressor_threshold = None
+        self.compressor_ratio = None
+        self.compressor_attack = None
+        self.compressor_release = None
+
         self.refreshData()
 
     def refreshData(self):
@@ -735,6 +745,8 @@ class InputChannel(object):
             self.getChairmanOverride()
             self.getGateDecay()
             self.getCoarseGain()
+        elif self.type == "Processing":
+            pass
         return True
 
     def getLabel(self):
@@ -1188,6 +1200,57 @@ class InputChannel(object):
         self.gate_attenuation = gate_attenuation
         return gate_attenuation
 
+    def getDelay(self):
+        """Get Delay for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        delay = self.comms.getDelay(self.channel, unitCode=self.unit.device_id)
+        self.delay = delay
+        return delay
+
+    def setDelay(self, delay):
+        """Set Delay for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        delay = self.comms.setDelay(self.channel, delay, unitCode=self.unit.device_id)
+        self.delay = delay
+        return delay
+
+    def getDelayStatus(self):
+        """Get Delay for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        delay = self.comms.getDelayStatus(self.channel, unitCode=self.unit.device_id)
+        self.delay = delay
+        return delay
+
+    def setDelayStatus(self, isEnabled):
+        """Set Delay for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        delay = self.comms.setDelayStatus(self.channel, isEnabled, unitCode=self.unit.device_id)
+        self.delay = delay
+        return delay
+
+    def getCompressorStatus(self):
+        """Get Compressor Status for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        comp = self.comms.getCompressorStatus(self.channel, unitCode=self.unit.device_id)
+        self.compressor_enabled = comp
+        return comp
+
+    def setCompressorStatus(self, isEnabled):
+        """Set Compressor Status for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        comp = self.comms.setCompressorStatus(self.channel, isEnabled, unitCode=self.unit.device_id)
+        self.compressor_enabled = comp
+        return comp
+
+    def getCompressor(self):
+
+
     def getExBus(self):
         exBus = []
         for channel, data in channel_data[self.unit.device_type].items():
@@ -1354,28 +1417,6 @@ class ExpansionBusManager(object):
                     return channel
             return False
 
-#
-#
-# class ProcessingChannel(object):
-#     self.label          = None
-#     self.delay = None
-#     self.mute = None
-#     self.compressor = None # True or False
-#     self.compressor_group = None #
-#     self.compressor_post_gain = None #
-#     self.compressor_threshold = None
-#     self.compressor_ratio = None
-#     self.compressor_attack = None
-#     self.compressor_release = None
-#     self.filters = None
-#     self.delay = None
-#     self.gain = None
-#
-        #
-        # ramps
-        # get gate status
-        # get gate reports
-
 
 class GatingGroup(object):
 
@@ -1401,6 +1442,7 @@ class GatingGroup(object):
         else:
             for id, unit in self.unit.connection.units.items():
                 fmp = self.comms.setFirstMicPriorityMode(self.group, isEnabled, unitCode=unit.device_id)
+                unit.gating_groups[self.group].first_mic_priority = fmp
         self.first_mic_priority = fmp
         return fmp
 
@@ -1414,7 +1456,8 @@ class GatingGroup(object):
             lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=self.unit.device_id)
         else:
             for id, unit in self.unit.connection.units.items():
-               lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=unit.device_id)
+                lmo = self.comms.setLastMicOnMode(self.group, mode, unitCode=unit.device_id)
+                unit.gating_groups[self.group].last_mic = lmo
         self.last_mic = lmo
         return lmo
 
@@ -1429,7 +1472,8 @@ class GatingGroup(object):
         else:
             for id, unit in self.unit.connection.units.items():
                 maxmics = self.comms.setMaxActiveMics(self.group, maxmics, unitCode=unit.device_id)
-        self.last_mic = maxmics
+                unit.gating_groups[self.group].max_mics = maxmics
+        self.max_mics = maxmics
         return maxmics
 
 
@@ -1484,3 +1528,8 @@ class NoExpansionBusAvailable(Exception):
 
 class NotSupported(Exception):
     pass
+#
+        #
+        # ramps
+        # get gate status
+        # get gate reports

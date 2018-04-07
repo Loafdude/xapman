@@ -1455,6 +1455,42 @@ class XAPX00(object):
         resp = self.XAPCommand('FILTSEL', channel, group, node, (1 if isEnabled else 0), unitCode=unitCode)
         return bool(int(resp))
 
+    def getDelay(self, channel, unitCode=0):
+        """Request Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('DELAY', channel, unitCode=unitCode)
+        return float(resp)
+
+    def setDelay(self, channel, delay, unitCode=0):
+        """Set the Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('DELAY', channel, delay, unitCode=unitCode)
+        return float(resp)
+
+    def getDelayStatus(self, channel, unitCode=0):
+        """Request Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('DELAYSEL', channel, unitCode=unitCode)
+        return bool(int(resp))
+
+    def setDelayStatus(self, channel, isEnabled, unitCode=0):
+        """Set the Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('DELAYSEL', channel, (1 if isEnabled else 0), unitCode=unitCode)
+        return bool(int(resp))
+
+    def getCompressorStatus(self, channel, unitCode=0):
+        """Request Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('COMPSEL', channel, unitCode=unitCode)
+        return bool(int(resp))
+
+    def setCompressorStatus(self, channel, isEnabled, unitCode=0):
+        """Set the Filter Enabled status of the node
+        """
+        resp = self.XAPCommand('COMPSEL', channel, (1 if isEnabled else 0), unitCode=unitCode)
+        return bool(int(resp))
+
     errorDefs = {"ERROR 1": "Out of Memory",
                  "ERROR 2": "Could not extract a command from\
                  the string received",
