@@ -1564,8 +1564,10 @@ class Filter(object):
         self.enabled = enabled
         return enabled
 
+
 class NoExpansionBusAvailable(Exception):
     pass
+
 
 class NotSupported(Exception):
     pass

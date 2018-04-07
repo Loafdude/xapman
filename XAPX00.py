@@ -1504,6 +1504,12 @@ class XAPX00(object):
         resp = self.XAPCommand('CGROUP', channel, group, unitCode=unitCode)
         return int(resp)
 
+    def ramp(self, channel, group, rate, target, unitCode=0):
+        """Ramp the Gain of Channel
+        """
+        resp = self.XAPCommand('RAMP', channel, group, rate, target, unitCode=unitCode)
+        return int(resp)
+
     def getCompressor(self, channel, unitCode=0):
         """Get the Compressor settings of the channel
         """
