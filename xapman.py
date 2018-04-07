@@ -1248,6 +1248,28 @@ class InputChannel(object):
         self.compressor = comp
         return comp
 
+    def getCompressorGroup(self):
+        """Get Compressor Group for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        comp = self.comms.getCompressorGroup(self.channel, unitCode=self.unit.device_id)
+        if comp is 0:
+            comp = None
+        self.compressor_group = comp
+        return comp
+
+    def setCompressorGroup(self, group):
+        """Set Compressor Group for Channel"""
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        if group is None:
+            group = 0
+        comp = self.comms.setCompressorGroup(self.channel, group, unitCode=self.unit.device_id)
+        if comp is 0:
+            comp = None
+        self.compressor_group = comp
+        return comp
+
     def getCompressor(self):
         if self.type != "Processing":  # Only Processing Channels are Compatible with this function
             raise NotSupported("Only Processing channels support this function")
@@ -1259,15 +1281,15 @@ class InputChannel(object):
         self.compressor_release = comp['release']
         return comp
 
-    def setCompressor(self, gain, threshold, ratio, attack, release):
+    def setCompressor(self, threshold, ratio, attack, release, gain):
         if self.type != "Processing":  # Only Processing Channels are Compatible with this function
             raise NotSupported("Only Processing channels support this function")
         comp = self.comms.setCompressor(self.channel, threshold, ratio, attack, release, gain, unitCode=self.unit.device_id)
-        self.compressor_gain = comp['gain']
         self.compressor_threshold = comp['threshold']
         self.compressor_ratio = comp['ratio']
         self.compressor_attack = comp['attack']
         self.compressor_release = comp['release']
+        self.compressor_gain = comp['gain']
         return comp
 
     def getExBus(self):
