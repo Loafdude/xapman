@@ -1259,6 +1259,17 @@ class InputChannel(object):
         self.compressor_release = comp['release']
         return comp
 
+    def getCompressor(self, gain, threshold, ratio, attack, release):
+        if self.type != "Processing":  # Only Processing Channels are Compatible with this function
+            raise NotSupported("Only Processing channels support this function")
+        comp = self.comms.setCompressor(self.channel, threshold, ratio, attack, release, gain, unitCode=self.unit.device_id)
+        self.compressor_gain = comp['gain']
+        self.compressor_threshold = comp['threshold']
+        self.compressor_ratio = comp['ratio']
+        self.compressor_attack = comp['attack']
+        self.compressor_release = comp['release']
+        return comp
+
     def getExBus(self):
         exBus = []
         for channel, data in channel_data[self.unit.device_type].items():
