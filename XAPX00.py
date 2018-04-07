@@ -1496,21 +1496,21 @@ class XAPX00(object):
         """Get the Compressor settings of the channel
         """
         resp = self.XAPCommand('COMPRESS', channel, unitCode=unitCode, rtnCount=5)
-        return {"threshold": float(resp[0]),
-                "ratio": float(resp[1]),
-                "attack": float(resp[2]),
-                "release": float(resp[3]),
-                "gain": float(resp[4])}
+        return {"threshold": resp[0],
+                "ratio": resp[1],
+                "attack": resp[2],
+                "release": resp[3],
+                "gain": resp[4]}
 
     def setCompressor(self, channel, threshold, ratio, attack, release, gain, unitCode=0):
         """Set the Compressor settings of the channel
         """
         resp = self.XAPCommand('COMPRESS', channel, threshold, ratio, attack, release, gain, unitCode=unitCode)
-        return {"threshold": float(resp[0]),
-                "ratio": float(resp[1]),
-                "attack": float(resp[2]),
-                "release": float(resp[3]),
-                "gain": float(resp[4])}
+        return {"threshold": resp[0],
+                "ratio": resp[1],
+                "attack": resp[2],
+                "release": resp[3],
+                "gain": resp[4]}
 
     errorDefs = {"ERROR 1": "Out of Memory",
                  "ERROR 2": "Could not extract a command from the string received",
