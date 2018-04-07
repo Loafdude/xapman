@@ -1512,12 +1512,16 @@ class XAPX00(object):
                 "gain": float(resp[4])}
 
     errorDefs = {"ERROR 1": "Out of Memory",
-                 "ERROR 2": "Could not extract a command from\
-                 the string received",
+                 "ERROR 2": "Could not extract a command from the string received",
                  "ERROR 3": "Unknown Command",
                  "ERROR 4": "N/A - reserved for later use",
                  "ERROR 5": "Invalid parameter",
                  "ERROR 6": "Unrecognized command",
+                 "ERROR 7": "Bad Checksum (Binary Command Error)",
+                 "ERROR 8": "Preset of Macro Invalid",
+                 "ERROR 10": "Queue Error",
+                 "ERROR 11": "Command too Big (Binary Command Error)",
+                 "ERROR 12": "Unit is Locked",
                  "default": "Unknown error - no description found"
                  }
 
