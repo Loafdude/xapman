@@ -231,12 +231,12 @@ class connect(object):
                  baudrate=38400,
                  mqtt_path="home/HA/AudioMixers/",
                  device_type="XAP800",
-                 ramptime=3,
+                 ramp_rate=6,
                  autoramp=True):
 
         self.mqtt_path = mqtt_path
         self.baudrate = baudrate
-        self.ramptime = ramptime
+        self.ramp_rate = ramp_rate
         self.autoramp = autoramp
         self.serial_path = serial_path
         self.units = {}
@@ -528,6 +528,7 @@ class OutputChannel(object):
         self.channel = channel
         self.group = channel_data[unit.device_type][channel]['og']
         self.type = channel_data[unit.device_type][channel]['otype']
+        self.ramp_rate = self.connection.ramp_rate
         self.gain = None  #
         self.prop_gain = None  #
         self.gain_min = None  #
@@ -627,6 +628,16 @@ class OutputChannel(object):
         prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], prop_gain, unitCode=self.unit.device_id)
         self.prop_gain = prop_gain
         return prop_gain
+
+    def rampToDb(self, targetDb, rate=self.ramp_rate):
+        """Ramp Gain to specified DB"""
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        return ramp
+
+    def rampToPercent(self, targetPercent, rate=self.ramp_rate):
+        """Ramp Gain to specified % of max gain"""
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        return ramp
 
     def getGain(self):
         """Fetch absolute gain for Channel"""
