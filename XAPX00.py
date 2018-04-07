@@ -179,7 +179,7 @@ class XAPX00(object):
     """XAPX000 Module."""
 
     def __init__(self, comPort="/dev/ttyUSB0", baudRate=38400,
-                 stereo=0, XAPType=XAP800Type):
+                 stereo=0, XAPType=XAP800Type, rtscts=False):
         """init: no parameters required."""
         _LOGGER.debug("XAPX00 version: {}".format(__version__))
         self.comPort      = comPort
@@ -188,6 +188,7 @@ class XAPX00(object):
         self.stopBits     = 1
         self.parity       = "N"
         self.timeout      = 1
+        self.rtscts       = rtscts
         self.stereo       = stereo
         self.XAPType      = XAPType
         self.XAPCMD       = XAP800_CMD if XAPType == XAP800Type else XAP400_CMD
@@ -208,7 +209,7 @@ class XAPX00(object):
         _LOGGER.info("Connecting to XAPX00 at " + str(self.baudRate) +
                      " baud...")
         self.serial = serial.Serial(self.comPort, self.baudRate,
-                                    timeout=self.timeout)
+                                    timeout=self.timeout, rtscts=self.rtscts)
         # Ensure connectivity by requesting the UID of the first unit
         for id in range(0,8):
             self.serial.reset_input_buffer()
