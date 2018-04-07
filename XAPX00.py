@@ -179,7 +179,7 @@ class XAPX00(object):
     """XAPX000 Module."""
 
     def __init__(self, comPort="/dev/ttyUSB0", baudRate=38400,
-                 stereo=0, XAPType=XAP800Type, rtscts=False):
+                 stereo=0, XAPType=XAP800Type, rtscts=True):
         """init: no parameters required."""
         _LOGGER.debug("XAPX00 version: {}".format(__version__))
         self.comPort      = comPort
