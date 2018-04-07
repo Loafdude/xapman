@@ -1249,6 +1249,7 @@ class InputChannel(object):
         return comp
 
     def getCompressor(self):
+        pass
 
 
     def getExBus(self):
