@@ -1505,7 +1505,7 @@ class XAPX00(object):
     def setCompressor(self, channel, threshold, ratio, attack, release, gain, unitCode=0):
         """Set the Compressor settings of the channel
         """
-        resp = self.XAPCommand('COMPRESS', channel, threshold, ratio, attack, release, gain, unitCode=unitCode)
+        resp = self.XAPCommand('COMPRESS', channel, threshold, ratio, attack, release, gain, unitCode=unitCode, rtnCount=5)
         return {"threshold": resp[0],
                 "ratio": resp[1],
                 "attack": resp[2],
