@@ -715,6 +715,7 @@ class InputChannel(object):
         self.gate_group = None  # 1-4 and A-D (gate group)
         self.gate_chairman = None  # True or False
         self.gate_decay = None  # Slow, Medium, Fast
+        self.gate_decay_string = None  # Slow, Medium, Fast
         self.gain_coarse = None
         self.gate_attenuation = None  # 0-60dB
 
@@ -1157,8 +1158,7 @@ class InputChannel(object):
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         decay = self.comms.getDecayRate(self.channel, unitCode=self.unit.device_id)
-        self.gate_decay = decay
-        return decay
+        return self.gate_decay_string
 
     def setGateDecay(self, mode):
         """Set Gate Decay for Channel"""
@@ -1167,8 +1167,7 @@ class InputChannel(object):
         if str(mode) not in ['1', '2', '3']:
             raise NotSupported("Invalid Mode")
         decay = self.comms.setDecayRate(self.channel, mode, unitCode=self.unit.device_id)
-        self.gate_decay = decay
-        return decay
+        return self.gate_decay_string
 
     def getCoarseGain(self, help=False, translation=False):
         if help:
