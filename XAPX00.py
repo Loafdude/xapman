@@ -261,28 +261,24 @@ class XAPX00(object):
         args = [str(x) for x in args]
         xapstr = "%s%s %s %s %s" % ( self.XAPCMD, unitCode, command, " ".join(args),  EOM)
         _LOGGER.debug("Sending %s" % xapstr)
-        response = False
-        while response == False:
-            starttime = time.time()
-            while 1:
-                if self._waiting_response==1:
-                    if time.time() - starttime > self._maxrespdelay:
-                        break
-                    _LOGGER.debug("Send going to sleep\n")
-                    time.sleep(self._sleeptime)
-                else:
+        starttime = time.time()
+        while 1:
+            if self._waiting_response==1:
+                if time.time() - starttime > self._maxrespdelay:
                     break
-            currtime = time.time()
-            if currtime - self._lastcall > self._maxtime:
-                self.reset()
-            self._lastcall = currtime
-            _LOGGER.debug("Sending: %s", xapstr)
-            self.serial.reset_input_buffer()
-            self.serial.write(xapstr.encode())
-            self._waiting_response = 1
-            res, cmd = self.readResponse(numElements=rtnCount)
-            if cmd == command or cmd == None:
-                response = True
+                _LOGGER.debug("Send going to sleep\n")
+                time.sleep(self._sleeptime)
+            else:
+                break
+        currtime = time.time()
+        if currtime - self._lastcall > self._maxtime:
+            self.reset()
+        self._lastcall = currtime
+        _LOGGER.debug("Sending: %s", xapstr)
+        self.serial.reset_input_buffer()
+        self.serial.write(xapstr.encode())
+        self._waiting_response = 1
+        res = self.readResponse(numElements=rtnCount)
         return res
 
     def readResponse(self, numElements=1):
@@ -297,22 +293,19 @@ class XAPX00(object):
             resp = self.serial.readline().decode() #Get the line
             if len(resp) > 5 and resp[0:5] == "ERROR": #If Error
                 self._waiting_response = 0
-                raise Exception(resp) #Exception with error code
+                raise Exception(resp)
             _LOGGER.debug("Response %s" % resp)
-            if resp.find('#') > -1: #If line has a Hash
-                self._waiting_response = 0 # Have data
+            if resp.find('#') > -1:
+                self._waiting_response = 0
                 break
-            if resp == '': #If no data
+            if resp == '':
                 # nothing coming, have read too many lines
-                return None, None
+                return None
         respitems = resp.split("#",maxsplit=1)[1].split()
-        command = respitems[1]
         if numElements == 1:
-            return respitems[-1], command
-        elif numElements == False:
-            return respitems, command
+            return respitems[-1]
         else:
-            return respitems[-numElements:], command
+            return respitems[-numElements:]
 
     def getUniqueId(self, unitCode=0):
         """Requests the unique ID of the target XAP800.
