@@ -281,8 +281,6 @@ class XAPX00(object):
         res = self.readResponse(numElements = rtnCount)
         return res
 
-    def decode_response(self):
-
     def readResponse(self, numElements=1):
         """Get response from unit.
         Args:
