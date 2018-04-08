@@ -285,7 +285,7 @@ class XAPX00(object):
             elif cmd == command:
                 return res
             else: # Got a response but not the right command.
-                return "Got Diff Command" + str(command)
+                print("Got a Different Command " + str(cmd))
 
     def readResponseCommand(self, numElements=1):
         """Get response from unit.
