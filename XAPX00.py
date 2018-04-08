@@ -179,12 +179,13 @@ class XAPX00(object):
     """XAPX000 Module."""
 
     def __init__(self, comPort="/dev/ttyUSB0", baudRate=38400,
-                 stereo=0, XAPType=XAP800Type, rtscts=True):
+                 stereo=0, XAPType=XAP800Type, rtscts=True, object=None):
         """init: no parameters required."""
         _LOGGER.debug("XAPX00 version: {}".format(__version__))
         self.comPort      = comPort
         self.baudRate     = baudRate
         self.byteLength   = 8
+        self.object       = object
         self.stopBits     = 1
         self.parity       = "N"
         self.timeout      = 1
@@ -279,6 +280,8 @@ class XAPX00(object):
         self._waiting_response = 1
         res = self.readResponse(numElements = rtnCount)
         return res
+
+    def decode_response(self):
 
     def readResponse(self, numElements=1):
         """Get response from unit.
@@ -1403,7 +1406,7 @@ class XAPX00(object):
                 "bandwidth": bandwidth,
                 }
 
-    def getFilter(self, channel, group, node, unitCode=0):
+    def getFilter(self, channel, group, node, unitCode=0, resp=None):
         """Set the settings of the AGC on an input channel
         unitCode - the unit code of the target XAP800
         channel   - 1-12
