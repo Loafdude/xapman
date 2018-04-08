@@ -303,6 +303,7 @@ class XAPX00(object):
                 # nothing coming, have read too many lines
                 return None
         respitems = resp.split("#",maxsplit=1)[1].split()
+        print(str(respitems))
         if numElements == 1:
             return respitems[-1]
         else:
