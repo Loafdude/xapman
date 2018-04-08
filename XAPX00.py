@@ -291,6 +291,7 @@ class XAPX00(object):
         """
         while 1:
             resp = self.serial.readline().decode() #Get the line
+            print(resp)
             if len(resp) > 5 and resp[0:5] == "ERROR": #If Error
                 self._waiting_response = 0
                 raise Exception(resp)
