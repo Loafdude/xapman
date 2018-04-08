@@ -279,7 +279,7 @@ class XAPX00(object):
         self.serial.write(xapstr.encode())
         self._waiting_response = 1
         while 1:
-            res, cmd = self.readResponse(numElements=rtnCount)
+            res, cmd = self.readResponseCommand(numElements=rtnCount)
             if res == None:
                 return None
             elif cmd == command:
@@ -287,7 +287,7 @@ class XAPX00(object):
             else: # Got a response but not the right command.
                 return "Got Diff Command" + str(command)
 
-    def readResponse(self, numElements=1):
+    def readResponseCommand(self, numElements=1):
         """Get response from unit.
         Args:
         numElements: How many response components to return,
@@ -314,6 +314,32 @@ class XAPX00(object):
             return respitems[-1], command
         else:
             return respitems[-numElements:], command
+
+    def readResponse(self, numElements=1):
+        """Get response from unit.
+        Args:
+        numElements: How many response components to return,
+        starts from end of resposne
+        Returns:
+            response string from unit
+        """
+        while 1:
+            resp = self.serial.readline().decode()
+            if len(resp) > 5 and resp[0:5] == "ERROR":
+                self._waiting_response = 0
+                raise Exception(resp)
+            _LOGGER.debug("Response %s" % resp)
+            if resp.find('#') > -1:
+                self._waiting_response = 0
+                break
+            if resp == '':
+                # nothing coming, have read too many lines
+                return None
+        respitems = resp.split("#",maxsplit=1)[1].split()
+        if numElements == 1:
+            return respitems[-1]
+        else:
+            return respitems[-numElements:]
 
     def getUniqueId(self, unitCode=0):
         """Requests the unique ID of the target XAP800.
