@@ -279,15 +279,44 @@ class XAPX00(object):
         self.serial.write(xapstr.encode())
         self._waiting_response = 1
         while 1:
-            res, cmd = self.readResponseCommand(numElements=rtnCount)
+            res, cmd = self.readResponseCommand()
             if res == None:
                 return None
             elif cmd == command:
-                return res
+                return self.decodeResponse(res)
             else: # Got a response but not the right command.
                 print("Got a Different Command " + str(cmd))
+                othercmd = self.decodeResponse(res)
 
-    def readResponseCommand(self, numElements=1):
+    def decodeResponse(self, res):
+        command = res[1]
+        unit = res[0][1:2]
+        if command == "GATE":
+            pass
+        elif command == "DECAY":
+            # Channel, Value
+            channel = int(res[2])
+            value = int(res[3])
+            string = None
+            if value == 1:
+                string = "Slow"
+            elif value == 2:
+                string = "Medium"
+            elif value == 3:
+                string = "Fast"
+            self.object.units[unit].input_channels[channel].gate_decay = value
+            self.object.units[unit].input_channels[channel].gate_decay_string = string
+            return value
+        elif command == "AEC":
+            # Channel, Group, Value
+            channel = int(res[2])
+            value = bool(int(res[4]))
+            self.object.units[unit].input_channels[channel].AEC = value
+            return value
+
+
+
+    def readResponseCommand(self):
         """Get response from unit.
         Args:
         numElements: How many response components to return,
@@ -309,11 +338,7 @@ class XAPX00(object):
                 return None, None
         respitems = resp.split("#",maxsplit=1)[1].split()
         command = respitems[1]
-        print(str(command))
-        if numElements == 1:
-            return respitems[-1], command
-        else:
-            return respitems[-numElements:], command
+        return respitems, command
 
     def readResponse(self, numElements=1):
         """Get response from unit.
