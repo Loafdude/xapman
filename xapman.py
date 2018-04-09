@@ -331,13 +331,18 @@ class XapUnit(object):
         self.FW_version = None
         self.DSP_version = None
         self.label = None
+        self.master_mode = None
+        self.master_mode_string = None
         self.modem_mode = None
         self.modem_pass = None
         self.modem_init_string = None
+        self.baudrate = None
+        self.flowcontrol = None
         self.program_strings = None
         self.safety_mute = None
         self.panel_timeout = None
         self.panel_lockout = None
+        self.panel_passcode = None
         self.output_channels = None
         self.input_channels = None
         self.processing_channels = None
@@ -527,12 +532,17 @@ class OutputChannel(object):
         self.group = channel_data[unit.device_type][channel]['og']
         self.type = channel_data[unit.device_type][channel]['otype']
         self.ramp_rate = self.connection.ramp_rate
-        self.gain = None  #
-        self.prop_gain = None  #
-        self.gain_min = None  #
-        self.gain_max = None  #
-        self.mute = None  #
-        self.label = None  #
+        self.gain = None
+        self.prop_gain = None
+        self.gain_min = None
+        self.gain_min_string = None
+        self.gain_max = None
+        self.gain_max_string = None
+        self.number_of_mic_attenuation = None
+        self.mute = None
+        self.label = None
+        self.level = None
+        self.level_metering_point = None
         self.sources = None
         self.filters = None
         self.exBus = None
@@ -689,6 +699,7 @@ class InputChannel(object):
         self.gain_max = None
         self.mute = None
         self.label = None
+        self.level = None
         self.mic = None
         self.exBus = None
         self.AGC = None  # True or False - Automatic Gain Control
@@ -696,6 +707,10 @@ class InputChannel(object):
         self.AGC_threshold = None  # -50 to 0dB
         self.AGC_attack = None  # 0.1 to 10.0s in .1 increments
         self.AGC_gain = None  # 0.0 to 18.0dB
+        self.AGC_target_string = None  # -30 to 20dB
+        self.AGC_threshold_string = None  # -50 to 0dB
+        self.AGC_attack_string = None  # 0.1 to 10.0s in .1 increments
+        self.AGC_gain_string = None  # 0.0 to 18.0dB
         self.filters = deepcopy(filter_data[self.type])
 
     # Microphone Input Only
@@ -705,11 +720,14 @@ class InputChannel(object):
         self.AEC = None  # True or False - Acoutstic Echo Canceller
         self.AEC_PA_reference = None  # None or OutputChannel
         self.NLP = None  # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
+        self.NLP_string = None  # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
         self.adaptive_ambient = None  # True or False
         self.ambient_level = None  # -80.0 to 0.0dB
         self.PA_adaptive = None  # True or False
         self.gating = None  # False, Manual On, Manual Off
+        self.gating_string = None
         self.gate_holdtime = None  # 0.10 - 8.00s
+        self.gate_holdtime_string = None  # 0.10 - 8.00s
         self.gate_override = None  # True or False
         self.gate_ratio = None  # 0-50dB
         self.gate_group = None  # 1-4 and A-D (gate group)
@@ -717,10 +735,14 @@ class InputChannel(object):
         self.gate_decay = None  # Slow, Medium, Fast
         self.gate_decay_string = None  # Slow, Medium, Fast
         self.gain_coarse = None
+        self.gain_coarse_string = None
         self.gate_attenuation = None  # 0-60dB
+        self.gate_attenuation_string = None  # 0-60dB
 
     # Processing Input Only
         self.delay = None
+        self.delay_time_string = None
+        self.delay_time = None
         self.compressor = None # True or False
         self.compressor_group = None #
         self.compressor_gain = None #
@@ -728,6 +750,11 @@ class InputChannel(object):
         self.compressor_ratio = None
         self.compressor_attack = None
         self.compressor_release = None
+        self.compressor_gain_string = None #
+        self.compressor_threshold_string = None
+        self.compressor_ratio_string = None
+        self.compressor_attack_string = None
+        self.compressor_release_string = None
 
         self.refreshData()
 
@@ -1336,12 +1363,23 @@ class MatrixLink(object):
         self.comms = connection.comms
         self.source = source
         self.dest = dest
-        self.gatemode = gatemode
+        self.gatemode = None
+        self.type = None
         self.state = None
         self.attenuation = None
+        self.attenuation_string = None
         self.enabled = False
         self.getStatus()
         self.getAttenuation()
+
+    def getType(self):
+        if self.state == "0":
+            self.type = "OFF"
+        elif self.state == "1" or self.state == "3":
+            self.type = "ON"
+        elif self.state == "4":
+            self.type = "GATED"
+        return self.type
 
     def getStatus(self):
         state = self.comms.getMatrixRouting(inChannel=self.source.channel, inGroup=self.source.group,
@@ -1483,6 +1521,7 @@ class GatingGroup(object):
         self.group = group
         self.comms = comms
         self.unit = unit
+        self.label = None
         self.max_mics = None # 1 to 8
         self.first_mic_priority = None # True or False
         self.last_mic = None # True, False
@@ -1549,6 +1588,9 @@ class Filter(object):
         self.frequency = None
         self.gain = None
         self.bandwidth = None
+        self.frequency_string = None
+        self.gain_string = None
+        self.bandwidth_string = None
         self.enabled = None
         self.getFilter()
         self.getEnabled()
@@ -1592,5 +1634,5 @@ class NotSupported(Exception):
         # get gate status
         # get gate reports
 #         flow control
-#
+    # label for gating groups
 #

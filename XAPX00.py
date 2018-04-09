@@ -186,12 +186,19 @@ class XAPX00(object):
         self.baudRate     = baudRate
         self.byteLength   = 8
         self.object       = object
+        self.write_to_object = False
         self.stopBits     = 1
         self.parity       = "N"
         self.timeout      = 1
         self.rtscts       = rtscts
         self.stereo       = stereo
         self.XAPType      = XAPType
+        self.input_groups = ['I', "M", "P", "L"]
+        self.unit_attribute = "units"
+        self.input_attribute = "input_channels"
+        self.output_attribute = "output_channels"
+        self.gating_attribute = "gating_groups"
+        self.output_groups = ['O']
         self.XAPCMD       = XAP800_CMD if XAPType == XAP800Type else XAP400_CMD
         self.connected    = 0
         self.input_range  = range(1, 13)
@@ -291,28 +298,373 @@ class XAPX00(object):
     def decodeResponse(self, res):
         command = res[1]
         unit = res[0][1:2]
+        value = None
         if command == "GATE":
             pass
         elif command == "DECAY":
-            # Channel, Value
-            channel = int(res[2])
-            value = int(res[3])
-            string = None
-            if value == 1:
-                string = "Slow"
-            elif value == 2:
-                string = "Medium"
-            elif value == 3:
-                string = "Fast"
-            self.object.units[unit].input_channels[channel].gate_decay = value
-            self.object.units[unit].input_channels[channel].gate_decay_string = string
-            return value
+            channel, value = int(res[2]), int(res[3])
+            strings = {1: "Slow",
+                       2: "Medium",
+                       3: "Fast"}
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_decay', value)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_decay_string', strings[value])
         elif command == "AEC":
-            # Channel, Group, Value
-            channel = int(res[2])
-            value = bool(int(res[4]))
-            self.object.units[unit].input_channels[channel].AEC = value
-            return value
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AEC', value)
+        elif command == "MAX":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                        in self.output_groups else self.input_attribute))[channel], 'gain_max', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                        in self.output_groups else self.input_attribute))[channel], 'gain_max_string', value)
+        elif command == "MIN":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                        in self.output_groups else self.input_attribute))[channel], 'gain_min', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                        in self.output_groups else self.input_attribute))[channel], 'gain_min_string', value)
+        elif command == "GAIN":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                        in self.output_groups else self.input_attribute))[channel], 'gain', value)
+        elif command == "LVL": # No Auto Update
+            channel, group, meter_position, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
+        elif command == "LABEL": # No Auto Update
+            if len(res) > 5:
+                channel, group, inout, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), str(res[5])
+            else:
+                channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+        elif command == "MTRX":
+            src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), int(res[6])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'state', value)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'enabled', bool(value))
+                getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel].getType()
+        elif command == "MTRXLVL":
+            src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), int(res[6])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation', value)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation_string', str(value))
+        elif command == "MUTE":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                            in self.output_groups else self.input_attribute))[channel], 'mute', float(value))
+        elif command == "RAMP":
+            channel, group, rate, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
+        elif command == "AAMB":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'adaptive_ambient', value)
+        elif command == "AGC":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                            in self.output_groups else self.input_attribute))[channel], 'AGC', value)
+        elif command == "AMBLVL":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'ambient_level', value)
+        elif command == "BAUD":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'baudrate', value)
+        elif command == "MASTER":
+            value = str(res[2])
+            strings = {1: "Master",
+                       2: "Slave"}
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'master_mode', value)
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'master_mode_string', strings[value])
+        elif command == "FLOW":
+            value = bool(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'flowcontrol', value)
+        elif command == "MDMODE":
+            value = bool(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'modem_mode', value)
+        elif command == "MINIT":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'modem_init_string', value)
+        elif command == "MPASS":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'modem_pass', value)
+        elif command == "VER":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'FW_version', value)
+        elif command == "DSPVER":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'DSP_version', value)
+        elif command == "SFTYMUTE":
+            value = bool(int(res[2]))
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'safety_mute', value)
+        elif command == "DID":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'serial_number', value)
+        elif command == "TOUT":
+            value = int(res[2])
+            if value is 0:
+                value = False
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_timeout', value)
+        elif command == "LFP":
+            value = int(res[3])
+            strings = {0: "Panel Unlocked",
+                       1: "Panel Locked",
+                       3: "Lock once timed out"}
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_lockout', value)
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_lockout_string', strings[value])
+        elif command == "PRESET":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), int(res[4])
+            # Not Implemented
+        elif command == "DFLTM":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+            # Convert Position and Group into string
+        elif command == "FPP":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_passcode', value)
+        elif command == "CHAIRO":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_chairman', value)
+        elif command == "GMODE":
+            channel, value = convertToInt(res[2]),  int(res[3])
+            strings = {1: "Auto",
+                       2: "Manual On",
+                       3: "Manual Off"}
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gating', value)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gating_string', strings[value])
+        elif command == "MLINE":
+            channel, value = convertToInt(res[2]),  int(res[3])
+            strings = {0: "0dB",
+                       2: "25dB",
+                       1: "55dB"}
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gain_coarse', value)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gain_coarse_string', strings[value])
+        elif command == "NLP":
+            channel, value = convertToInt(res[2]),  int(res[3])
+            strings = {0: "Off",
+                       1: "Soft",
+                       2: "Medium",
+                       3: "Aggressive"}
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'NLP', value)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'NLP_string', strings[value])
+        elif command == "GRPSEL":
+            channel, value = convertToInt(res[2]), convertToInt(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_group', value)
+        elif command == "GOVER":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_override', value)
+        elif command == "PAA":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'PA_adaptive', value)
+        elif command == "PP":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'phantom_power', value)
+        elif command == "NCSEL":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'NC', value)
+        elif command == "NCD":
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), int(res[4])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'NC_depth', value)
+        elif command == "GHOLD":
+            channel, value = convertToInt(res[2]), str(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_holdtime', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_holdtime_string', value)
+        elif command == "GHOLD":
+            channel, group, threshold, target, attack, gain = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), str(res[5]), str(res[6]), str(res[7])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_threshold', float(threshold))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_threshold_string', threshold)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_target', float(target))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_target_string', target)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_attack', float(attack))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_attack_string', attack)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_gain', float(gain))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AGC_gain_string', gain)
+        elif command == "FILTER":
+            channel, group, node, ftype = convertToInt(res[2]), convertToInt(res[3]), int(res[4]), int(res[5])
+            freq, gain, bandwidth = None, None, None
+            strings = {0: "Not Configured",
+                       1: "All Pass",
+                       2: "Low Pass",
+                       3: "High Pass",
+                       4: "Low Shelving",
+                       5: "High Shelving",
+                       6: "Parametric EQ",
+                       7: "CD Horn",
+                       8: "Bessel Crossover",
+                       9: "Butterworth Crossover",
+                       10: "Linkwitz-Riley Crossover",
+                       11: "Notch"}
+            if ftype is not 0:
+                freq = str(res[6])
+                if ftype is 4 or ftype is 5:
+                    gain = str(res[7])
+                elif ftype is 6 or 6 < ftype < 11:
+                    gain = str(res[7])
+                    bandwidth = str(res[8])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'type', int(ftype))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'type_string', strings[ftype])
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'frequency', float(freq))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'frequency_string', freq)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'gain', float(gain))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'gain_string', gain)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'bandwidth', float(bandwidth))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'bandwidth_string', bandwidth)
+            value = [channel, group, node, ftype, freq, gain, bandwidth]
+        elif command == "FILTSEL":
+            channel, group, node, value = convertToInt(res[2]), convertToInt(res[3]), int(res[4]), bool(int(res[5]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].filters[node],
+                        'enabled', value)
+        elif command == "COMPSEL":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'compressor', value)
+        elif command == "CGROUP":
+            channel, value = convertToInt(res[2]), int(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'compressor_group', value)
+        elif command == "COMPRESS":
+            channel, threshold, ratio, attack, release, gain = convertToInt(res[2]), str(res[3]), str(res[4]), str(res[5]), str(res[6]), str(res[7])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'threshold', float(threshold))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'threshold_string', threshold)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'ratio', float(ratio))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'ratio_string', ratio)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'attack', float(attack))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'attack_string', attack)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'release', float(release))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'release_string', release)
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gain', float(gain))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gain_string', gain)
+            value = [channel, threshold, ratio, attack, release, gain]
+        elif command == "DELAYSEL":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'delay', value)
+        elif command == "DELAY":
+            channel, value = convertToInt(res[2]), str(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'delay_time', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'delay_time_time', value)
+        elif command == "GRATIO":
+            channel, value = convertToInt(res[2]),  int(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_ratio', float(value))
+        elif command == "REFSEL":
+            channel, ref_group, ref_channel = convertToInt(res[2]), str(res[3]), convertToInt(res[4])
+            if self.write_to_object:
+                refchan = getattr(getattr(self.object, self.unit_attribute)[unit], self.output_attribute)[ref_channel]
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'AEC_PA_reference', refchan)
+        elif command == "OFFA":
+            channel, value = convertToInt(res[2]), str(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_attenuation', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'gate_attenuation_string', value)
+        elif command == "FMP":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.gating_attribute)[channel],
+                        'first_mic_priority', value)
+        elif command == "LMO":
+            channel, value = convertToInt(res[2]), str(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.gating_attribute)[channel],
+                        'last_mic', value)
+        elif command == "MMAX":
+            channel, value = convertToInt(res[2]), int(res[3])
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.gating_attribute)[channel],
+                        'max_mics', value)
+        elif command == "NOM":
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            if self.write_to_object:
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.output_attribute)[channel],
+                        'number_of_mic_attenuation', value)
+        return value
+
 
 
 
@@ -420,7 +772,7 @@ class XAPX00(object):
         unitCode - the unit code of the target XAP800
         """
         res = self.XAPCommand("DECAY", channel, unitCode=unitCode)
-        return int(res)
+        return res
 
     @stereo
     def setEchoCanceller(self, channel, isEnabled, unitCode=0):
@@ -430,7 +782,7 @@ class XAPX00(object):
         isEnabled - true to enable the channel, false to disable
         """
         res = self.XAPCommand("AEC", channel, (1 if isEnabled else 0), unitCode=unitCode)
-        return bool(int(res))
+        return res
 
     @stereo
     def getEchoCanceller(self, channel, unitCode=0):
@@ -440,12 +792,12 @@ class XAPX00(object):
         isEnabled - true to enable the channel, false to disable
         """
         res = self.XAPCommand("AEC", channel, unitCode=unitCode)
-        return bool(int(res))
+        return res
 
     @stereo
     def getMaxGain(self, channel, group="I", unitCode=0):
         """Get max gain setting for a channel."""
-        if group in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
+        if group in nogainGroups: #E is expansion, GAIN is set on source unit, so returns max
             raise Exception('Gain not available on Expansion Bus')
         resp = self.XAPCommand("MAX", channel, group, unitCode=unitCode)
         return float(resp)
@@ -453,7 +805,7 @@ class XAPX00(object):
     @stereo
     def setMaxGain(self, channel, gain, group="I", unitCode=0):
         """Set max gain setting for a channel."""
-        if group in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
+        if group in nogainGroups: #E is expansion, GAIN is set on source unit, so returns max
             raise Exception('Gain not available on Expansion Bus')
         resp = self.XAPCommand("MAX", channel, group, gain, unitCode=unitCode)
         return resp
@@ -461,7 +813,7 @@ class XAPX00(object):
     @stereo
     def getMinGain(self, channel, group="I", unitCode=0):
         """Get min gain setting for a channel."""
-        if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so return max
+        if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so returns mix
             raise Exception('Gain not available on Expansion Bus')
         resp = self.XAPCommand("MIN", channel, group, unitCode=unitCode)
         return float(resp)
@@ -469,7 +821,7 @@ class XAPX00(object):
     @stereo
     def setMinGain(self, channel, gain, group="I", unitCode=0):
         """Set min gain setting for a channel."""
-        if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so return max
+        if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so returns mix
             raise Exception('Gain not available on Expansion Bus')
         resp = self.XAPCommand("MIN", channel, group, gain, unitCode=unitCode)
         return resp
@@ -525,8 +877,6 @@ class XAPX00(object):
         if group in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
             raise Exception('Gain not available on Expansion Bus')
         gain = linear2db(gain) if self.convertDb else gain
-        if group in ('E'):  # can't set GAIN on expansion bus
-            resp = 20.0 # or raise error?????
         resp = self.XAPCommand("GAIN", channel, group, gain, "A" if isAbsolute == 1 else "R",
                                unitCode=unitCode, rtnCount=2)[0]
         return db2linear(resp) if self.convertDb else resp
@@ -698,7 +1048,7 @@ class XAPX00(object):
         Ramp gain at the specified rate in db/sec to the target
         or to max / min if target is blank (space).
         """
-        resp = self.XAPCommand("Ramp", channel, group, rate, target, unitCode=unitCode)
+        resp = self.XAPCommand("RAMP", channel, group, rate, target, unitCode=unitCode)
         return int(resp)
 
     def setAdaptiveAmbient(self, channel, isEnabled, unitCode=0):
@@ -813,7 +1163,7 @@ class XAPX00(object):
         """Cause the XAP800 to swap its settings for the given preset.
         Args:
             unitCode - the unit code of the target XAP800
-            preset - the preset to switch to (1-6)
+            preset - the preset to switch to (1-32)
         """
         resp = self.XAPCommand('PRESET', preset, unitCode=unitCode)
         return int(resp)
@@ -824,14 +1174,6 @@ class XAPX00(object):
             unitCode - the unit code of the target XAP800
         """
         resp = self.XAPCommand('PRESET', preset, unitCode=unitCode)
-        return int(resp)
-
-    def getEchoReturnLoss(self, channel, unitCode=0):
-        """Request the status of the echo return loss.
-        unitCode - the unit code of the target XAP800
-        channel - the target channel
-        """
-        resp = self.XAPCommand('ERL', channel, unitCode=unitCode)
         return int(resp)
 
     def setDefaultMeter(self, channel, isInput, unitCode=0):
@@ -958,23 +1300,6 @@ class XAPX00(object):
         """
         resp = self.XAPCommand('GOVER', channel, unitCode=unitCode)
         return bool(int(resp))
-
-    def setGatingHold(self, channel, time, unitCode=0):
-        """Set the gating mode on the specified channel for the specified XAP800.
-        unitCode - the unit code of the target XAP800
-        channel - the target channel (1-8, or * for all)
-        time - the gating hold time. 0.10s - 8.00s
-        """
-        resp = self.XAPCommand('GHOLD', channel, time, unitCode=unitCode)
-        return float(resp)
-
-    def getGatingHold(self, channel, unitCode=0):
-        """Request the gating mode on the specified channel for the specified XAP800.
-        unitCode - the unit code of the target XAP800
-        channel - the target channel (1-8, or * for all)
-        """
-        resp = self.XAPCommand('GHOLD', channel, unitCode=unitCode)
-        return float(resp)
 
     def setGateRatio(self, channel, gateRatioInDb, unitCode=0):
         """Set the gating ratio for the specified XAP800.
@@ -1147,6 +1472,8 @@ class XAPX00(object):
             maxMics = 0
         elif maxMics > 8:
             maxMics = 8
+        if group in ["A", "B", "C", "D"]:
+            unitCode = "*"
         resp = self.XAPCommand('MMAX', group, maxMics, unitCode=unitCode)
         return int(resp)
 
@@ -1590,21 +1917,8 @@ class XAPX00(object):
                 "release": resp[3],
                 "gain": resp[4]}
 
-    errorDefs = {"ERROR 1": "Out of Memory",
-                 "ERROR 2": "Could not extract a command from the string received",
-                 "ERROR 3": "Unknown Command",
-                 "ERROR 4": "N/A - reserved for later use",
-                 "ERROR 5": "Invalid parameter",
-                 "ERROR 6": "Unrecognized command",
-                 "ERROR 7": "Bad Checksum (Binary Command Error)",
-                 "ERROR 8": "Preset of Macro Invalid",
-                 "ERROR 10": "Queue Error",
-                 "ERROR 11": "Command too Big (Binary Command Error)",
-                 "ERROR 12": "Unit is Locked",
-                 "default": "Unknown error - no description found"
-                 }
-
-    def getHumanErrorDescription(self, errorMsg):
-        """Translates ERROR replies from the XAP800 into a human-readable description of the problem."""
-        return errorDefs.get(errorMsg, "Unknown Error")
-
+def convertToInt(string):
+        try:
+            return int(string)
+        except:
+            return string
