@@ -371,7 +371,8 @@ class XapUnit(object):
         print("  Scanning Matrix...")
         for y, row in self.matrix.items():
             for x, matrix_item in row.items():
-                matrix_item.initialize()
+                if matrix_item:
+                    matrix_item.initialize()
         print("  Scanning Gating Groups...")
         for group, data in self.gating_groups.items():
             self.gating_groups[group].initialize()
