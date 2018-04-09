@@ -645,6 +645,9 @@ class XAPX00(object):
                 refchan = getattr(getattr(self.object, self.unit_attribute)[unit], self.output_attribute)[ref_channel]
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'AEC_PA_reference', refchan)
+            else:
+                refchan = ref_channel
+            value = refchan
         elif command == "OFFA":
             channel, value = convertToInt(res[2]), str(res[3])
             if self.write_to_object:
