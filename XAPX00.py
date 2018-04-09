@@ -201,11 +201,9 @@ class XAPX00(object):
         self.output_groups = ['O']
         self.XAPCMD       = XAP800_CMD if XAPType == XAP800Type else XAP400_CMD
         self.connected    = 0
-        self.input_range  = range(1, 13)
-        self.output_range = range(1, 13)
         self.convertDb    = 1  # translate levels between linear(0-1) and db
         self._lastcall    = time.time()
-        self._maxtime     = 60 * 60 * 1  # 1 hour
+        self._maxtime     = 60 * 60 * 1  # After 1hr reset serial before attempting commands
         self._maxrespdelay = 5
         self._sleeptime = 0.25
         self._waiting_response = 0
@@ -295,6 +293,16 @@ class XAPX00(object):
                 print("Got a Different Command " + str(cmd))
                 othercmd = self.decodeResponse(res)
 
+    def listen(self):
+        self._waiting_response = 1
+        while 1:
+            res, cmd = self.readResponseCommand()
+            if res == None:
+                return None
+            else: # Got a response but not the right command.
+                print("Got a Different Command " + str(cmd))
+                othercmd = self.decodeResponse(res)
+
     def decodeResponse(self, res):
         print("DATA: " + str(res))
         res.append("")
@@ -302,7 +310,8 @@ class XAPX00(object):
         unit = int(res[0][1:2])
         value = None
         if command == "GATE":
-            pass
+            value = str(res[2])
+            print('{0:08b}'.format(5))
         elif command == "DECAY":
             channel, value = int(res[2]), int(res[3])
             strings = {1: "Slow",
