@@ -238,6 +238,7 @@ class connect(object):
         self.baudrate = baudrate
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
+        self.initialize = True  # Do not scan devices for data
         self.units = {}
         print("Preparing XAP devices to be interrogated")
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type, object=self)
@@ -329,7 +330,6 @@ class XapUnit(object):
     def __init__(self, xap_connection, XAP_unit=0):
         self.connection = xap_connection
         self.comms = xap_connection.comms
-        self.initialize = True
         self.device_id = XAP_unit
         self.device_type = xap_connection.comms.getUnitType(XAP_unit)
         self.serial_number = None
@@ -358,7 +358,7 @@ class XapUnit(object):
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def initialize(self):
-        if self.initialize is True:
+        if self.connection.initialize is True:
             self.refreshData()
             self.scanOutputChannels()
             self.scanInputChannels()
