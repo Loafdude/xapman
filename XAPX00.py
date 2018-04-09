@@ -340,12 +340,10 @@ class XAPX00(object):
         elif command == "LVL": # No Auto Update
             channel, group, meter_position, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
         elif command == "LABEL": # No Auto Update
-            if len(res) == 6:
+            if len(res) == 7:
                 channel, group, inout, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), str(res[5])
-            elif len(res) == 5:
-                channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
             else:
-                channel, group, value = convertToInt(res[2]), convertToInt(res[3]), ""
+                channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
         elif command == "MTRX":
             src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), int(res[6])
             if self.write_to_object:
@@ -681,9 +679,6 @@ class XAPX00(object):
             print("Could not parse command " + str(command))
             return None
         return value
-
-
-
 
     def readResponseCommand(self):
         """Get response from unit.
