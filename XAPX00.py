@@ -1823,7 +1823,7 @@ class XAPX00(object):
         freq = None
         gain = None
         bandwidth = None
-        if int(resp[5]) is not 0:
+        if resp[5] and int(resp[5]) is not 0:
             type = int(resp[5])
             freq = float(resp[6])
             if type is 4 or type is 5:
