@@ -231,6 +231,7 @@ class XAPX00(object):
         self.serial.write("#7* STRING 7\r".encode())
         data = self.serial.readlines(5000)
         try:
+            print(str(data))
             attached_unit = data[data.index("**IMATTACHED**")-14]
             print("Attached Unit " + attached_unit)
         except:
