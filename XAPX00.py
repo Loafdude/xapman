@@ -249,6 +249,8 @@ class XAPX00(object):
                 print(str(data))
                 if len(data) > 3:
                     type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
+                    print(cmd)
+                    print(command)
                     if str(cmd) is str(command):
                         print(str(cmd))
                         result.append([type, did, cmd, value1, value2])
