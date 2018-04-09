@@ -253,7 +253,7 @@ class XAPX00(object):
                                          "device_type": u[2]})
         self.connected = 1
         print("Serially Attached to Unit ID " + str(self.connected_unit_id))
-        print(len(self.available_units) + " total units found" + str(self.connected_unit_id))
+        print(" Total Units Found: " + str(len(self.available_units)))
 
     def getSerialData(self, command):
         result = []
