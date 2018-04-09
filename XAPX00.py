@@ -220,9 +220,9 @@ class XAPX00(object):
         units = []
         self.serial.reset_input_buffer()
         self.serial.readlines(5000)  # clear response
-        self.serial.write("#5* PRGSTRING 7 \r".encode())
+        self.serial.write("#5* PRGSTRING 7\r".encode())
         units.append(self.getSerialData("PRGSTRING"))
-        self.serial.write("#7* PRGSTRING 7 \r".encode())
+        self.serial.write("#7* PRGSTRING 7\r".encode())
         units.append(self.getSerialData("PRGSTRING"))
         for u in units:
             print(str(u))
