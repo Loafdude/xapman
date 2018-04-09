@@ -235,7 +235,6 @@ class XAPX00(object):
         for d in data:
             try:
                 if "**IMATTACHED**" in str(d):
-                    print(str(d))
                     attached_unit = str(d)[str(d).index("**IMATTACHED**")+15]
                     print("Attached Unit " + attached_unit)
             except:
@@ -254,7 +253,7 @@ class XAPX00(object):
             if len(resp) is 2:
                 data = resp[1].split()
                 if len(data) > 3:
-                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
+                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2].strip(), data[3].strip()
                     if str(cmd) == str(command):
                         result.append([type, did, cmd, value1, value2])
         return result
