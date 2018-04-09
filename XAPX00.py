@@ -299,7 +299,7 @@ class XAPX00(object):
         print("DATA: " + str(res))
         res.append("")
         command = res[1]
-        unit = res[0][1:2]
+        unit = int(res[0][1:2])
         value = None
         if command == "GATE":
             pass
