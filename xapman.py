@@ -262,6 +262,7 @@ class connect(object):
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.comms.write_to_object = True
                 self.units[u] = XapUnit(self, XAP_unit=u)
+                self.units[u].initialize()
         self.comms.write_to_object = True
         print("Found " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
@@ -351,13 +352,16 @@ class XapUnit(object):
         self.processing_channels = None
         self.expansion_busses = None
         self.matrix = None
+        self.gating_groups = deepcopy(gating_groups)
+        for group, data in self.gating_groups.items():
+            self.gating_groups[group] = GatingGroup(group, self.comms, self)
+            self.gating_groups[group].initialize()
+
+    def initialize(self):
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
         self.scanMatrix()
-        self.gating_groups = deepcopy(gating_groups)
-        for group, data in self.gating_groups.items():
-            self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
@@ -1414,6 +1418,8 @@ class GatingGroup(object):
         self.max_mics = None # 1 to 8
         self.first_mic_priority = None # True or False
         self.last_mic = None # True, False
+
+    def initialize(self):
         self.getFirstMicPriority()
         self.getLastMicOn()
         self.getMaxMics()
