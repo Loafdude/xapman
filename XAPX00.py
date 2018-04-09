@@ -236,7 +236,7 @@ class XAPX00(object):
     def getSerialData(self, command):
         result = []
         for serdata in self.serial.readlines(5000):
-            resp = serdata.strip().split('#')
+            resp = str(serdata).strip().split('#')
             if len(resp) == 2:
                 data = resp.split()
                 if len(data) > 4:
