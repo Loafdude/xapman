@@ -251,7 +251,7 @@ class XAPX00(object):
                     type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
                     print(cmd)
                     print(command)
-                    if str(cmd).encode() is str(command).encode():
+                    if str(cmd) == str(command):
                         print(str(cmd))
                         result.append([type, did, cmd, value1, value2])
         return result
