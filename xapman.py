@@ -360,6 +360,10 @@ class XapUnit(object):
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
+    def __setattr__(self, name, value):
+        print(str(name) + " <- " + str(value))
+        super().__setattr__(name, value)
+
     def initialize(self):
         if self.connection.initialize is True:
             self.refreshData()
