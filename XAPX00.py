@@ -663,6 +663,9 @@ class XAPX00(object):
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.output_attribute)[channel],
                         'number_of_mic_attenuation', value)
+        else:
+            print("Could not parse command " + str(command))
+            return None
         return value
 
 
