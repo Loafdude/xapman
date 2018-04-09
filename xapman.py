@@ -1364,14 +1364,18 @@ class ExpansionBusManager(object):
         def __repr__(self):
             return "ExpansionBusAllocator: " + self.statusReport()
 
-        def __init__(self, connection, reserved_channels=None):
+        def __init__(self, connection, reserved_channels=[]):
             self.connection = connection
             self.comms = connection.comms
-            self.reserved_channels = []
+            self.reserved_channels = reserved_channels
             self.units = connection.units
+            if self.connection.initialize:
+                self.initialize()
+
+
+        def initialize(self):
             self.busUsed = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
-            if reserved_channels:
-                self.reserved_channels = reserved_channels
+            if len(self.reserved_channels) > 0:
                 for channel in self.reserved_channels:
                     self.busUsed.pop(channel, None)
             for channel, status in self.busUsed.items():
