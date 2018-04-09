@@ -374,7 +374,6 @@ class XAPX00(object):
             else:
                 channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
         elif command == "MTRX":
-            print(str(res))
             src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), str(res[6])
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'state', value)
