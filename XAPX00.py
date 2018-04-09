@@ -746,8 +746,12 @@ class XAPX00(object):
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.output_attribute)[channel],
                         'number_of_mic_attenuation', value)
+        elif command == "PRGSTRING":
+            pass # Not implemented
+        elif command == "STRING":
+            pass # Not implemented
         else:
-            raise Exception("Could not parse command " + str(command))
+            print("ERROR: Could not parse serial command " + str(command))
         return value
 
     def readResponseCommand(self):
