@@ -316,7 +316,7 @@ class XAPX00(object):
                         gates = format(int('0x' + str(res[2]), 16), "04b")[::-1]
                     else:
                         gates = format(int('0x' + str(res[2]), 16), "08b")[::-1]
-                except TypeError:
+                except (TypeError, KeyError):
                     gates = format(int('0x' + str(res[2]), 16), "08b")[::-1]
                 channel = 1
                 for bit in gates:
@@ -329,7 +329,7 @@ class XAPX00(object):
                         if bool(int(bit)) is not gate:
                             setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
                                 channel], "gate_open", bool(int(bit)))
-                    except TypeError:
+                    except (TypeError, KeyError):
                         break
                     channel += 1
         elif command == "DECAY":
