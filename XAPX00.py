@@ -235,6 +235,7 @@ class XAPX00(object):
         for d in data:
             try:
                 if "**IMATTACHED**" in str(d):
+                    print(str(d))
                     attached_unit = str(d)[str(d).index("**IMATTACHED**")-14]
                     print("Attached Unit " + attached_unit)
             except:
