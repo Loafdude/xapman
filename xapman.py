@@ -1539,8 +1539,6 @@ class NoExpansionBusAvailable(Exception):
 class NotSupported(Exception):
     pass
 #
-        #
-        # get gate status
-        # get gate reports
     # label for gating groups
+    # how to run functions on attribute change
 #

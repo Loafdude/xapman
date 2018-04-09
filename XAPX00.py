@@ -290,7 +290,6 @@ class XAPX00(object):
             elif cmd == command:
                 return self.decodeResponse(res)
             else: # Got a response but not the right command.
-                print("Got a Different Command " + str(cmd))
                 othercmd = self.decodeResponse(res)
 
     def listen(self):
@@ -309,7 +308,6 @@ class XAPX00(object):
         value = None
         if command == "GATE":
             value = format(int('0x' + str(res[2]), 16), "08b")
-            print(format(int('0x' + str(res[2]), 16), "08b"))
             if self.write_to_object:
                 try:
                     if self.object.units[unit].device_type is "XAP400":
@@ -376,6 +374,7 @@ class XAPX00(object):
             else:
                 channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
         elif command == "MTRX":
+            print(str(res))
             src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), str(res[6])
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'state', value)
@@ -707,8 +706,7 @@ class XAPX00(object):
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.output_attribute)[channel],
                         'number_of_mic_attenuation', value)
         else:
-            print("Could not parse command " + str(command))
-            return None
+            raise Exception("Could not parse command " + str(command))
         return value
 
     def readResponseCommand(self):
