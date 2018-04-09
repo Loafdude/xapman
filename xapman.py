@@ -720,6 +720,7 @@ class InputChannel(object):
         self.gate_holdtime_string = None  # 0.10 - 8.00s
         self.gate_override = None  # True or False
         self.gate_ratio = None  # 0-50dB
+        self.gate_open = None  # True False
         self.gate_group = None  # 1-4 and A-D (gate group)
         self.gate_chairman = None  # True or False
         self.gate_decay = None  # Slow, Medium, Fast
