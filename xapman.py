@@ -241,7 +241,7 @@ class connect(object):
         self.serial_path = serial_path
         self.initialize = init  # Do not scan devices for data
         self.units = {}
-        print("Preparing XAP devices to be interrogated")
+        print("Connecting...")
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type, object=self)
         self.comms.convertDb = 0
         self.comms.connect()
@@ -257,7 +257,8 @@ class connect(object):
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
-        for u in range(8):
+        for device in self.comms.available_units:
+            u = device['device_id']
             self.comms.write_to_object = False
             uid = self.comms.getUniqueId(u)
             if uid != None:
