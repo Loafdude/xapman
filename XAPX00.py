@@ -250,7 +250,7 @@ class XAPX00(object):
         self.connected_unit_id = attached_unit
         for u in units:
             self.available_units.append({"device_id": u[1],
-                                         "device_type": u[2]})
+                                         "device_type": u[0]})
         self.connected = 1
         print("Serially Attached to Unit ID " + str(self.connected_unit_id))
         print(" Total Units Found: " + str(len(self.available_units)))
