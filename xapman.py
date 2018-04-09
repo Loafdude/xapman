@@ -244,7 +244,6 @@ class connect(object):
         self.comms.convertDb = 0
         self.comms.connect()
         self.scanDevices()
-        self.comms.write_to_object = True
         print("Scanning Expansion Bus and allocating channels...")
         self.expansion_bus = ExpansionBusManager(self)
         print("  ExBus Status: " + self.expansion_bus.statusReport())
@@ -256,11 +255,14 @@ class connect(object):
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
         for u in range(8):
+            self.comms.write_to_object = False
             uid = self.comms.getUniqueId(u)
             if uid != None:
                 unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": self.comms.getUnitType(u)}
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
+                self.comms.write_to_object = True
                 self.units[u] = XapUnit(self, XAP_unit=u)
+        self.comms.write_to_object = True
         print("Found " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
         return self.units
@@ -323,8 +325,7 @@ class XapUnit(object):
     def __repr__(self):
         return "Unit: " + self.device_type + " (ID " + str(self.device_id) + ")"
 
-    def __init__(self, xap_connection,
-                 XAP_unit=0):
+    def __init__(self, xap_connection, XAP_unit=0):
         self.connection = xap_connection
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
