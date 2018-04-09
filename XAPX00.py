@@ -848,7 +848,7 @@ class XAPX00(object):
         maxdb = self.getMaxGain(channel, group=group, unitCode=unitCode,
                                 stereo=0)
         resp = self.XAPCommand("GAIN", channel, group, unitCode=unitCode, rtnCount=2)
-        resp = db2linear(resp[0], maxdb)
+        resp = db2linear(resp, maxdb)
         return resp
 
     @stereo
