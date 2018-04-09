@@ -321,8 +321,14 @@ class connect(object):
             self.expansion_bus.getChannelUsage(exBus)
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + released
 
+class TestClass(type):
+    def __setattr__(cls, name, value):
+        print("ding ding")
+        print(str(name) + " <- " + str(value))
+        super().__setattr__(name, value)
 
-class XapUnit(object):
+
+class XapUnit(object, metaclass=TestClass):
     """Xap Unit Wrapper
        The following are not implemented;
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
