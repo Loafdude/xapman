@@ -542,6 +542,7 @@ class XAPX00(object):
                         'AGC_gain', float(gain))
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'AGC_gain_string', gain)
+            value = [threshold, target, attack, gain]
         elif command == "FILTER":
             channel, group, node, ftype = convertToInt(res[2]), convertToInt(res[3]), int(res[4]), int(res[5])
             freq, gain, bandwidth = None, None, None
