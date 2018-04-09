@@ -162,7 +162,7 @@ def db2linear(db, maxref=0):
     """Convert a db level to a linear level of 0-1.
     If maxref is provided, the return value is a proportion of maxref
     """
-    return (10.0 ** ((float(db) + 0.0000001 - float(maxref)) / 20.0))
+    return (10.0 ** ((float(db) + 0.0000001 - maxref) / 20.0))
 
 
 def linear2db(gain, maxref=0):
@@ -337,6 +337,7 @@ class XAPX00(object):
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
                         in self.output_groups else self.input_attribute))[channel], 'gain', value)
+            value = float(value)
         elif command == "LVL": # No Auto Update
             channel, group, meter_position, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
         elif command == "LABEL": # No Auto Update
