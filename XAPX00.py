@@ -328,9 +328,9 @@ class XAPX00(object):
                             gate = False
                             setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
                                     channel], "gate_open", False)
-                        if bool(bit) is not gate:
+                        if bool(int(bit)) is not gate:
                             setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
-                                channel], "gate_open", bool(bit))
+                                channel], "gate_open", bool(int(bit)))
                     except TypeError:
                         break
                     channel += 1
