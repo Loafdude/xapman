@@ -232,13 +232,14 @@ class connect(object):
                  baudrate=38400,
                  mqtt_path="home/HA/AudioMixers/",
                  device_type="XAP800",
-                 ramp_rate=6):
+                 ramp_rate=6,
+                 init=True):
 
         self.mqtt_path = mqtt_path
         self.baudrate = baudrate
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
-        self.initialize = True  # Do not scan devices for data
+        self.initialize = init  # Do not scan devices for data
         self.units = {}
         print("Preparing XAP devices to be interrogated")
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type, object=self)
