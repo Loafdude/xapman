@@ -336,7 +336,9 @@ class XAPX00(object):
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
-                        in self.output_groups else self.input_attribute))[channel], 'gain', value)
+                        in self.output_groups else self.input_attribute))[channel], 'gain', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
+                        in self.output_groups else self.input_attribute))[channel], 'gain_string', value)
         elif command == "LVL": # No Auto Update
             channel, group, meter_position, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
         elif command == "LABEL": # No Auto Update
