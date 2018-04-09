@@ -724,6 +724,7 @@ class InputChannel(object):
         self.NLP_string = None  # False = Off, Soft, Medium, Aggresive - Non-Linear Processing
         self.adaptive_ambient = None  # True or False
         self.ambient_level = None  # -80.0 to 0.0dB
+        self.ambient_level_string = None  # -80.0 to 0.0dB
         self.PA_adaptive = None  # True or False
         self.gating = None  # False, Manual On, Manual Off
         self.gating_string = None

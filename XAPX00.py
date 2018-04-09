@@ -375,10 +375,12 @@ class XAPX00(object):
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
                             in self.output_groups else self.input_attribute))[channel], 'AGC', value)
         elif command == "AMBLVL":
-            channel, value = convertToInt(res[2]), bool(int(res[3]))
+            channel, value = convertToInt(res[2]), str(res[3])
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
-                        'ambient_level', value)
+                        'ambient_level', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
+                        'ambient_level_string', value)
         elif command == "BAUD":
             value = str(res[2])
             if self.write_to_object:
