@@ -253,7 +253,7 @@ class XAPX00(object):
             if len(resp) is 2:
                 data = resp[1].split()
                 if len(data) > 3:
-                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2].strip(), data[3].strip()
+                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], str(data[2]).strip(), str(data[3]).strip()
                     if str(cmd) == str(command):
                         result.append([type, did, cmd, value1, value2])
         return result
