@@ -240,8 +240,11 @@ class XAPX00(object):
                     print("Attached Unit " + attached_unit)
             except:
                 raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
+        for u in units:
+            self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[4] + "\r").encode())
         if attached_unit is None:
             raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
+
         self.connected = 1
 
     def getSerialData(self, command):
