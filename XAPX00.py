@@ -232,13 +232,13 @@ class XAPX00(object):
         self.serial.write("#7* STRING 7\r".encode())
         data = self.serial.readlines(5000)
         attached_unit = None
-        try:
-            for d in data:
+        for d in data:
+            try:
                 if "**IMATTACHED**" in str(d):
                     attached_unit = data[data.index("**IMATTACHED**")-14]
                     print("Attached Unit " + attached_unit)
-        except:
-            raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
+            except:
+                raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
         if attached_unit is None:
             raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
         self.connected = 1
