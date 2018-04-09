@@ -328,7 +328,7 @@ class TestClass(type):
         super().__setattr__(name, value)
 
 
-class XapUnit(object, metaclass=TestClass):
+class XapUnit(metaclass=TestClass):
     """Xap Unit Wrapper
        The following are not implemented;
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
