@@ -227,7 +227,6 @@ class XAPX00(object):
         self.serial.write("#7* PRGSTRING 7\r".encode())
         units = units + self.getSerialData("PRGSTRING")
         for u in units:
-            print(str(u))
             self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 **IMATTACHED**" + u[0] + u[1] + "\r").encode())
         self.serial.readlines(5000) # Clear Buffer
         self.serial.write("#5* STRING 7\r".encode())
@@ -238,7 +237,6 @@ class XAPX00(object):
             try:
                 if "**IMATTACHED**" in str(d):
                     attached_unit = str(d)[str(d).index("**IMATTACHED**")+15]
-                    print("Attached Unit " + attached_unit)
             except:
                 for u in units:
                     self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[4].strip() + "\r").encode())
@@ -254,6 +252,8 @@ class XAPX00(object):
             self.available_units.append({"device_id": u[1],
                                          "device_type": u[2]})
         self.connected = 1
+        print("Serially Attached to Unit ID " + str(self.connected_unit_id))
+        print(len(self.available_units) + " total units found" + str(self.connected_unit_id))
 
     def getSerialData(self, command):
         result = []
