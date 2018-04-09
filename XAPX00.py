@@ -300,11 +300,9 @@ class XAPX00(object):
             if res == None:
                 return None
             else: # Got a response but not the right command.
-                print("Got a Different Command " + str(cmd))
                 othercmd = self.decodeResponse(res)
 
     def decodeResponse(self, res):
-        print("DATA: " + str(res))
         res.append("")
         command = res[1]
         unit = int(res[0][1:2])
@@ -334,8 +332,6 @@ class XAPX00(object):
                     except TypeError:
                         break
                     channel += 1
-
-
         elif command == "DECAY":
             channel, value = int(res[2]), int(res[3])
             strings = {1: "Slow",
