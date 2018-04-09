@@ -353,10 +353,10 @@ class XAPX00(object):
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'enabled', bool(value))
                 getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel].getType()
         elif command == "MTRXLVL":
-            src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), int(res[6])
+            src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), str(res[6])
             if self.write_to_object:
-                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation', value)
-                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation_string', str(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation', float(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation_string', value)
         elif command == "MUTE":
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
             if self.write_to_object:
