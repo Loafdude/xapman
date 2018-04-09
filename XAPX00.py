@@ -1659,7 +1659,7 @@ class XAPX00(object):
                                   3 = G-Link EC Ref bus
         """
         resp = self.XAPCommand('REFSEL', input, unitCode=unitCode)
-        return int(resp)
+        return resp
 
     def setScreenTimeout(self, timeInMinutes, unitCode=0):
         """Sets the screen timeout in minutes.
