@@ -365,7 +365,7 @@ class XAPX00(object):
         elif command == "RAMP":
             channel, group, rate, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
         elif command == "AAMB":
-            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
+            channel, value = convertToInt(res[2]), bool(int(res[3]))
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'adaptive_ambient', value)
