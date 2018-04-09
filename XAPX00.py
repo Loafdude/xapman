@@ -297,6 +297,7 @@ class XAPX00(object):
 
     def decodeResponse(self, res):
         print("DATA: " + str(res))
+        res.apppend("")
         command = res[1]
         unit = res[0][1:2]
         value = None
