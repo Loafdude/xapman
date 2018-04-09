@@ -540,9 +540,8 @@ class OutputChannel(object):
         self.filters = None
         self.exBus = None
         self.constant_gain = None # Also known as Number of Mics (NOM)
-        self.refreshData()
 
-    def refreshData(self):
+    def initialize(self):
         """Fetch all data Channel Data"""
         self.getLabel()
         self.getMaxGain()
@@ -735,9 +734,7 @@ class InputChannel(object):
         self.compressor_attack_string = None
         self.compressor_release_string = None
 
-        self.refreshData()
-
-    def refreshData(self):
+    def initialize(self):
         """Fetch all data Channel Data"""
         self.getLabel()
         self.getMaxGain()
@@ -769,7 +766,11 @@ class InputChannel(object):
             self.getGateDecay()
             self.getCoarseGain()
         elif self.type == "Processing":
-            pass
+            self.getCompressor()
+            self.getCompressorGroup()
+            self.getCompressorStatus()
+            self.getDelayStatus()
+            self.getDelay()
         return True
 
     def getLabel(self):
@@ -1273,6 +1274,8 @@ class MatrixLink(object):
         self.attenuation = None
         self.attenuation_string = None
         self.enabled = False
+
+    def initialize(self):
         self.getStatus()
         self.getAttenuation()
 
@@ -1485,11 +1488,13 @@ class Filter(object):
         self.gain_string = None
         self.bandwidth_string = None
         self.enabled = None
-        self.getFilter()
-        self.getEnabled()
 
         self.Q = None
         self.phase = None
+
+    def initialize(self):
+        self.getFilter()
+        self.getEnabled()
 
     def getFilter(self):
         filter = self.comms.getFilter(self.channel.channel, self.channel.group, self.node, unitCode=self.unit.device_id)
