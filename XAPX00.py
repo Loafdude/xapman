@@ -433,7 +433,7 @@ class XAPX00(object):
             if self.write_to_object:
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_timeout', value)
         elif command == "LFP":
-            value = int(res[3])
+            value = int(res[2])
             strings = {0: "Panel Unlocked",
                        1: "Panel Locked",
                        3: "Lock once timed out"}
