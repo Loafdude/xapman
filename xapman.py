@@ -355,13 +355,14 @@ class XapUnit(object):
         self.gating_groups = deepcopy(gating_groups)
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
-            self.gating_groups[group].initialize()
 
     def initialize(self):
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
         self.scanMatrix()
+        for group, data in self.gating_groups.items():
+            self.gating_groups[group].initialize()
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
