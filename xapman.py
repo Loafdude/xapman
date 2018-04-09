@@ -330,7 +330,6 @@ class XapUnit(object):
         return "Unit: " + self.device_type + " (ID " + str(self.device_id) + ")"
 
     def __init__(self, xap_connection, XAP_unit=0):
-        self.__setattr__ = self.setattr
         self.connection = xap_connection
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
@@ -362,7 +361,6 @@ class XapUnit(object):
 
     def __setattr__(self, name, value):
         print("ding dong")
-        print(str(name) + " <- " + str(value))
         super().__setattr__(name, value)
 
     def setattr(self, name, value):
