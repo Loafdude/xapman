@@ -248,7 +248,8 @@ class connect(object):
         self.scanDevices()
         print("Scanning Expansion Bus and allocating channels...")
         self.expansion_bus = ExpansionBusManager(self)
-        print("  ExBus Status: " + self.expansion_bus.statusReport())
+        if init:
+            print("  ExBus Status: " + self.expansion_bus.statusReport())
 
     def scanDevices(self):
         """Scan for XAP units"""
