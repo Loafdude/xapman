@@ -314,12 +314,12 @@ class XAPX00(object):
             print(format(int('0x' + str(res[2]), 16), "08b"))
             if self.write_to_object:
                 try:
-                    if self.object.units[unit].device_type == "XAP400":
-                        gates = format(int('0x05', 16), "04b")[::-1]
+                    if self.object.units[unit].device_type is "XAP400":
+                        gates = format(int('0x' + str(res[2]), 16), "04b")[::-1]
                     else:
-                        gates = format(int('0x05', 16), "08b")[::-1]
+                        gates = format(int('0x' + str(res[2]), 16), "08b")[::-1]
                 except TypeError:
-                    gates = format(int('0x05', 16), "08b")[::-1]
+                    gates = format(int('0x' + str(res[2]), 16), "08b")[::-1]
                 channel = 1
                 for bit in gates:
                     try:
@@ -330,7 +330,7 @@ class XAPX00(object):
                                     channel], "gate_open", False)
                         if bool(bit) is not gate:
                             setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
-                                channel], "gate_open", gate)
+                                channel], "gate_open", bool(bit))
                     except TypeError:
                         break
                     channel += 1
