@@ -523,7 +523,7 @@ class XAPX00(object):
                         'gate_holdtime', float(value))
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'gate_holdtime_string', value)
-        elif command == "GHOLD":
+        elif command == "AGCSET":
             channel, group, threshold, target, attack, gain = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), str(res[5]), str(res[6]), str(res[7])
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
