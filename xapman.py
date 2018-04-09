@@ -243,6 +243,7 @@ class connect(object):
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type, object=self)
         self.comms.convertDb = 0
         self.comms.connect()
+        self.comms.write_to_object = True
         self.scanDevices()
         print("Scanning Expansion Bus and allocating channels...")
         self.expansion_bus = ExpansionBusManager(self)
