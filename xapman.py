@@ -363,7 +363,7 @@ class XapUnit(object):
     def __setattr__(self, name, value):
         print("ding dong")
         print(str(name) + " <- " + str(value))
-        self.__dict__[name] = value
+        super().__setattr__(name, value)
 
     def setattr(self, name, value):
         print("ding ding")
