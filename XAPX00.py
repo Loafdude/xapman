@@ -310,8 +310,29 @@ class XAPX00(object):
         unit = int(res[0][1:2])
         value = None
         if command == "GATE":
-            value = str(res[2])
+            value = format(int('0x05', 16), "08b")
             print(format(int('0x05', 16), "08b"))
+            if self.write_to_object:
+                try:
+                    if self.object.units[unit].device_type == "XAP400":
+                        gates = format(int('0x05', 16), "04b")[::-1]
+                    else:
+                        gates = format(int('0x05', 16), "08b")[::-1]
+                except:
+                    gates = format(int('0x05', 16), "08b")[::-1]
+                channel = 1
+                for bit in gates:
+                    gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
+                    if gate is None:
+                        gate = False
+                        setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
+                                channel], "gate_open", False)
+                    if bool(bit) is not gate:
+                        setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
+                            channel], "gate_open", gate)
+                    channel += 1
+
+
         elif command == "DECAY":
             channel, value = int(res[2]), int(res[3])
             strings = {1: "Slow",
