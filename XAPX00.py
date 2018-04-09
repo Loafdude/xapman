@@ -236,7 +236,7 @@ class XAPX00(object):
             try:
                 if "**IMATTACHED**" in str(d):
                     print(str(d))
-                    attached_unit = str(d)[str(d).index("**IMATTACHED**")+2]
+                    attached_unit = str(d)[str(d).index("**IMATTACHED**")+16]
                     print("Attached Unit " + attached_unit)
             except:
                 raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
