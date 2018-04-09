@@ -318,18 +318,21 @@ class XAPX00(object):
                         gates = format(int('0x05', 16), "04b")[::-1]
                     else:
                         gates = format(int('0x05', 16), "08b")[::-1]
-                except:
+                except TypeError:
                     gates = format(int('0x05', 16), "08b")[::-1]
                 channel = 1
                 for bit in gates:
-                    gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
-                    if gate is None:
-                        gate = False
-                        setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
-                                channel], "gate_open", False)
-                    if bool(bit) is not gate:
-                        setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
-                            channel], "gate_open", gate)
+                    try:
+                        gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
+                        if gate is None:
+                            gate = False
+                            setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
+                                    channel], "gate_open", False)
+                        if bool(bit) is not gate:
+                            setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
+                                channel], "gate_open", gate)
+                    except TypeError:
+                        break
                     channel += 1
 
 
