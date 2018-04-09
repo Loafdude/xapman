@@ -221,9 +221,9 @@ class XAPX00(object):
         self.serial.reset_input_buffer()
         self.serial.readlines(5000)  # clear response
         self.serial.write("#5* PRGSTRING 7\r".encode())
-        units.append(self.getSerialData("PRGSTRING"))
+        units = units + self.getSerialData("PRGSTRING")
         self.serial.write("#7* PRGSTRING 7\r".encode())
-        units.append(self.getSerialData("PRGSTRING"))
+        units = units + self.getSerialData("PRGSTRING")
         for u in units:
             print(str(u))
             self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 **IMATTACHED**" + u[0] + u[1] + "\r").encode())
@@ -247,8 +247,6 @@ class XAPX00(object):
                 data = resp[1].split()
                 if len(data) > 3:
                     type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
-                    print(cmd)
-                    print(command)
                     if str(cmd) == str(command):
                         result.append([type, did, cmd, value1, value2])
         return result
