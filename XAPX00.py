@@ -112,6 +112,10 @@ matrixGeo = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
                         {"c": "C", "og": "P", "ig": "P"},
                         {"c": "D", "og": "P", "ig": "P"}]}
 nogainGroups = ('E')
+unit_types = {5: "XAP800",
+              7: "XAP400",
+              4: "PSR1212",
+              6: "XAPTH2"}
 
 def stereo(func):
     """
@@ -249,8 +253,8 @@ class XAPX00(object):
             raise Exception("Could Not Determine Attached Unit")
         self.connected_unit_id = attached_unit
         for u in units:
-            self.available_units.append({"device_id": u[1],
-                                         "device_type": u[0]})
+            self.available_units.append({"device_id": int(u[1]),
+                                         "device_type": unit_types[int(u[0])]})
         self.connected = 1
         print(" Serially Attached to Unit ID " + str(self.connected_unit_id))
         print(" Total Units Found: " + str(len(self.available_units)))
