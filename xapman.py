@@ -1,5 +1,6 @@
 import XAPX00
 from copy import deepcopy
+
 channel_data = {"XAP800": {1: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
                            2: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
                            3: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},

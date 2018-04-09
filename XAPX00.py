@@ -296,6 +296,7 @@ class XAPX00(object):
                 othercmd = self.decodeResponse(res)
 
     def decodeResponse(self, res):
+        print("DATA: " + str(res))
         command = res[1]
         unit = res[0][1:2]
         value = None
