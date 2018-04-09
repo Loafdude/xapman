@@ -190,6 +190,8 @@ class XAPX00(object):
         self.stopBits     = 1
         self.parity       = "N"
         self.timeout      = 1
+        self.connected_unit_id = None
+        self.available_units = []
         self.rtscts       = rtscts
         self.stereo       = stereo
         self.XAPType      = XAPType
@@ -238,12 +240,19 @@ class XAPX00(object):
                     attached_unit = str(d)[str(d).index("**IMATTACHED**")+15]
                     print("Attached Unit " + attached_unit)
             except:
+                for u in units:
+                    self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[4].strip() + "\r").encode())
                 raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
         for u in units:
+            if u[4].strip() == "":
+                u[4] = "CLEAR"
             self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[4].strip() + "\r").encode())
         if attached_unit is None:
-            raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
-
+            raise Exception("Could Not Determine Attached Unit")
+        self.connected_unit_id = attached_unit
+        for u in units:
+            self.available_units.append({"device_id": u[1],
+                                         "device_type": u[2]})
         self.connected = 1
 
     def getSerialData(self, command):
