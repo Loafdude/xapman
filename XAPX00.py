@@ -310,8 +310,8 @@ class XAPX00(object):
         unit = int(res[0][1:2])
         value = None
         if command == "GATE":
-            value = format(int('0x' + str(res), 16), "08b")
-            print(format(int('0x' + str(res), 16), "08b"))
+            value = format(int('0x' + str(res[2]), 16), "08b")
+            print(format(int('0x' + str(res[2]), 16), "08b"))
             if self.write_to_object:
                 try:
                     if self.object.units[unit].device_type == "XAP400":
