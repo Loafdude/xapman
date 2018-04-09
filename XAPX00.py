@@ -378,7 +378,7 @@ class XAPX00(object):
             src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), str(res[6])
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'state', value)
-                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'enabled', bool(value))
+                setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'enabled', bool(int(value)))
                 getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel].getType()
         elif command == "MTRXLVL":
             src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), str(res[6])
@@ -421,11 +421,11 @@ class XAPX00(object):
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'master_mode', value)
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'master_mode_string', strings[value])
         elif command == "FLOW":
-            value = bool(res[2])
+            value = bool(int(res[2]))
             if self.write_to_object:
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'flowcontrol', value)
         elif command == "MDMODE":
-            value = bool(res[2])
+            value = bool(int(res[2]))
             if self.write_to_object:
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'modem_mode', value)
         elif command == "MINIT":
