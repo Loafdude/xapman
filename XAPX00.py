@@ -252,7 +252,9 @@ class XAPX00(object):
             resp = str(serdata).strip().split('#')
             if len(resp) is 2:
                 data = resp[1].split()
+                data.append('')
                 if len(data) > 3:
+                    data[3]
                     type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], str(data[2]).strip(), str(data[3]).strip()
                     if str(cmd) == str(command):
                         result.append([type, did, cmd, value1, value2])
