@@ -331,7 +331,7 @@ class XapUnit(object):
         return "Unit: " + self.device_type + " (ID " + str(self.device_id) + ")"
 
     def __init__(self, xap_connection, XAP_unit=0):
-        self.__setattr__ = self.__setattr___replacement
+        self.__setattr__ = self.setattr
         self.connection = xap_connection
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
@@ -361,7 +361,7 @@ class XapUnit(object):
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
-    def __setattr___replacement(self, name, value):
+    def setattr(self, name, value):
         print("ding ding")
         print(str(name) + " <- " + str(value))
         super().__setattr__(name, value)
