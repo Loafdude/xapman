@@ -357,10 +357,22 @@ class XapUnit(object):
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def initialize(self):
+
         self.refreshData()
         self.scanOutputChannels()
         self.scanInputChannels()
         self.scanMatrix()
+        print("  Scanning Output Channels...")
+        for id, channel in self.output_channels.items():
+            channel.initialize()
+        print("  Scanning Input Channels...")
+        for id, channel in self.input_channels.items():
+            channel.initialize()
+        print("  Scanning Matrix...")
+        for y, row in self.matrix.items():
+            for x, matrix_item in row.items():
+                matrix_item.initialize()
+        print("  Scanning Gating Groups...")
         for group, data in self.gating_groups.items():
             self.gating_groups[group].initialize()
 
@@ -391,7 +403,6 @@ class XapUnit(object):
         return
 
     def scanMatrix(self):
-        print("  Scanning Matrix Status...")
         self.matrix = deepcopy(matrix[self.device_type])
         for inChannel, row in self.matrix.items():
             for outChannel, object in row.items():
@@ -404,7 +415,6 @@ class XapUnit(object):
 
     def scanOutputChannels(self):
         """Fetch all output channels from Unit"""
-        print("  Scanning Output Channels...")
         self.output_channels = {}
         for channel, data in channel_data[self.device_type].items():
             self.output_channels[channel] = OutputChannel(self, channel=channel)
@@ -412,7 +422,6 @@ class XapUnit(object):
 
     def scanInputChannels(self):
         """Fetch all output channels from Unit"""
-        print("  Scanning Input Channels...")
         self.input_channels = {}
         for channel, data in channel_data[self.device_type].items():
             self.input_channels[channel] = InputChannel(self, channel=channel)
