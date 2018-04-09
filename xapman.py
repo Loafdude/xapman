@@ -258,7 +258,7 @@ class connect(object):
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
         for device in self.comms.available_units:
-            u = int(device['device_id'])
+            u = device['device_id']
             self.comms.write_to_object = False
             uid = self.comms.getUniqueId(u)
             if uid != None:
