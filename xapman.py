@@ -360,12 +360,6 @@ class XapUnit(object):
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def __setattr__(self, name, value):
-        print("ding dong")
-        super().__setattr__(name, value)
-
-    def setattr(self, name, value):
-        print("ding ding")
-        print(str(name) + " <- " + str(value))
         super().__setattr__(name, value)
 
     def initialize(self):
