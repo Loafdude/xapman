@@ -321,14 +321,7 @@ class connect(object):
             self.expansion_bus.getChannelUsage(exBus)
             return "UnLinked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + released
 
-class TestClass(type):
-    def __setattr__(cls, name, value):
-        print("ding ding")
-        print(str(name) + " <- " + str(value))
-        super().__setattr__(name, value)
-
-
-class XapUnit(metaclass=TestClass):
+class XapUnit(object):
     """Xap Unit Wrapper
        The following are not implemented;
        Presets, Macros, Serial Strings, Preset/Macro Locking, Master Mode, gateing report
@@ -366,6 +359,11 @@ class XapUnit(metaclass=TestClass):
         self.gating_groups = deepcopy(gating_groups)
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
+
+    def __setattr__(self, name, value):
+        print("ding dong")
+        print(str(name) + " <- " + str(value))
+        self.__dict__[name] = value
 
     def setattr(self, name, value):
         print("ding ding")
