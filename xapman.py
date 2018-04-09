@@ -262,14 +262,14 @@ class connect(object):
             self.comms.write_to_object = False
             uid = self.comms.getUniqueId(u)
             if uid != None:
-                unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": self.comms.getUnitType(u)}
+                unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": device['device_type']}
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.comms.write_to_object = True
                 self.units[u] = XapUnit(self, XAP_unit=u)
                 self.units[u].initialize()
         if self.initialize:
             self.comms.write_to_object = True
-        print("Found " + str(len(self.units)) + " units.")
+        print("Scanned " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
         return self.units
 
