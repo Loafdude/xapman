@@ -680,8 +680,8 @@ class XAPX00(object):
             response string from unit
         """
         while 1:
-            resp = self.serial.readline().decode() #Get the line
-            if len(resp) > 5 and resp[0:5] == "ERROR": #If Error
+            resp = self.serial.readline().decode()  #Get the line
+            if len(resp) > 5 and resp[0:5] == "ERROR":  #If Error
                 self._waiting_response = 0
                 raise Exception(resp)
             _LOGGER.debug("Response %s" % resp)
@@ -691,7 +691,8 @@ class XAPX00(object):
             if resp == '':
                 # nothing coming, have read too many lines
                 return None, None
-        respitems = resp.split("#",maxsplit=1)[1].split()
+        print str(resp)
+        respitems = resp.split("#", maxsplit=1)[1].split()
         command = respitems[1]
         return respitems, command
 
