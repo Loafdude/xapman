@@ -249,13 +249,13 @@ class XAPX00(object):
     def getSerialData(self, command):
         result = []
         for serdata in self.serial.readlines(5000):
-            resp = str(serdata).strip().split('#')
+            resp = str(serdata.strip()).split('#')
             if len(resp) is 2:
                 data = resp[1].split()
                 data.append('')
                 if len(data) > 3:
                     data[3]
-                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], str(data[2]).strip(), str(data[3]).strip()
+                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
                     if str(cmd) == str(command):
                         result.append([type, did, cmd, value1, value2])
         return result
