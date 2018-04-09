@@ -224,11 +224,14 @@ class XAPX00(object):
         units.append(self.getSerialData("PRGSTRING"))
         self.serial.write("#7* PRGSTRING 7 \r".encode())
         units.append(self.getSerialData("PRGSTRING"))
-        self.serial.write("#5* PRGSTRING 7 **IMATTACHED**".encode())
-        self.serial.write("#7* PRGSTRING 7 **IMATTACHED**".encode())
+        self.serial.write("#5* PRGSTRING 7 **IMATTACHED**\r".encode())
+        self.serial.write("#7* PRGSTRING 7 **IMATTACHED**\r".encode())
+        self.serial.readlines(5000) # Clear Buffer
+        self.serial.write("#5* STRING 7\r".encode())
+        self.serial.write("#7* STRING 7\r".encode())
         data = self.serial.readlines(5000)
         try:
-            attached_unit = data[data.index("**IMATTACHED")-14]
+            attached_unit = data[data.index("**IMATTACHED**")-14]
             print("Attached Unit " + attached_unit)
         except:
             raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
