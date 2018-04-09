@@ -162,7 +162,7 @@ def db2linear(db, maxref=0):
     """Convert a db level to a linear level of 0-1.
     If maxref is provided, the return value is a proportion of maxref
     """
-    return (10.0 ** ((float(db) + 0.0000001 - maxref) / 20.0))
+    return (10.0 ** ((float(db) + 0.0000001 - float(maxref)) / 20.0))
 
 
 def linear2db(gain, maxref=0):
