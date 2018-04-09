@@ -266,7 +266,8 @@ class connect(object):
                 self.comms.write_to_object = True
                 self.units[u] = XapUnit(self, XAP_unit=u)
                 self.units[u].initialize()
-        self.comms.write_to_object = True
+        if self.initialize:
+            self.comms.write_to_object = True
         print("Found " + str(len(self.units)) + " units.")
         self.comms._maxrespdelay = delay
         return self.units
