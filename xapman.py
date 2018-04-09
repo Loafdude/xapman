@@ -957,7 +957,7 @@ class InputChannel(object):
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         rc = self.comms.getMicEchoCancellerReferenceOutput(self.channel, unitCode=self.unit.device_id)
-        return self.unit.output_channels[rc]
+        return rc
 
     def setReferenceChannel(self, ref_channel):
         """Set Reference Channel - Used for AEC and PA"""
