@@ -311,7 +311,7 @@ class XAPX00(object):
         value = None
         if command == "GATE":
             value = str(res[2])
-            print('{0:08b}'.format(value))
+            print(format(int('0x05', 16), "08b"))
         elif command == "DECAY":
             channel, value = int(res[2]), int(res[3])
             strings = {1: "Slow",
