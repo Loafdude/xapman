@@ -414,10 +414,14 @@ class XAPX00(object):
             value = bool(int(res[2]))
             if self.write_to_object:
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'safety_mute', value)
-        elif command == "DID":
+        elif command == "UID":
             value = str(res[2])
             if self.write_to_object:
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'serial_number', value)
+        elif command == "DID":
+            value = str(res[2])
+            if self.write_to_object:
+                setattr(getattr(self.object, self.unit_attribute)[unit], 'device_id', value)
         elif command == "TOUT":
             value = int(res[2])
             if value is 0:
