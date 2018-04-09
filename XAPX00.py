@@ -225,7 +225,8 @@ class XAPX00(object):
         self.serial.write("#7* PRGSTRING 7 \r".encode())
         units.append(self.getSerialData("PRGSTRING"))
         for u in units:
-            self.serial.write("#" + u[0] + u[1] + " PRGSTRING 7 **IMATTACHED**" + u[0] + u[1] + "\r".encode())
+            print(str(u))
+            self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 **IMATTACHED**" + u[0] + u[1] + "\r").encode())
         self.serial.readlines(5000) # Clear Buffer
         self.serial.write("#5* STRING 7\r".encode())
         self.serial.write("#7* STRING 7\r".encode())
