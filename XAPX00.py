@@ -238,7 +238,7 @@ class XAPX00(object):
         for serdata in self.serial.readlines(5000):
             resp = str(serdata).strip().split('#')
             if len(resp) == 2:
-                data = resp.split()
+                data = resp[1].split()
                 if len(data) > 4:
                     type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
                     if cmd is command:
