@@ -217,15 +217,34 @@ class XAPX00(object):
         self.serial = serial.Serial(self.comPort, self.baudRate,
                                     timeout=self.timeout, rtscts=self.rtscts)
         # Ensure connectivity by requesting the UID of the first unit
-        for id in range(0,8):
-            self.serial.reset_input_buffer()
-            self.serial.write(("#5%s SERECHO 1 %s" % (str(id), EOM)).encode())
-            self.serial.readlines(3) #clear response
-            self.serial.write(("#7%s SERECHO 1 %s" % (str(id), EOM)).encode())
-            self.serial.readlines(3) #clear response
-        # uid = self.getUniqueId(0) # We cannot assume the unit we have is at ID 0
-        # _LOGGER.info("Connected, got uniqueID %s", str(uid))
+        units = []
+        self.serial.reset_input_buffer()
+        self.serial.readlines(5000)  # clear response
+        self.serial.write("#5* PRGSTRING 7 \r".encode())
+        units.append(self.getSerialData("PRGSTRING"))
+        self.serial.write("#7* PRGSTRING 7 \r".encode())
+        units.append(self.getSerialData("PRGSTRING"))
+        self.serial.write("#5* PRGSTRING 7 **IMATTACHED**")
+        self.serial.write("#7* PRGSTRING 7 **IMATTACHED**")
+        data = self.serial.readlines(5000)
+        try:
+            attached_unit = data[data.index("**IMATTACHED")-14]
+        except:
+            raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
         self.connected = 1
+
+    def getSerialData(self, command):
+        result = []
+        for serdata in self.serial.readlines(5000):
+            resp = serdata.strip().split('#')
+            if len(resp) == 2:
+                data = resp.split()
+                if len(data) > 4:
+                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
+                    if cmd is command:
+                        result.append([type, did, cmd, value1, value2])
+        return result
+
 
     def disconnect(self):
         """Disconnect from serial port"""
