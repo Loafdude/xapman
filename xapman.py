@@ -1614,12 +1614,12 @@ class Filter(object):
         pass
 
     def getEnabled(self):
-        enabled = self.comms.getFilterEnabled(self.channel.channel, self.channel.group, self.node)
+        enabled = self.comms.getFilterEnabled(self.channel.channel, self.channel.group, self.node, unitCode=self.unit.device_id)
         self.enabled = enabled
         return enabled
 
     def setEnabled(self, isEnabled):
-        enabled = self.comms.setFilterEnabled(self.channel.channel, self.channel.group, self.node, isEnabled)
+        enabled = self.comms.setFilterEnabled(self.channel.channel, self.channel.group, self.node, isEnabled, unitCode=self.unit.device_id)
         self.enabled = enabled
         return enabled
 
