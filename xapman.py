@@ -1,5 +1,6 @@
 import XAPX00
 from copy import deepcopy
+import mqtt
 
 channel_data = {"XAP800": {1: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
                            2: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
@@ -239,9 +240,12 @@ class connect(object):
         self.baudrate = baudrate
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
-        self.mqtt = None
+        self.mqtt = mqtt.MQTT()
         self.initialize = init  # Do not scan devices for data
         self.units = {}
+        print("Connecting to MQTT Server")
+        self.mqtt.conn()
+        self.mqtt.loop_start()
         print("Connecting...")
         self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type, object=self)
         self.comms.convertDb = 0
