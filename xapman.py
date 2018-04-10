@@ -364,7 +364,8 @@ class XapUnit(object):
     def __setattr__(self, name, value):
         try:
             if self.connection.mqtt:
-                self.connection.mqtt.publish(self.connection.mqtt.topic_root + '/unit' + str(self.device_id) + "-" +
+                print("publishing...")
+                self.connection.mqtt.publish("home" + '/unit' + str(self.device_id) + "-" +
                                              self.device_type + "-" + self.label + "/" + name, str(value))
             super().__setattr__(name, value)
         except:
