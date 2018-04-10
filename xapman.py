@@ -362,10 +362,13 @@ class XapUnit(object):
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def __setattr__(self, name, value):
-        if self.connection.mqtt:
-            self.connection.mqtt.publish(self.connection.mqtt.topic_root + '/unit' + str(self.device_id) + "-" +
-                                         self.device_type + "-" + self.label + "/" + name, str(value))
-        super().__setattr__(name, value)
+        try:
+            if self.connection.mqtt:
+                self.connection.mqtt.publish(self.connection.mqtt.topic_root + '/unit' + str(self.device_id) + "-" +
+                                             self.device_type + "-" + self.label + "/" + name, str(value))
+            super().__setattr__(name, value)
+        except:
+            super().__setattr__(name, value)
 
     def initialize(self):
         if self.connection.initialize is True:
