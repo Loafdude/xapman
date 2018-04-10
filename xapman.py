@@ -222,7 +222,6 @@ matrix = {"XAP800": {1: deepcopy(matrix_y['XAP800']),
                      "C": deepcopy(matrix_y['XAP400']),
                      "D": deepcopy(matrix_y['XAP400'])}}
 
-
 class connect(object):
     """Xap Serial Connection Wrapper
     """
@@ -311,7 +310,6 @@ class connect(object):
             self.expansion_bus.getChannelUsage(usable_bus)
             return "Linked Input: " + str(source.channel) + " to Output: " + str(dest.channel) + " Via ExBus: " + str(usable_bus)
 
-
     def delChannelRoute(self, source, dest):
         """unLink Channels - Releases Expansion Bus if possible"""
         if source.unit.device_id == dest.unit.device_id:
@@ -373,6 +371,13 @@ class XapUnit(object):
             super().__setattr__(name, value)
         except:
             super().__setattr__(name, value)
+
+    def mqttSubscribe(self):
+        for attribute in self.__dir__():
+            if attribute[0] != "_" and callable(getattr(self, attribute)):
+                if getattr(getattr(self, attribute), 'mqttSubscribe'):
+                    #create callback here
+                    print("Create callback for func " + attribute)
 
     def initialize(self):
         if self.connection.initialize is True:
@@ -448,7 +453,7 @@ class XapUnit(object):
 
     def getID(self):
         """Fetch ID from XAP Unit"""
-        self.getID.mqttPublish = True
+        getID.mqttPublish = True
         uid = self.comms.getDeviceID(unitCode=self.device_id)
         return uid
         
@@ -1574,4 +1579,30 @@ class NotSupported(Exception):
 #
     # label for gating groups
     # how to run functions on attribute change
+    # unit master mode
 #
+
+XapUnit.initialize.mqttSubscribe = False
+XapUnit.refreshData.mqttSubscribe = True
+XapUnit.clearMatrix.mqttSubscribe = True
+XapUnit.scanMatrix.mqttSubscribe = False
+XapUnit.scanOutputChannels.mqttSubscribe = False
+XapUnit.scanInputChannels.mqttSubscribe = False
+XapUnit.getID.mqttSubscribe = True
+XapUnit.getFW.mqttSubscribe = True
+XapUnit.getDSP.mqttSubscribe = True
+XapUnit.getSerialNumber.mqttSubscribe = True
+XapUnit.getLabel.mqttSubscribe = True
+XapUnit.getModemMode.mqttSubscribe = True
+XapUnit.setModemMode.mqttSubscribe = True
+XapUnit.getModemInit.mqttSubscribe = True
+XapUnit.setModemInit.mqttSubscribe = True
+XapUnit.getModemPass.mqttSubscribe = True
+XapUnit.setModemPass.mqttSubscribe = True
+XapUnit.getSafetyMute.mqttSubscribe = True
+XapUnit.setSafetyMute.mqttSubscribe = True
+XapUnit.getPanelTimeout.mqttSubscribe = True
+XapUnit.setPanelTimeout.mqttSubscribe = True
+XapUnit.getPanelLock.mqttSubscribe = True
+XapUnit.setPanelLock.mqttSubscribe = True
+
