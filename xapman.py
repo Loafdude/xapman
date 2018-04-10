@@ -360,25 +360,29 @@ class XapUnit(object):
         self.expansion_busses = None
         self.matrix = None
         self.gating_groups = deepcopy(gating_groups)
+        self.mqttPublish = ["device_id",
+                            "device_type",
+                            "serial_number",
+                            ]
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def __setattr__(self, name, value):
         try:
             if self.connection.mqtt:
-                self.connection.mqtt.publish("home" + '/unit' + str(self.device_id) + "-" +
-                                             self.device_type + "-" + self.label + "/" + name, str(value))
+                self.connection.mqtt.publish("home/audiomatrix/" + self.label + "(" + str(self.device_id) + ")/" + name, str(value))
             super().__setattr__(name, value)
         except:
             super().__setattr__(name, value)
 
     def mqttSubscribe(self):
         for attribute in self.__dir__():
-            print(attribute)
             if attribute[0] != "_" and callable(getattr(self, attribute)):
-                print('callable')
-                if getattr(getattr(self, attribute), 'mqttSubscribe'):
-                    #create callback here
+                try:
+                    method = getattr(getattr(self, attribute), 'mqttSubscribe')
+                except:
+
+
                     print("Create callback for func " + attribute)
 
     def initialize(self):
@@ -1583,6 +1587,7 @@ class NotSupported(Exception):
     # unit master mode
 #
 
+XapUnit.mqttSubscribe.mqttSubscribe = False
 XapUnit.initialize.mqttSubscribe = False
 XapUnit.refreshData.mqttSubscribe = True
 XapUnit.clearMatrix.mqttSubscribe = True
