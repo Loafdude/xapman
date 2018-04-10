@@ -575,7 +575,7 @@ class OutputChannel(object):
             if self.connection.mqtt:
                 print("publishing...")
                 self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
-                                             self.unit.device_type + "-" + self.unit.label + "/output_channels/" + name, str(value))
+                                             self.unit.device_type + "-" + self.unit.label + "/output_channels/"  + str(self.channel) + "-" + self.label + "/" + name, str(value))
             super().__setattr__(name, value)
         except:
             super().__setattr__(name, value)
@@ -779,7 +779,7 @@ class InputChannel(object):
             if self.connection.mqtt:
                 print("publishing...")
                 self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
-                                             self.unit.device_type + "-" + self.unit.label + "/input_channels/" + name, str(value))
+                                             self.unit.device_type + "-" + self.unit.label + "/input_channels/" + str(self.channel) + "-" + self.label + "/" + name, str(value))
             super().__setattr__(name, value)
         except:
             super().__setattr__(name, value)
