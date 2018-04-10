@@ -570,6 +570,16 @@ class OutputChannel(object):
         self.exBus = None
         self.constant_gain = None # Also known as Number of Mics (NOM)
 
+    def __setattr__(self, name, value):
+        try:
+            if self.connection.mqtt:
+                print("publishing...")
+                self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
+                                             self.unit.device_type + "-" + self.unit.label + "/output_channels/" + name, str(value))
+            super().__setattr__(name, value)
+        except:
+            super().__setattr__(name, value)
+
     def initialize(self):
         """Fetch all data Channel Data"""
         self.getLabel()
@@ -763,6 +773,16 @@ class InputChannel(object):
         self.compressor_ratio_string = None
         self.compressor_attack_string = None
         self.compressor_release_string = None
+
+    def __setattr__(self, name, value):
+        try:
+            if self.connection.mqtt:
+                print("publishing...")
+                self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
+                                             self.unit.device_type + "-" + self.unit.label + "/input_channels/" + name, str(value))
+            super().__setattr__(name, value)
+        except:
+            super().__setattr__(name, value)
 
     def initialize(self):
         """Fetch all data Channel Data"""
