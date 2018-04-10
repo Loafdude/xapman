@@ -374,7 +374,9 @@ class XapUnit(object):
 
     def mqttSubscribe(self):
         for attribute in self.__dir__():
+            print(attribute)
             if attribute[0] != "_" and callable(getattr(self, attribute)):
+                print('callable')
                 if getattr(getattr(self, attribute), 'mqttSubscribe'):
                     #create callback here
                     print("Create callback for func " + attribute)
