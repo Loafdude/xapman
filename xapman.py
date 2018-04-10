@@ -270,7 +270,7 @@ class connect(object):
                 unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": device['device_type']}
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.comms.write_to_object = True
-                self.units[u] = XapUnit(self, XAP_unit=u)
+                self.units[u] = XapUnit(self, XAP_unit=u, unitType=device['device_type'])
                 self.units[u].initialize()
         if self.initialize:
             self.comms.write_to_object = True
@@ -335,11 +335,11 @@ class XapUnit(object):
     def __repr__(self):
         return "Unit: " + self.device_type + " (ID " + str(self.device_id) + ")"
 
-    def __init__(self, xap_connection, XAP_unit=0):
+    def __init__(self, xap_connection, XAP_unit=0, unitType="XAP800"):
         self.connection = xap_connection
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
-        self.device_type = xap_connection.comms.getUnitType(XAP_unit)
+        self.device_type = unitType
         self.serial_number = None
         self.FW_version = None
         self.DSP_version = None
@@ -368,7 +368,6 @@ class XapUnit(object):
     def __setattr__(self, name, value):
         try:
             if self.connection.mqtt:
-                print("publishing...")
                 self.connection.mqtt.publish("home" + '/unit' + str(self.device_id) + "-" +
                                              self.device_type + "-" + self.label + "/" + name, str(value))
             super().__setattr__(name, value)
