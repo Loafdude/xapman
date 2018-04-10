@@ -380,10 +380,9 @@ class XapUnit(object):
             if attribute[0] != "_" and callable(getattr(self, attribute)):
                 try:
                     method = getattr(getattr(self, attribute), 'mqttSubscribe')
-                except:
-
-
                     print("Create callback for func " + attribute)
+                except:
+                    noop = 1
 
     def initialize(self):
         if self.connection.initialize is True:
