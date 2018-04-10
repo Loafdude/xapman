@@ -822,22 +822,6 @@ class XAPX00(object):
         warnings.warn("Clearing Serial Connection")
         self.serial.reset_input_buffer()
 
-    def getUnitType(self, id):
-        """Get unit type based on responses"""
-        self.send("#5" + str(id) + " SERECHO 1 \r")
-        if self.readResponse() == "1":
-            return "XAP800"
-        self.send("#7" + str(id) + " SERECHO 1 \r")
-        if self.readResponse() == "1":
-            return "XAP400"
-        self.send("#4" + str(id) + " SERECHO 1 \r")
-        if self.readResponse() == "1":
-            return "PSR1212"
-        self.send("#6" + str(id) + " SERECHO 1 \r")
-        if self.readResponse() == "1":
-            return "XAPTH2"
-        return "No Device Found"
-
     @stereo
     def setDecayRate(self, channel, decayRate, unitCode=0):
         """Modify the decay rate for the specified XAP800.
