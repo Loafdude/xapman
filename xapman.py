@@ -239,6 +239,7 @@ class connect(object):
         self.baudrate = baudrate
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
+        self.mqtt = None
         self.initialize = init  # Do not scan devices for data
         self.units = {}
         print("Connecting...")
@@ -361,6 +362,9 @@ class XapUnit(object):
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def __setattr__(self, name, value):
+        if self.connection.mqtt:
+            self.connection.mqtt.publish(self.connection.mqtt.topic_root + '/unit' + str(self.device_id) + "-" +
+                                         self.device_type + "-" + self.label + "/" + name, str(value))
         super().__setattr__(name, value)
 
     def initialize(self):
