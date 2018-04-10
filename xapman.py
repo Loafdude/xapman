@@ -453,7 +453,6 @@ class XapUnit(object):
 
     def getID(self):
         """Fetch ID from XAP Unit"""
-        getID.mqttPublish = True
         uid = self.comms.getDeviceID(unitCode=self.device_id)
         return uid
         
