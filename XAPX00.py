@@ -708,7 +708,7 @@ class XAPX00(object):
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'delay_time', float(value))
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
-                        'delay_time_time', value)
+                        'delay_time_string', value)
         elif command == "GRATIO":
             channel, value = convertToInt(res[2]),  int(res[3])
             if self.write_to_object:
