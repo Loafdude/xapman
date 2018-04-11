@@ -382,7 +382,7 @@ class XapUnit(object):
         self.matrix = None
         self.gating_groups = deepcopy(gating_groups)
         for group, data in self.gating_groups.items():
-            self.gating_groups[group] = GatingGroup(group, self.comms, self)
+            self.gating_groups[group] = GatingGroup(group, self.connection, self)
         self.mqttSubscribeFunctions()
         self.device_id = self.device_id  # This will publish MQTT values that were missed
 
@@ -393,7 +393,7 @@ class XapUnit(object):
                 if name not in self.mqttRestrictedAttributes:
                     if value is None:
                         value = ""
-                    self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + name, str(value))
+                    self.connection.mqtt.publish(self.mqtt_string + name, str(value))
         except:
             noop = 1
 
@@ -401,9 +401,9 @@ class XapUnit(object):
         if self.connection.mqtt:
             for item in self.__dir__():
                 if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
-                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+                    self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
 
     def mqttRunFunction(self, mosq, obj, msg):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
@@ -430,7 +430,7 @@ class XapUnit(object):
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def calcMqttString(self):
-        self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label != "" else (self.device_type + "(" + str(self.device_id) + ")/"))
+        self.mqtt_string = (self.connection.mqtt_root + (self.label + "(" + str(self.device_id) + ")/") if self.label != "" else (self.device_type + "(" + str(self.device_id) + ")/"))
 
     def initialize(self):
         if self.connection.initialize is True:
@@ -659,13 +659,16 @@ class OutputChannel(object):
         if self.connection.mqtt:
             for item in self.__dir__():
                 if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
-                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+                    self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
 
     def calcMqttString(self):
-        self.mqtt_string = ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("OutputChannel(" + str(self.channel) + ")/"))
+        self.mqtt_string = self.unit.mqtt_string + "Outputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("OutputChannel(" + str(self.channel) + ")/"))
         self.label = self.label # To ensure label is published to MQTT
+
+    def mqttRunFunction(self):
+        pass
 
     def initialize(self):
         """Fetch all data Channel Data"""
@@ -891,13 +894,16 @@ class InputChannel(object):
         if self.connection.mqtt:
             for item in self.__dir__():
                 if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
-                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+                    self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
 
     def calcMqttString(self):
-        self.mqtt_string = ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("InputChannel(" + str(self.channel) + ")/"))
+        self.mqtt_string = self.unit.mqtt_string + "Inputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("InputChannel(" + str(self.channel) + ")/"))
         self.label = self.label  # To ensure label is published to MQTT
+
+    def mqttRunFunction(self):
+        pass
 
     def initialize(self):
         """Fetch all data Channel Data"""
@@ -1464,7 +1470,10 @@ class MatrixLink(object):
                     self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
 
     def calcMqttString(self):
-        self.mqtt_string = "Src:" + self.source.label + "(" + str(self.source.channel) + ")/" + "Dest:" + self.dest.label + "(" + str(self.dest.channel) + ")/"
+        self.mqtt_string = self.unit.mqtt_string + "Matrix/Src:" + self.source.label + "(" + str(self.source.channel) + ")/" + "Dest:" + self.dest.label + "(" + str(self.dest.channel) + ")/"
+
+    def mqttRunFunction(self):
+        pass
 
     def initialize(self):
         self.getStatus()
@@ -1544,6 +1553,19 @@ class ExpansionBusManager(object):
             return "ExpansionBusAllocator: " + self.statusReport()
 
         def __init__(self, connection, reserved_channels=[]):
+            self.mqttRestrictedAttributes = ["connection",
+                                             "comms",
+                                             "source",
+                                             "dest",
+                                             "mqtt_string",
+                                             "mqttRestrictedFunctions",
+                                             "mqttRestrictedAttributes"]
+            self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                            "mqttRunFunction",
+                                            "mqttSubscribeFunctions",
+                                            "calcMqttString",
+                                            "initialize"]
+            self.mqtt_string = None
             self.connection = connection
             self.comms = connection.comms
             self.reserved_channels = reserved_channels
@@ -1551,6 +1573,19 @@ class ExpansionBusManager(object):
             if self.connection.initialize:
                 self.initialize()
 
+        def mqttSubscribeFunctions(self):
+            if self.connection.mqtt:
+                for item in self.__dir__():
+                    if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
+                        self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                        self.connection.mqtt.subscribe(self.mqtt_string + item)
+                        self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
+
+        def calcMqttString(self):
+            self.mqtt_string = self.connection.mqtt_root + "ExpansionBus/"
+
+        def mqttRunFunction(self):
+            pass
 
         def initialize(self):
             self.busUsed = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
@@ -1609,14 +1644,42 @@ class GatingGroup(object):
     def __repr__(self):
         return "GatingGroup: " + str(self.group)
 
-    def __init__(self, group, comms, unit):
+    def __init__(self, group, connection, unit):
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "source",
+                                         "dest",
+                                         "mqtt_string",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "initialize"]
+        self.mqtt_string = None
         self.group = group
-        self.comms = comms
+        self.connection = connection
+        self.comms = connection.comms
         self.unit = unit
-        self.label = None
-        self.max_mics = None # 1 to 8
-        self.first_mic_priority = None # True or False
-        self.last_mic = None # True, False
+        self.label = None # If someone is going to fix labels for gating groups then fix the MQTT string too
+        self.max_mics = None  # 1 to 8
+        self.first_mic_priority = None  # True or False
+        self.last_mic = None  # True, False
+
+    def mqttSubscribeFunctions(self):
+        if self.connection.mqtt:
+            for item in self.__dir__():
+                if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
+                    self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
+
+    def calcMqttString(self):
+        self.mqtt_string = self.unit.mqtt_string + "GatingGroup/" + str(self.group) + "/"
+
+    def mqttRunFunction(self):
+        pass
 
     def initialize(self):
         self.getFirstMicPriority()
@@ -1669,6 +1732,20 @@ class Filter(object):
         return "Filter: " + self.type_string + " | Node " + str(self.node)
 
     def __init__(self, unit, channel, node):
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "unit",
+                                         "node",
+                                         "channel",
+                                         "mqtt_string",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "initialize"]
+        self.mqtt_string = None
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
@@ -1686,6 +1763,20 @@ class Filter(object):
 
         self.Q = None
         self.phase = None
+
+    def mqttSubscribeFunctions(self):
+        if self.connection.mqtt:
+            for item in self.__dir__():
+                if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
+                    self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
+
+    def calcMqttString(self):
+        self.mqtt_string = self.channel.mqtt_string + "Filter/" + str(self.node) + "/"
+
+    def mqttRunFunction(self):
+        pass
 
     def initialize(self):
         self.getFilter()
