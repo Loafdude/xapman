@@ -240,6 +240,7 @@ class connect(object):
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
         self.mqtt = mqtt.MQTT()
+        self.mqtt_subscriptions = []
         self.initialize = init  # Do not scan devices for data
         self.units = {}
         print("Connecting to MQTT Server")
@@ -408,7 +409,9 @@ class XapUnit(object):
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
         if self.connection.mqtt:
+            self.connection.mqtt_subscriptions.append(self.connection.mqtt_root + self.mqtt_string + "+")
             self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + "+")
+            self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + "+", self.mqttRunFunction)
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
