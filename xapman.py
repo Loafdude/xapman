@@ -414,22 +414,22 @@ class XapUnit(object):
 
     def mqttRunFunction(self, mosq, obj, msg):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
-            try:
-                func = getattr(self, msg.topic.split("/")[-1])
-                args = inspect.getfullargspec(func).args.remove(self)
-                if len(args) is 0:
-                    func()
-                else:
-                    payload = json.loads(msg.payload)
-                    if isinstance(payload, list):
-                        if len(payload) == len(args):
-                            func(*payload)
-                        else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            #try:
+            func = getattr(self, msg.topic.split("/")[-1])
+            args = inspect.getfullargspec(func).args.remove(self)
+            if len(args) is 0:
+                func()
+            else:
+                payload = json.loads(msg.payload)
+                if isinstance(payload, list):
+                    if len(payload) == len(args):
+                        func(*payload)
                     else:
-                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-            except:
-                print("Command Failed " + msg.topic)
+                        print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                else:
+                    print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            # except:
+            #     print("Command Failed " + msg.topic)
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
