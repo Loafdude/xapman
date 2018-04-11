@@ -407,6 +407,8 @@ class XapUnit(object):
         #                       "setPanelLock"]
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
+        if self.connection.mqtt is not False:
+            self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string)
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
@@ -422,7 +424,7 @@ class XapUnit(object):
     #             print("Create callback for func " + attribute)
 
     def mqttRunFunction(self, mosq, obj, msg):
-        if msg.topic.split[-1] not in self.mqttRestrictedFunctions:
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
             getattr(self, msg.topic.split[-1])()
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
@@ -449,7 +451,7 @@ class XapUnit(object):
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
-        self.getLabel()
+        self.getLabel() # It is important this runs first for MQTT
         self.getID()
         self.getFW()
         self.getDSP()
