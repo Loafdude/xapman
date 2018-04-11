@@ -416,7 +416,10 @@ class XapUnit(object):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
             #try:
             func = getattr(self, msg.topic.split("/")[-1])
-            args = inspect.getfullargspec(func).args
+            try:
+                args = inspect.getfullargspec(func).args
+            except TypeError:
+                return
             args.remove('self')
             if len(args) is 0:
                 func()
