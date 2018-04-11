@@ -399,9 +399,11 @@ class XapUnit(object):
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
         if self.connection.mqtt:
-            self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + "+")
-            self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + "+")
-            self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + "+", self.mqttRunFunction)
+            for item in self.__dir__():
+                if item[0] != "_" and callable(getattr(self, item)):
+                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
