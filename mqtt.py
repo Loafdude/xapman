@@ -4,6 +4,8 @@ import paho.mqtt.publish as publish
 class MQTT(mqtt.Client):
 
     def on_connect(self, mqttc, obj, flags, rc):
+        for s in self.subscriptions:
+            self.subscribe(s)
         print("rc: "+str(rc))
 
     def on_publish(self, mqttc, obj, mid):
