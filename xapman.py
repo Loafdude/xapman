@@ -1,6 +1,8 @@
 import XAPX00
 from copy import deepcopy
 import mqtt
+import json
+import inspect
 
 channel_data = {"XAP800": {1: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
                            2: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
@@ -363,24 +365,12 @@ class XapUnit(object):
         self.expansion_busses = None
         self.matrix = None
         self.gating_groups = deepcopy(gating_groups)
-        self.mqttPublish = ["device_id",
-                            "device_type",
-                            "serial_number",
-                            "FW_version",
-                            "DSP_version",
-                            "label",
-                            "master_mode",
-                            "master_mode_string",
-                            "modem_mode",
-                            "modem_pass",
-                            "modem_init_string",
-                            "baudrate",
-                            "flowcontrol",
-                            "safety_mute",
-                            "panel_timeout",
-                            "panel_lockout",
-                            "panel_passcode"
-                            ]
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "mqtt_string",
+                                         "gating_groups",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
         self.mqttRestrictedFunctions = ["mqttSubscribe",
                                         "mqttRunFunction",
                                         "initialize",
@@ -417,21 +407,29 @@ class XapUnit(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + name, str(value))
+                if name not in self.mqttRestrictedAttributes:
+                    self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + name, str(value))
         except:
             noop = 1
-
-    # def mqttSubscribe(self):
-    #     for attribute in self.__dir__():
-    #         if attribute in self.mqttSubscribe:
-    #             print("Create callback for func " + attribute)
 
     def mqttRunFunction(self, mosq, obj, msg):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
             try:
-                getattr(self, msg.topic.split("/")[-1])()
+                func = getattr(self, msg.topic.split("/")[-1])
+                args = inspect.getfullargspec(func).args.remove(self)
+                if len(args) is 0:
+                    func()
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            func(*payload)
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
-                print("Command Failed" + msg.topic)
+                print("Command Failed " + msg.topic)
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
