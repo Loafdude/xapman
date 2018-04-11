@@ -428,7 +428,7 @@ class XapUnit(object):
 
     def mqttRunFunction(self, mosq, obj, msg):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
-            getattr(self, msg.topic.split()[-1])
+            getattr(self, msg.topic.split("/")[-1])()
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
