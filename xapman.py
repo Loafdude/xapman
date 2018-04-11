@@ -261,7 +261,7 @@ class connect(object):
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
-        self.comms.available_units = {"device_id": 0, "device_type": "XAP800"}
+        self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}]
         for device in self.comms.available_units:
             u = device['device_id']
             self.comms.write_to_object = False
