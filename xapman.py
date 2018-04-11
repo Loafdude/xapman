@@ -417,7 +417,7 @@ class XapUnit(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + "(" + str(self.device_id) + ")/" + name, str(value))
+                self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + name, str(value))
         except:
             noop = 1
 
@@ -428,7 +428,10 @@ class XapUnit(object):
 
     def mqttRunFunction(self, mosq, obj, msg):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
-            getattr(self, msg.topic.split("/")[-1])()
+            try:
+                getattr(self, msg.topic.split("/")[-1])()
+            except:
+                print("Command Failed" + msg.topic)
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
