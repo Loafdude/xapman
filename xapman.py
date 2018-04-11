@@ -400,7 +400,7 @@ class XapUnit(object):
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
         if self.connection.mqtt:
             for item in self.__dir__():
-                if item[0] != "_" and callable(getattr(self, item)):
+                if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
                     self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
                     self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
                     self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
