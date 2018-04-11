@@ -230,12 +230,12 @@ class connect(object):
 
     def __init__(self, serial_path="/dev/ttyUSB0",
                  baudrate=38400,
-                 mqtt_path="home/HA/AudioMixers/",
+                 mqtt_root="home/HA/AudioMixers/",
                  device_type="XAP800",
                  ramp_rate=6,
                  init=True):
 
-        self.mqtt_path = mqtt_path
+        self.mqtt_root = mqtt_root
         self.baudrate = baudrate
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
@@ -338,6 +338,7 @@ class XapUnit(object):
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
         self.device_type = unitType
+        self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label == "" else (self.device_type + "(" + str(self.device_id) + ")/"))
         self.serial_number = None
         self.FW_version = None
         self.DSP_version = None
@@ -363,27 +364,56 @@ class XapUnit(object):
         self.mqttPublish = ["device_id",
                             "device_type",
                             "serial_number",
+                            "FW_version",
+                            "DSP_version",
+                            "label",
+                            "master_mode",
+                            "master_mode_string",
+                            "modem_mode",
+                            "modem_pass",
+                            "modem_init_string",
+                            "baudrate",
+                            "flowcontrol",
+                            "safety_mute",
+                            "panel_timeout",
+                            "panel_lockout",
+                            "panel_passcode"
                             ]
+        self.mqttSubscribe = ["refreshData",
+                              "clearMatrix",
+                              "getID",
+                              "getFW",
+                              "getDSP",
+                              "getSerialNumber",
+                              "getLabel",
+                              "getModemMode",
+                              "setModemMode",
+                              "getModemInit",
+                              "setModemInit",
+                              "getModemPass",
+                              "setModemPass",
+                              "getSafetyMute",
+                              "setSafetyMute",
+                              "getPanelTimeout",
+                              "setPanelTimeout",
+                              "getPanelLock",
+                              "setPanelLock"]
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
     def __setattr__(self, name, value):
+        super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                self.connection.mqtt.publish("home/audiomatrix/" + self.label + "(" + str(self.device_id) + ")/" + name, str(value))
+                self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + "(" + str(self.device_id) + ")/" + name, str(value))
             super().__setattr__(name, value)
         except:
-            super().__setattr__(name, value)
+            noop = 1
 
     def mqttSubscribe(self):
         for attribute in self.__dir__():
-            if attribute[0] != "_" and callable(getattr(self, attribute)):
-                try:
-                    method = getattr(getattr(self, attribute), 'mqttSubscribe')
-                    if method:
-                        print("Create callback for func " + attribute)
-                except:
-                    noop = 1
+            if attribute in self.mqttSubscribe:
+                print("Create callback for func " + attribute)
 
     def initialize(self):
         if self.connection.initialize is True:
@@ -408,10 +438,10 @@ class XapUnit(object):
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
+        self.getLabel()
         self.getID()
         self.getFW()
         self.getDSP()
-        self.getLabel()
         self.getSerialNumber()
         self.getModemMode()
         self.getModemInit()
@@ -1586,29 +1616,4 @@ class NotSupported(Exception):
     # how to run functions on attribute change
     # unit master mode
 #
-
-XapUnit.mqttSubscribe.mqttSubscribe = False
-XapUnit.initialize.mqttSubscribe = False
-XapUnit.refreshData.mqttSubscribe = True
-XapUnit.clearMatrix.mqttSubscribe = True
-XapUnit.scanMatrix.mqttSubscribe = False
-XapUnit.scanOutputChannels.mqttSubscribe = False
-XapUnit.scanInputChannels.mqttSubscribe = False
-XapUnit.getID.mqttSubscribe = True
-XapUnit.getFW.mqttSubscribe = True
-XapUnit.getDSP.mqttSubscribe = True
-XapUnit.getSerialNumber.mqttSubscribe = True
-XapUnit.getLabel.mqttSubscribe = True
-XapUnit.getModemMode.mqttSubscribe = True
-XapUnit.setModemMode.mqttSubscribe = True
-XapUnit.getModemInit.mqttSubscribe = True
-XapUnit.setModemInit.mqttSubscribe = True
-XapUnit.getModemPass.mqttSubscribe = True
-XapUnit.setModemPass.mqttSubscribe = True
-XapUnit.getSafetyMute.mqttSubscribe = True
-XapUnit.setSafetyMute.mqttSubscribe = True
-XapUnit.getPanelTimeout.mqttSubscribe = True
-XapUnit.setPanelTimeout.mqttSubscribe = True
-XapUnit.getPanelLock.mqttSubscribe = True
-XapUnit.setPanelLock.mqttSubscribe = True
 
