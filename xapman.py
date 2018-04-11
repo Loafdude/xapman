@@ -338,11 +338,11 @@ class XapUnit(object):
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
         self.device_type = unitType
+        self.label = None
         self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label == "" else (self.device_type + "(" + str(self.device_id) + ")/"))
         self.serial_number = None
         self.FW_version = None
         self.DSP_version = None
-        self.label = None
         self.master_mode = None
         self.master_mode_string = None
         self.modem_mode = None
