@@ -379,25 +379,31 @@ class XapUnit(object):
                             "panel_lockout",
                             "panel_passcode"
                             ]
-        self.mqttSubscribe = ["refreshData",
-                              "clearMatrix",
-                              "getID",
-                              "getFW",
-                              "getDSP",
-                              "getSerialNumber",
-                              "getLabel",
-                              "getModemMode",
-                              "setModemMode",
-                              "getModemInit",
-                              "setModemInit",
-                              "getModemPass",
-                              "setModemPass",
-                              "getSafetyMute",
-                              "setSafetyMute",
-                              "getPanelTimeout",
-                              "setPanelTimeout",
-                              "getPanelLock",
-                              "setPanelLock"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "initialize",
+                                        "scanMatrix",
+                                        "scanOutputChannels",
+                                        "scanInputChannels"]
+        # self.mqttSubscribe = ["refreshData",
+        #                       "clearMatrix",
+        #                       "getID",
+        #                       "getFW",
+        #                       "getDSP",
+        #                       "getSerialNumber",
+        #                       "getLabel",
+        #                       "getModemMode",
+        #                       "setModemMode",
+        #                       "getModemInit",
+        #                       "setModemInit",
+        #                       "getModemPass",
+        #                       "setModemPass",
+        #                       "getSafetyMute",
+        #                       "setSafetyMute",
+        #                       "getPanelTimeout",
+        #                       "setPanelTimeout",
+        #                       "getPanelLock",
+        #                       "setPanelLock"]
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
 
@@ -406,14 +412,18 @@ class XapUnit(object):
         try:
             if self.connection.mqtt:
                 self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + "(" + str(self.device_id) + ")/" + name, str(value))
-            super().__setattr__(name, value)
         except:
             noop = 1
 
-    def mqttSubscribe(self):
-        for attribute in self.__dir__():
-            if attribute in self.mqttSubscribe:
-                print("Create callback for func " + attribute)
+    # def mqttSubscribe(self):
+    #     for attribute in self.__dir__():
+    #         if attribute in self.mqttSubscribe:
+    #             print("Create callback for func " + attribute)
+
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split[-1] not in self.mqttRestrictedFunctions:
+            getattr(self, msg.topic.split[-1])()
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
         if self.connection.initialize is True:
