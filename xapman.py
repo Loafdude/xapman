@@ -338,12 +338,28 @@ class XapUnit(object):
         return "Unit: " + self.device_type + " (ID " + str(self.device_id) + ")"
 
     def __init__(self, xap_connection, XAP_unit=0, unitType="XAP800"):
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "mqtt_string",
+                                         "gating_groups",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "initialize",
+                                        "scanMatrix",
+                                        "scanOutputChannels",
+                                        "scanInputChannels"]
         self.connection = xap_connection
         self.comms = xap_connection.comms
         self.device_id = XAP_unit
-        self.device_type = unitType
+        self.mqtt_string = None
         self.label = None
-        self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label == "" else (self.device_type + "(" + str(self.device_id) + ")/"))
+        self.getLabel()
+        self.calcMqttString()
+        self.device_type = unitType
         self.serial_number = None
         self.FW_version = None
         self.DSP_version = None
@@ -365,39 +381,23 @@ class XapUnit(object):
         self.expansion_busses = None
         self.matrix = None
         self.gating_groups = deepcopy(gating_groups)
-        self.mqttRestrictedAttributes = ["connection",
-                                         "comms",
-                                         "mqtt_string",
-                                         "gating_groups",
-                                         "mqttRestrictedFunctions",
-                                         "mqttRestrictedAttributes"]
-        self.mqttRestrictedFunctions = ["mqttSubscribe",
-                                        "mqttRunFunction",
-                                        "initialize",
-                                        "scanMatrix",
-                                        "scanOutputChannels",
-                                        "scanInputChannels"]
-        # self.mqttSubscribe = ["refreshData",
-        #                       "clearMatrix",
-        #                       "getID",
-        #                       "getFW",
-        #                       "getDSP",
-        #                       "getSerialNumber",
-        #                       "getLabel",
-        #                       "getModemMode",
-        #                       "setModemMode",
-        #                       "getModemInit",
-        #                       "setModemInit",
-        #                       "getModemPass",
-        #                       "setModemPass",
-        #                       "getSafetyMute",
-        #                       "setSafetyMute",
-        #                       "getPanelTimeout",
-        #                       "setPanelTimeout",
-        #                       "getPanelLock",
-        #                       "setPanelLock"]
         for group, data in self.gating_groups.items():
             self.gating_groups[group] = GatingGroup(group, self.comms, self)
+        self.mqttSubscribeFunctions()
+        self.device_id = self.device_id  # This will publish MQTT values that were missed
+
+    def __setattr__(self, name, value):
+        super().__setattr__(name, value)
+        try:
+            if self.connection.mqtt:
+                if name not in self.mqttRestrictedAttributes:
+                    if value is None:
+                        value = ""
+                    self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + name, str(value))
+        except:
+            noop = 1
+
+    def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
             for item in self.__dir__():
                 if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
@@ -405,38 +405,32 @@ class XapUnit(object):
                     self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
                     self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
 
-    def __setattr__(self, name, value):
-        super().__setattr__(name, value)
-        try:
-            if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
-                    self.connection.mqtt.publish(self.connection.mqtt_root + self.mqtt_string + name, str(value))
-        except:
-            noop = 1
-
     def mqttRunFunction(self, mosq, obj, msg):
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
-            #try:
-            func = getattr(self, msg.topic.split("/")[-1])
             try:
-                args = inspect.getfullargspec(func).args
-            except TypeError:
-                return
-            args.remove('self')
-            if len(args) is 0:
-                func()
-            else:
-                payload = json.loads(msg.payload)
-                if isinstance(payload, list):
-                    if len(payload) == len(args):
-                        func(*payload)
-                    else:
-                        print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    func()
                 else:
-                    print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-            # except:
-            #     print("Command Failed " + msg.topic)
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            func(*payload)
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + msg.topic + " Payload:" + msg.payload)
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+
+    def calcMqttString(self):
+        self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label != "" else (self.device_type + "(" + str(self.device_id) + ")/"))
 
     def initialize(self):
         if self.connection.initialize is True:
@@ -461,7 +455,7 @@ class XapUnit(object):
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
-        self.getLabel() # It is important this runs first for MQTT
+        self.getLabel()
         self.getID()
         self.getFW()
         self.getDSP()
@@ -534,12 +528,14 @@ class XapUnit(object):
         """Fetch Label from XAP Unit"""
         label = self.comms.getLabel(0, "U", unitCode=self.device_id)
         self.label = label
+        self.calcMqttString()
         return label
 
     def setLabel(self, label):
         """Fetch Label from XAP Unit"""
         label = self.comms.setLabel(0, "U", label, unitCode=self.device_id)
         self.label = label
+        self.calcMqttString()
         return label
 
     def getModemMode(self):
@@ -610,11 +606,26 @@ class OutputChannel(object):
         return "Output: " + str(self.unit.device_id) + ":" + str(self.channel) + " | " + self.label
 
     def __init__(self, unit, channel):
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "mqtt_string",
+                                         "unit",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "initialize"]
+        self.mqtt_string = None
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
         self.channel = channel
         self.group = channel_data[unit.device_type][channel]['og']
+        self.label = None
+        self.getLabel()
+        self.calcMqttString()
         self.type = channel_data[unit.device_type][channel]['otype']
         self.ramp_rate = self.connection.ramp_rate
         self.gain = None
@@ -625,22 +636,36 @@ class OutputChannel(object):
         self.gain_max_string = None
         self.number_of_mic_attenuation = None
         self.mute = None
-        self.label = None
         self.level = None
         self.level_metering_point = None
         self.sources = None
         self.filters = None
         self.exBus = None
-        self.constant_gain = None # Also known as Number of Mics (NOM)
+        self.constant_gain = None  # Also known as Number of Mics (NOM)
+        self.channel = self.channel  # This will publish MQTT values that were missed
+        self.group = self.group  # This will publish MQTT values that were missed
+
 
     def __setattr__(self, name, value):
         try:
-            if self.connection.mqtt:
+            if self.mqtt_string and self.connection.mqtt:
                 self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
                                              self.unit.device_type + "-" + self.unit.label + "/output_channels/"  + str(self.channel) + "-" + self.label + "/" + name, str(value))
             super().__setattr__(name, value)
         except:
             super().__setattr__(name, value)
+
+    def mqttSubscribeFunctions(self):
+        if self.connection.mqtt:
+            for item in self.__dir__():
+                if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
+                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+
+    def calcMqttString(self):
+        self.mqtt_string = ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("OutputChannel(" + str(self.channel) + ")/"))
+        self.label = self.label # To ensure label is published to MQTT
 
     def initialize(self):
         """Fetch all data Channel Data"""
@@ -653,16 +678,16 @@ class OutputChannel(object):
 
     def getLabel(self):
         """Fetch Label from XAP Unit"""
-        label = self.comms.getLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'],
-                                    unitCode=self.unit.device_id, inout=0)
+        label = self.comms.getLabel(self.channel, self.group, unitCode=self.unit.device_id, inout=0)
         self.label = label
+        self.calcMqttString()
         return label
     
     def setLabel(self, label):
         """Fetch Label from XAP Unit"""
-        label = self.comms.setLabel(self.channel, channel_data[self.unit.device_type][self.channel]['og'], label,
-                                    unitCode=self.unit.device_id, inout=0)
+        label = self.comms.setLabel(self.channel, self.group, label, unitCode=self.unit.device_id, inout=0)
         self.label = label
+        self.calcMqttString()
         return label
 
     def getMaxGain(self):
@@ -763,11 +788,29 @@ class InputChannel(object):
         return "Input: " + str(self.unit.device_id) + ":" + str(self.channel) + " | " + self.label
 
     def __init__(self, unit, channel):
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "mqtt_string",
+                                         "unit",
+                                         "filters",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "initialize"]
         self.unit = unit
         self.connection = unit.connection
         self.comms = unit.comms
         self.channel = channel
         self.group = channel_data[unit.device_type][channel]['ig']
+        self.label = None
+        self.mqtt_string = None
+        self.getLabel()
+        self.calcMqttString()
+        self.group = self.group  # This will publish MQTT values that were missed
+        self.channel = self.channel  # This will publish MQTT values that were missed
         self.type = channel_data[unit.device_type][channel]['itype']
         self.gain = None
         self.gain_string = None
@@ -776,7 +819,6 @@ class InputChannel(object):
         self.gain_min_string = None
         self.gain_max_string = None
         self.mute = None
-        self.label = None
         self.level = None
         self.mic = None
         self.exBus = None
@@ -845,9 +887,22 @@ class InputChannel(object):
         except:
             super().__setattr__(name, value)
 
+    def mqttSubscribeFunctions(self):
+        if self.connection.mqtt:
+            for item in self.__dir__():
+                if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
+                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+
+    def calcMqttString(self):
+        self.mqtt_string = ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("InputChannel(" + str(self.channel) + ")/"))
+        self.label = self.label  # To ensure label is published to MQTT
+
     def initialize(self):
         """Fetch all data Channel Data"""
         self.getLabel()
+        self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label == "" else (self.device_type + "(" + str(self.device_id) + ")/"))
         self.getMaxGain()
         self.getMinGain()
         self.getMute()
@@ -1375,16 +1430,41 @@ class MatrixLink(object):
             return "Matrix: GATED-ON"
 
     def __init__(self, connection, source, dest, gatemode=False):
+        self.mqttRestrictedAttributes = ["connection",
+                                         "comms",
+                                         "source",
+                                         "dest",
+                                         "mqtt_string",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "initialize"]
+        self.mqtt_string = None
         self.connection = connection
         self.comms = connection.comms
         self.source = source
         self.dest = dest
+        self.calcMqttString()
         self.gatemode = None
         self.type = None
         self.state = None
         self.attenuation = None
         self.attenuation_string = None
         self.enabled = False
+
+    def mqttSubscribeFunctions(self):
+        if self.connection.mqtt:
+            for item in self.__dir__():
+                if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
+                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+
+    def calcMqttString(self):
+        self.mqtt_string = "Src:" + self.source.label + "(" + str(self.source.channel) + ")/" + "Dest:" + self.dest.label + "(" + str(self.dest.channel) + ")/"
 
     def initialize(self):
         self.getStatus()
