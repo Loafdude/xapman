@@ -647,13 +647,15 @@ class OutputChannel(object):
 
 
     def __setattr__(self, name, value):
+        super().__setattr__(name, value)
         try:
-            if self.mqtt_string and self.connection.mqtt:
-                self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
-                                             self.unit.device_type + "-" + self.unit.label + "/output_channels/"  + str(self.channel) + "-" + self.label + "/" + name, str(value))
-            super().__setattr__(name, value)
+            if self.connection.mqtt:
+                if name not in self.mqttRestrictedAttributes:
+                    if value is None:
+                        value = ""
+                    self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
-            super().__setattr__(name, value)
+            noop = 1
 
     def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
@@ -882,13 +884,15 @@ class InputChannel(object):
         self.compressor_release_string = None
 
     def __setattr__(self, name, value):
+        super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                self.connection.mqtt.publish("home" + '/unit' + str(self.unit.device_id) + "-" +
-                                             self.unit.device_type + "-" + self.unit.label + "/input_channels/" + str(self.channel) + "-" + self.label + "/" + name, str(value))
-            super().__setattr__(name, value)
+                if name not in self.mqttRestrictedAttributes:
+                    if value is None:
+                        value = ""
+                    self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
-            super().__setattr__(name, value)
+            noop = 1
 
     def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
@@ -1461,6 +1465,17 @@ class MatrixLink(object):
         self.attenuation_string = None
         self.enabled = False
 
+    def __setattr__(self, name, value):
+        super().__setattr__(name, value)
+        try:
+            if self.connection.mqtt:
+                if name not in self.mqttRestrictedAttributes:
+                    if value is None:
+                        value = ""
+                    self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
+        except:
+            noop = 1
+
     def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
             for item in self.__dir__():
@@ -1573,6 +1588,17 @@ class ExpansionBusManager(object):
             if self.connection.initialize:
                 self.initialize()
 
+        def __setattr__(self, name, value):
+            super().__setattr__(name, value)
+            try:
+                if self.connection.mqtt:
+                    if name not in self.mqttRestrictedAttributes:
+                        if value is None:
+                            value = ""
+                        self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
+            except:
+                noop = 1
+
         def mqttSubscribeFunctions(self):
             if self.connection.mqtt:
                 for item in self.__dir__():
@@ -1666,6 +1692,17 @@ class GatingGroup(object):
         self.max_mics = None  # 1 to 8
         self.first_mic_priority = None  # True or False
         self.last_mic = None  # True, False
+
+    def __setattr__(self, name, value):
+        super().__setattr__(name, value)
+        try:
+            if self.connection.mqtt:
+                if name not in self.mqttRestrictedAttributes:
+                    if value is None:
+                        value = ""
+                    self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
+        except:
+            noop = 1
 
     def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
@@ -1763,6 +1800,17 @@ class Filter(object):
 
         self.Q = None
         self.phase = None
+
+    def __setattr__(self, name, value):
+        super().__setattr__(name, value)
+        try:
+            if self.connection.mqtt:
+                if name not in self.mqttRestrictedAttributes:
+                    if value is None:
+                        value = ""
+                    self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
+        except:
+            noop = 1
 
     def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
