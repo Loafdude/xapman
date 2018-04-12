@@ -486,7 +486,7 @@ class XapUnit(object):
                 if inChannel == outChannel and channel_data[self.device_type][outChannel]['otype'] != "Output":
                     continue
                 else:
-                    self.matrix[inChannel][outChannel] = MatrixLink(self.connection, self.input_channels[inChannel],
+                    self.matrix[inChannel][outChannel] = MatrixLink(self.connection, self, self.input_channels[inChannel],
                                                                     self.output_channels[outChannel])
         return
 
@@ -1435,7 +1435,7 @@ class MatrixLink(object):
         elif self.state == "4":
             return "Matrix: GATED-ON"
 
-    def __init__(self, connection, source, dest, gatemode=False):
+    def __init__(self, connection, unit, source, dest):
         self.mqttRestrictedAttributes = ["connection",
                                          "comms",
                                          "source",
@@ -1450,6 +1450,7 @@ class MatrixLink(object):
                                         "initialize"]
         self.mqtt_string = None
         self.connection = connection
+        self.unit = unit
         self.comms = connection.comms
         self.source = source
         self.dest = dest
