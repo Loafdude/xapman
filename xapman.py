@@ -908,7 +908,6 @@ class InputChannel(object):
     def initialize(self):
         """Fetch all data Channel Data"""
         self.getLabel()
-        self.mqtt_string = ((self.label + "(" + str(self.device_id) + ")/") if self.label == "" else (self.device_type + "(" + str(self.device_id) + ")/"))
         self.getMaxGain()
         self.getMinGain()
         self.getMute()
