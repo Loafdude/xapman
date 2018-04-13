@@ -653,7 +653,7 @@ class OutputChannel(object):
                 if name not in self.mqttRestrictedAttributes:
                     if value is None:
                         value = ""
-                    self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
+                    self.connection.mqtt.publish(self.mqtt_string + name, son.dumps(value))
         except:
             noop = 1
 
