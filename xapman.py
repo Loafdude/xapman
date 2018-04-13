@@ -343,7 +343,10 @@ class XapUnit(object):
                                          "mqtt_string",
                                          "gating_groups",
                                          "mqttRestrictedFunctions",
-                                         "mqttRestrictedAttributes"]
+                                         "mqttRestrictedAttributes"
+                                         "matrix",
+                                         "input_channels",
+                                         "output_channels"]
         self.mqttRestrictedFunctions = ["mqttSubscribe",
                                         "mqttRunFunction",
                                         "mqttSubscribeFunctions",
