@@ -391,8 +391,6 @@ class XapUnit(object):
         try:
             if self.connection.mqtt:
                 if name not in self.mqttRestrictedAttributes:
-                    if value is None:
-                        value = ""
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -651,8 +649,6 @@ class OutputChannel(object):
         try:
             if self.connection.mqtt:
                 if name not in self.mqttRestrictedAttributes:
-                    if value is None:
-                        value = ""
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -889,8 +885,6 @@ class InputChannel(object):
         try:
             if self.connection.mqtt:
                 if name not in self.mqttRestrictedAttributes:
-                    if value is None:
-                        value = ""
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -1471,8 +1465,6 @@ class MatrixLink(object):
         try:
             if self.connection.mqtt:
                 if name not in self.mqttRestrictedAttributes:
-                    if value is None:
-                        value = ""
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -1594,8 +1586,6 @@ class ExpansionBusManager(object):
             try:
                 if self.connection.mqtt:
                     if name not in self.mqttRestrictedAttributes:
-                        if value is None:
-                            value = ""
                         self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
             except:
                 noop = 1
@@ -1699,8 +1689,6 @@ class GatingGroup(object):
         try:
             if self.connection.mqtt:
                 if name not in self.mqttRestrictedAttributes:
-                    if value is None:
-                        value = ""
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -1807,8 +1795,6 @@ class Filter(object):
         try:
             if self.connection.mqtt:
                 if name not in self.mqttRestrictedAttributes:
-                    if value is None:
-                        value = ""
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
