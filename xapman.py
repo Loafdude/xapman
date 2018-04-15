@@ -1641,6 +1641,7 @@ class ExpansionBusManager(object):
             self.units = connection.units
             if self.connection.initialize:
                 self.initialize()
+            self.calcMqttString()
             self.mqttSubscribeFunctions()
 
         def __setattr__(self, name, value):
@@ -1745,6 +1746,7 @@ class GatingGroup(object):
         self.max_mics = None  # 1 to 8
         self.first_mic_priority = None  # True or False
         self.last_mic = None  # True, False
+        self.calcMqttString()
         self.mqttSubscribeFunctions()
 
     def __setattr__(self, name, value):
@@ -1849,6 +1851,7 @@ class Filter(object):
         self.gain_string = None
         self.bandwidth_string = None
         self.enabled = None
+        self.calcMqttString()
         self.mqttSubscribeFunctions()
 
     def __setattr__(self, name, value):
