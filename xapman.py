@@ -241,6 +241,20 @@ class connect(object):
         self.baudrate = baudrate
         self.ramp_rate = ramp_rate
         self.serial_path = serial_path
+        self.mqttRestrictedAttributes = ["mqtt_root",
+                                         "comms",
+                                         "mqtt_string",
+                                         "gating_groups",
+                                         "mqttRestrictedFunctions",
+                                         "mqttRestrictedAttributes"
+                                         "matrix",
+                                         "input_channels",
+                                         "output_channels"]
+        self.mqttRestrictedFunctions = ["mqttSubscribe",
+                                        "mqttRunFunction",
+                                        "mqttSubscribeFunctions",
+                                        "calcMqttString",
+                                        "scanDevices"]
         self.mqtt = mqtt.MQTT()
         self.mqtt.subscriptions = []
         self.initialize = init  # Do not scan devices for data
@@ -635,16 +649,15 @@ class OutputChannel(object):
         self.gain_min_string = None
         self.gain_max = None
         self.gain_max_string = None
-        self.number_of_mic_attenuation = None
+        self.number_of_mic_attenuation = None#
         self.mute = None
-        self.level = None
-        self.level_metering_point = None
-        self.sources = None
-        self.filters = None
-        self.exBus = None
+        self.level = None  # Not yet implemented
+        self.level_metering_point = None  # Not yet implemented
+        self.exBus = None #
         self.constant_gain = None  # Also known as Number of Mics (NOM)
         self.channel = self.channel  # This will publish MQTT values that were missed
         self.group = self.group  # This will publish MQTT values that were missed
+        self.mqttSubscribeFunctions()
 
 
     def __setattr__(self, name, value):
@@ -656,6 +669,29 @@ class OutputChannel(object):
         except:
             noop = 1
 
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+            try:
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    func()
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            func(*payload)
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + msg.topic + " Payload:" + msg.payload)
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def mqttSubscribeFunctions(self):
         if self.connection.mqtt:
@@ -810,6 +846,7 @@ class InputChannel(object):
         self.comms = unit.comms
         self.channel = channel
         self.group = channel_data[unit.device_type][channel]['ig']
+        self.ramp_rate = self.connection.ramp_rate
         self.label = None
         self.mqtt_string = None
         self.getLabel()
@@ -824,9 +861,9 @@ class InputChannel(object):
         self.gain_min_string = None
         self.gain_max_string = None
         self.mute = None
-        self.level = None
-        self.mic = None
-        self.exBus = None
+        self.level = None  # Not yet Implemented
+        self.mic = None  #!!
+        self.exBus = None  #!!
         self.AGC = None  # True or False - Automatic Gain Control
         self.AGC_target = None  # -30 to 20dB
         self.AGC_threshold = None  # -50 to 0dB
@@ -882,6 +919,7 @@ class InputChannel(object):
         self.compressor_ratio_string = None
         self.compressor_attack_string = None
         self.compressor_release_string = None
+        self.mqttSubscribeFunctions()
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
@@ -1309,7 +1347,7 @@ class InputChannel(object):
         gain_coarse = self.comms.getMicInputGain(self.channel, unitCode=self.unit.device_id)
         return gain_coarse
 
-    def setCoarseGain(self, mode, help=False, translation=False):
+    def setCoarseGain(self, mode):
         if self.type != "Mic":  # Only Mics are Compatible with this function
             raise NotSupported("Only MIC channels support this function")
         if str(mode) not in ['0', '1', '2']:
@@ -1343,6 +1381,7 @@ class InputChannel(object):
         if self.type != "Processing":  # Only Processing Channels are Compatible with this function
             raise NotSupported("Only Processing channels support this function")
         delay = self.comms.getDelay(self.channel, unitCode=self.unit.device_id)
+
         return delay
 
     def setDelay(self, delay):
@@ -1422,6 +1461,24 @@ class InputChannel(object):
         self.exBus = exBus
         return exBus
 
+    def rampToDb(self, targetDb, rate=False):
+        """Ramp Gain to specified DB"""
+        if not rate:
+            rate = self.ramp_rate
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        return ramp
+
+
+    def rampToPercent(self, targetPercent, rate=False):
+        """Ramp Gain to specified % between min and max gain"""
+        if not rate:
+            rate = self.ramp_rate
+        if targetPercent < 0 or targetPercent > 1:
+            raise NotSupported("Percentage must be between 0 and 1")
+        targetDb = (self.gain_max - self.gain_min) * targetPercent
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        return ramp
+
 
 class MatrixLink(object):
     """XAP Matrix Link Manager"""
@@ -1462,6 +1519,7 @@ class MatrixLink(object):
         self.attenuation = None
         self.attenuation_string = None
         self.enabled = False
+        self.mqttSubscribeFunctions()
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
@@ -1583,6 +1641,7 @@ class ExpansionBusManager(object):
             self.units = connection.units
             if self.connection.initialize:
                 self.initialize()
+            self.mqttSubscribeFunctions()
 
         def __setattr__(self, name, value):
             super().__setattr__(name, value)
@@ -1686,6 +1745,7 @@ class GatingGroup(object):
         self.max_mics = None  # 1 to 8
         self.first_mic_priority = None  # True or False
         self.last_mic = None  # True, False
+        self.mqttSubscribeFunctions()
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
@@ -1789,9 +1849,7 @@ class Filter(object):
         self.gain_string = None
         self.bandwidth_string = None
         self.enabled = None
-
-        self.Q = None
-        self.phase = None
+        self.mqttSubscribeFunctions()
 
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
