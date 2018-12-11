@@ -232,7 +232,7 @@ class connect(object):
 
     def __init__(self, serial_path="/dev/ttyUSB0",
                  baudrate=38400,
-                 mqtt_root="home/HA/AudioMixers/",
+                 mqtt_root="Home/Audio/",
                  device_type="XAP800",
                  ramp_rate=6,
                  init=True):
