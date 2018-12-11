@@ -392,6 +392,8 @@ class XAPX00(object):
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'AEC', value)
+        elif command == "GREPORT":
+            value = convertToInt(res[1])
         elif command == "MAX":
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
             if self.write_to_object:
