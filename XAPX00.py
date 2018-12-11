@@ -345,7 +345,7 @@ class XAPX00(object):
             if res == None:
                 return None
             else: # Got a response but not the right command.
-                othercmd = self.decodeResponse(res)
+                return self.decodeResponse(res)
 
     def decodeResponse(self, res):
         res.append("")
