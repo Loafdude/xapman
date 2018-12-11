@@ -267,7 +267,7 @@ class connect(object):
         self.comms.convertDb = 0
         self.comms.connect()
         self.scanDevices()
-        print("Scanning Expansion Bus and allocating channels...")
+            print("Scanning Expansion Bus and allocating channels...")
         self.expansion_bus = ExpansionBusManager(self)
         if init:
             print("  ExBus Status: " + self.expansion_bus.statusReport())
@@ -278,7 +278,9 @@ class connect(object):
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
-        self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}]
+        self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"},
+                                      {"device_id": 1, "device_type": "XAP800"},
+                                      {"device_id": 2, "device_type": "XAP800"}]
         for device in self.comms.available_units:
             u = device['device_id']
             self.comms.write_to_object = False
