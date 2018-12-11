@@ -533,6 +533,18 @@ class XapUnit(object):
         """Fetch DSP Version from XAP Unit"""
         DSP = self.comms.getDSPVersion(unitCode=self.device_id)
         return DSP
+
+    def getGateStatus(self):
+        """Fetch DSP Version from XAP Unit"""
+        gates = self.comms.getGate(unitCode=self.device_id)
+        count = 0
+        for c in gates:
+            count += 1
+            if c == '1':
+                self.input_channels[count].gate_on = True
+            else:
+                self.input_channels[count].gate_on = False
+        return gates
         
     def getSerialNumber(self):
         """Fetch Unique ID from XAP Unit"""
@@ -893,7 +905,7 @@ class InputChannel(object):
         self.gate_holdtime_string = None  # 0.10 - 8.00s
         self.gate_override = None  # True or False
         self.gate_ratio = None  # 0-50dB
-        self.gate_open = None  # True False
+        self.gate_on = None  # True False
         self.gate_group = None  # 1-4 and A-D (gate group)
         self.gate_chairman = None  # True or False
         self.gate_decay = None  # Slow, Medium, Fast
