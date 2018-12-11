@@ -8,12 +8,15 @@ class MQTT(mqtt.Client):
         #print("rc: "+str(rc))
 
     def on_publish(self, mqttc, obj, mid):
+        noop = 1
         #print("mid: " + str(mid))
 
     def on_subscribe(self, mqttc, obj, mid, granted_qos):
+        noop = 1
         #print("Subscribed: " + str(mid) + " " + str(granted_qos))
 
     def on_log(self, mqttc, obj, level, string):
+        noop = 1
         #print(string)
 
     def conn(self):
