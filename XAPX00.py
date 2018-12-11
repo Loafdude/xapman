@@ -363,6 +363,7 @@ class XAPX00(object):
                 except (TypeError, KeyError):
                     gates = format(int('0x' + str(res[2]), 16), "08b")[::-1]
                 channel = 1
+                print(gates)
                 for bit in gates:
                     try:
                         gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
