@@ -460,10 +460,10 @@ class XapUnit(object):
             for id, channel in self.input_channels.items():
                 channel.initialize()
             print("  Scanning Matrix...")
-            # for y, row in self.matrix.items():
-            #     for x, matrix_item in row.items():
-            #         if matrix_item:
-            #             matrix_item.initialize()
+                # for y, row in self.matrix.items():
+                #     for x, matrix_item in row.items():
+                #         if matrix_item:
+                #             matrix_item.initialize()
             print("  Scanning Gating Groups...")
             for group, data in self.gating_groups.items():
                 self.gating_groups[group].initialize()
@@ -905,6 +905,7 @@ class InputChannel(object):
         self.gate_holdtime_string = None  # 0.10 - 8.00s
         self.gate_override = None  # True or False
         self.gate_ratio = None  # 0-50dB
+        self.gate_open = None  # True False
         self.gate_on = None  # True False
         self.gate_group = None  # 1-4 and A-D (gate group)
         self.gate_chairman = None  # True or False
