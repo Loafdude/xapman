@@ -441,7 +441,7 @@ class XapUnit(object):
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
-                print("Command Failed - Unknown Reason Topic:" + msg.topic + " Payload:" + msg.payload)
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def calcMqttString(self):
