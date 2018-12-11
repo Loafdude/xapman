@@ -998,6 +998,16 @@ class XAPX00(object):
           resp = self.XAPCommand("LABEL", channel, group, label, unitCode=unitCode)
         return resp
 
+    def setGateReport(self, toggle, unitCode=0):
+        """Set gate status autoreports on/off
+        """
+        if toggle:
+            toggle = "1"
+        else:
+            toggle = "0"
+        resp = self.XAPCommand("GREPORT", toggle, unitCode=unitCode)
+        return resp
+
     @stereo
     def setMatrixRouting(self, inChannel, outChannel, state=1, inGroup="I",
                          outGroup="O", unitCode=0):
