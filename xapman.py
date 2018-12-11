@@ -407,7 +407,7 @@ class XapUnit(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
+                if name not in self.mqttRestrictedAttributes and value != None:
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -674,7 +674,7 @@ class OutputChannel(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
+                if name not in self.mqttRestrictedAttributes and value != None:
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -936,7 +936,7 @@ class InputChannel(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
+                if name not in self.mqttRestrictedAttributes and value != None:
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -1536,7 +1536,7 @@ class MatrixLink(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
+                if name not in self.mqttRestrictedAttributes and value != None:
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -1659,7 +1659,7 @@ class ExpansionBusManager(object):
             super().__setattr__(name, value)
             try:
                 if self.connection.mqtt:
-                    if name not in self.mqttRestrictedAttributes:
+                    if name not in self.mqttRestrictedAttributes and value != None:
                         self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
             except:
                 noop = 1
@@ -1764,7 +1764,7 @@ class GatingGroup(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
+                if name not in self.mqttRestrictedAttributes and value != None:
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
@@ -1869,7 +1869,7 @@ class Filter(object):
         super().__setattr__(name, value)
         try:
             if self.connection.mqtt:
-                if name not in self.mqttRestrictedAttributes:
+                if name not in self.mqttRestrictedAttributes and value != None:
                     self.connection.mqtt.publish(self.mqtt_string + name, json.dumps(value))
         except:
             noop = 1
