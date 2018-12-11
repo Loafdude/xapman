@@ -368,7 +368,6 @@ class XAPX00(object):
                         gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
                         if gate is None:
                             gate = False
-                            print('test')
                             setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
                                     channel], "gate_open", False)
                         if bool(int(bit)) is not gate:
@@ -393,7 +392,7 @@ class XAPX00(object):
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel],
                         'AEC', value)
         elif command == "GREPORT":
-            value = convertToInt(res[1])
+            value = bool(int(res[2]))
         elif command == "MAX":
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
             if self.write_to_object:
