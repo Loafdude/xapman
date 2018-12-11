@@ -538,7 +538,7 @@ class XapUnit(object):
         """Fetch DSP Version from XAP Unit"""
         gates = self.comms.getGate(unitCode=self.device_id)
         count = 0
-        for c in gates:
+        for c in str(gates):
             count += 1
             if c == '1':
                 self.input_channels[count].gate_on = True
