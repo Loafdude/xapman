@@ -230,7 +230,7 @@ class connect(object):
     def __repr__(self):
         return "XapConnection: " + self.serial_path
 
-    def __init__(self, serial_path="/dev/ttyUSB0",
+    def __init__(self, serial_path="/dev/ttyUSB1",
                  baudrate=38400,
                  mqtt_root="Home/Audio/",
                  device_type="XAP800",
@@ -450,23 +450,23 @@ class XapUnit(object):
     def initialize(self):
         if self.connection.initialize is True:
             self.refreshData()
-            self.scanOutputChannels()
-            self.scanInputChannels()
-            self.scanMatrix()
-            print("  Scanning Output Channels...")
-            for id, channel in self.output_channels.items():
-                channel.initialize()
-            print("  Scanning Input Channels...")
-            for id, channel in self.input_channels.items():
-                channel.initialize()
-            print("  Scanning Matrix...")
-                # for y, row in self.matrix.items():
-                #     for x, matrix_item in row.items():
-                #         if matrix_item:
-                #             matrix_item.initialize()
-            print("  Scanning Gating Groups...")
-            for group, data in self.gating_groups.items():
-                self.gating_groups[group].initialize()
+            # self.scanOutputChannels()
+            # self.scanInputChannels()
+            # self.scanMatrix()
+            # print("  Scanning Output Channels...")
+            # for id, channel in self.output_channels.items():
+            #     channel.initialize()
+            # print("  Scanning Input Channels...")
+            # for id, channel in self.input_channels.items():
+            #     channel.initialize()
+            # print("  Scanning Matrix...")
+            # for y, row in self.matrix.items():
+            #     for x, matrix_item in row.items():
+            #         if matrix_item:
+            #             matrix_item.initialize()
+            # print("  Scanning Gating Groups...")
+            # for group, data in self.gating_groups.items():
+            #     self.gating_groups[group].initialize()
 
     def refreshData(self):
         """Fetch all data XAP Unit"""
