@@ -263,7 +263,7 @@ class connect(object):
         self.mqtt.conn()
         self.mqtt.loop_start()
         print("Connecting...")
-        self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=38400, XAPType=device_type, object=self)
+        self.comms = XAPX00.XAPX00(comPort=serial_path, baudRate=baudrate, XAPType=device_type, object=self)
         self.comms.convertDb = 0
         self.comms.connect()
         self.scanDevices()
