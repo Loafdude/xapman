@@ -537,13 +537,6 @@ class XapUnit(object):
     def getGateStatus(self):
         """Fetch DSP Version from XAP Unit"""
         gates = self.comms.getGate(unitCode=self.device_id)
-        count = 0
-        for c in str(gates):
-            count += 1
-            if c == '1':
-                self.input_channels[count].gate_on = True
-            else:
-                self.input_channels[count].gate_on = False
         return gates
         
     def getSerialNumber(self):
