@@ -267,7 +267,7 @@ class connect(object):
         self.comms.convertDb = 0
         self.comms.connect()
         self.scanDevices()
-            print("Scanning Expansion Bus and allocating channels...")
+        print("Scanning Expansion Bus and allocating channels...")
         self.expansion_bus = ExpansionBusManager(self)
         if init:
             print("  ExBus Status: " + self.expansion_bus.statusReport())
