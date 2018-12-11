@@ -363,12 +363,12 @@ class XAPX00(object):
                 except (TypeError, KeyError):
                     gates = format(int('0x' + str(res[2]), 16), "08b")[::-1]
                 channel = 1
-                print(gates)
                 for bit in gates:
                     try:
                         gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
                         if gate is None:
                             gate = False
+                            print('test')
                             setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
                                     channel], "gate_open", False)
                         if bool(int(bit)) is not gate:
@@ -416,10 +416,18 @@ class XAPX00(object):
         elif command == "LVL": # No Auto Update
             channel, group, meter_position, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), float(res[5])
         elif command == "LABEL": # No Auto Update
-            if len(res) == 7:
-                channel, group, inout, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4]), str(res[5])
+            value = ''
+            if res[3] == "E":
+                channel, group, inout = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+                for i, v in enumerate(res):
+                    if i > 4:
+                        value = value + ' ' + v
             else:
-                channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
+                channel, group = convertToInt(res[2]), convertToInt(res[3])
+                for i, v in enumerate(res):
+                    if i > 3:
+                        value = value + ' ' + v
+            value = value.strip()
         elif command == "MTRX":
             src_channel, src_group, dst_channel, dst_group, value = convertToInt(res[2]), convertToInt(res[3]), convertToInt(res[4]), convertToInt(res[5]), str(res[6])
             if self.write_to_object:
