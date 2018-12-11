@@ -459,11 +459,11 @@ class XapUnit(object):
             print("  Scanning Input Channels...")
             for id, channel in self.input_channels.items():
                 channel.initialize()
-            # print("  Scanning Matrix...")
-            # for y, row in self.matrix.items():
-            #     for x, matrix_item in row.items():
-            #         if matrix_item:
-            #             matrix_item.initialize()
+            print("  Scanning Matrix...")
+            for y, row in self.matrix.items():
+                for x, matrix_item in row.items():
+                    if matrix_item:
+                        matrix_item.initialize()
             print("  Scanning Gating Groups...")
             for group, data in self.gating_groups.items():
                 self.gating_groups[group].initialize()
