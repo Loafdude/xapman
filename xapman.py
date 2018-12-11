@@ -541,10 +541,8 @@ class XapUnit(object):
 
     def setGateReport(self, toggle):
         """Fetch Label from XAP Unit"""
-        label = self.comms.setGateReport(0, "U", label, unitCode=self.device_id)
-        self.label = label
-        self.calcMqttString()
-        return label
+        report = self.comms.setGateReport(toggle, unitCode=self.device_id)
+        return report
         
     def getSerialNumber(self):
         """Fetch Unique ID from XAP Unit"""
