@@ -342,17 +342,19 @@ class XAPX00(object):
             else: # Got a response but not the right command.
                 othercmd = self.decodeResponse(res)
 
+    def mqtt_process_cmds(self):
+        if len(self.mqtt_command_queue) > 0:
+            queue = self.mqtt_command_queue
+            self.mqtt_command_queue = []
+            for item in queue:
+                if len(item['args']) == 0:
+                    item['cmd']()
+                else:
+                    item['cmd'](*item['args'])
+                time.sleep(0.1)
+
     def listen(self):
         while 1:
-            if len(self.mqtt_command_queue) > 0:
-                queue = self.mqtt_command_queue
-                self.mqtt_command_queue = []
-                for item in queue:
-                    if len(item['args']) == 0:
-                        item['cmd']()
-                    else:
-                        item['cmd'](*item['args'])
-                    time.sleep(0.1)
             res, cmd = self.readResponseCommand()
             if res == None:
                 return None
