@@ -348,9 +348,13 @@ class XAPX00(object):
                 return self.decodeResponse(res)
 
     def decodeResponse(self, res):
-        res.append("")
-        command = res[1]
-        unit = int(res[0][1:2])
+        try:
+            res.append("")
+            command = res[1]
+            unit = int(res[0][1:2])
+        except:
+            print("Mangled Command:" + res)
+            command = None
         value = None
         if command == "GATE":
             value = format(int('0x' + str(res[2]), 16), "08b")
