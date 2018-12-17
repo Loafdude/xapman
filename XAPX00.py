@@ -193,7 +193,7 @@ class XAPX00(object):
         self.write_to_object = False
         self.stopBits     = 1
         self.parity       = "N"
-        self.timeout      = 0.1
+        self.timeout      = .5
         self.connected_unit_id = None
         self.available_units = []
         self.rtscts       = rtscts
@@ -210,7 +210,7 @@ class XAPX00(object):
         self.convertDb    = 1  # translate levels between linear(0-1) and db
         self._lastcall    = time.time()
         self._maxtime     = 60 * 60 * 1  # After 1hr reset serial before attempting commands
-        self._maxrespdelay = 5
+        self._maxrespdelay = 1
         self._sleeptime = 0.25
         self._waiting_response = 0
         self.ExpansionChannels = string.ascii_uppercase[string.ascii_uppercase.find('O'):]
