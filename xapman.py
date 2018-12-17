@@ -287,7 +287,7 @@ class connect(object):
                 unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": device['device_type']}
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.comms.write_to_object = True
-                self.units[u] = XapUnit(self, XAPf_unit=u, unitType=device['device_type'])
+                self.units[u] = XapUnit(self, XAP_unit=u, unitType=device['device_type'])
                 self.units[u].initialize()
         if self.initialize:
             self.comms.write_to_object = True
