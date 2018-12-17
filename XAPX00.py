@@ -788,6 +788,7 @@ class XAPX00(object):
             if resp == '':
                 # nothing coming, have read too many lines
                 return None, None
+        print("Resp:" + resp)
         respitems = resp.split("#", maxsplit=1)[1].split()
         print(respitems)
         try:
