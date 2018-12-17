@@ -194,8 +194,7 @@ class XAPX00(object):
         self.stopBits     = 1
         self.parity       = "N"
         self.timeout      = 1
-        self.readwait     = False
-        self.readwaiting  = False
+        self.mqtt_command_queue = []
         self.connected_unit_id = None
         self.available_units = []
         self.rtscts       = rtscts
@@ -344,10 +343,17 @@ class XAPX00(object):
                 othercmd = self.decodeResponse(res)
 
     def listen(self):
-        #self._waiting_response = 1
-        while self.readwait is True:
-            continue
         while 1:
+            if len(self.mqtt_command_queue) > 0:
+                queue = self.mqtt_command_queue
+                self.mqtt_command_queue = []
+                for item in queue:
+                    if len(item['args']) == 0:
+                        item['cmd']()
+                    else:
+                        item['cmd'](*item['args'])
+                    time.sleep(0.1)
+            else:
             res, cmd = self.readResponseCommand()
             if res == None:
                 return None

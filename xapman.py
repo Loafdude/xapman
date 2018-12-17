@@ -430,12 +430,14 @@ class XapUnit(object):
                     return
                 args.remove('self')
                 if len(args) is 0:
-                    func()
+                    #func()
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
                         if len(payload) == len(args):
-                            func(*payload)
+                            #func(*payload)
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
                             print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
                     else:
