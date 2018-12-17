@@ -278,7 +278,7 @@ class connect(object):
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
-        # self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}]
+        self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}]
         for device in self.comms.available_units:
             u = device['device_id']
             self.comms.write_to_object = False
@@ -287,7 +287,7 @@ class connect(object):
                 unit = {'id': str(u), 'UID':uid, 'version':self.comms.getVersion(u), "type": device['device_type']}
                 print("Found " + unit['type'] + " at ID " + unit['id'] + " - " + unit['UID'] + "  Ver. " + unit['version'] )
                 self.comms.write_to_object = True
-                self.units[u] = XapUnit(self, XAP_unit=u, unitType=device['device_type'])
+                self.units[u] = XapUnit(self, XAPf_unit=u, unitType=device['device_type'])
                 self.units[u].initialize()
         if self.initialize:
             self.comms.write_to_object = True
@@ -445,7 +445,7 @@ class XapUnit(object):
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def calcMqttString(self):
-        self.mqtt_string = (self.connection.mqtt_root + (self.label + "(" + str(self.device_id) + ")/") if self.label != "" else (self.device_type + "(" + str(self.device_id) + ")/"))
+        self.mqtt_string = (self.connection.mqtt_root + (self.label + "/") if self.label != "" else (self.device_type + "(" + str(self.device_id) + ")/"))
 
     def initialize(self):
         if self.connection.initialize is True:
