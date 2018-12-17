@@ -354,7 +354,7 @@ class XAPX00(object):
             command = res[1]
             unit = int(res[0][1:2])
         except:
-            print("Mangled Command:" + res)
+            print("Mangled Command:" + str(res))
             command = None
         value = None
         if command == "GATE":
