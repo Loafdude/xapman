@@ -430,13 +430,11 @@ class XapUnit(object):
                     return
                 args.remove('self')
                 if len(args) is 0:
-                    #func()
                     self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
                         if len(payload) == len(args):
-                            #func(*payload)
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
                             print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
@@ -691,18 +689,18 @@ class OutputChannel(object):
                     return
                 args.remove('self')
                 if len(args) is 0:
-                    func()
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
                         if len(payload) == len(args):
-                            func(*payload)
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
                             print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
-                print("Command Failed - Unknown Reason Topic:" + msg.topic + " Payload:" + msg.payload)
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
             print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def mqttSubscribeFunctions(self):
@@ -717,8 +715,29 @@ class OutputChannel(object):
         self.mqtt_string = self.unit.mqtt_string + "Outputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("OutputChannel(" + str(self.channel) + ")/"))
         self.label = self.label # To ensure label is published to MQTT
 
-    def mqttRunFunction(self):
-        pass
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+            try:
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
         """Fetch all data Channel Data"""
@@ -955,8 +974,29 @@ class InputChannel(object):
         self.mqtt_string = self.unit.mqtt_string + "Inputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("InputChannel(" + str(self.channel) + ")/"))
         self.label = self.label  # To ensure label is published to MQTT
 
-    def mqttRunFunction(self):
-        pass
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+            try:
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
         """Fetch all data Channel Data"""
@@ -1554,8 +1594,29 @@ class MatrixLink(object):
     def calcMqttString(self):
         self.mqtt_string = self.unit.mqtt_string + "Matrix/Src:" + self.source.label + "(" + str(self.source.channel) + ")/" + "Dest:" + self.dest.label + "(" + str(self.dest.channel) + ")/"
 
-    def mqttRunFunction(self):
-        pass
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+            try:
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
         self.getStatus()
@@ -1677,8 +1738,29 @@ class ExpansionBusManager(object):
         def calcMqttString(self):
             self.mqtt_string = self.connection.mqtt_root + "ExpansionBus/"
 
-        def mqttRunFunction(self):
-            pass
+        def mqttRunFunction(self, mosq, obj, msg):
+            if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+                try:
+                    func = getattr(self, msg.topic.split("/")[-1])
+                    try:
+                        args = inspect.getfullargspec(func).args
+                    except TypeError:
+                        return
+                    args.remove('self')
+                    if len(args) is 0:
+                        self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                    else:
+                        payload = json.loads(msg.payload)
+                        if isinstance(payload, list):
+                            if len(payload) == len(args):
+                                self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
+                            else:
+                                print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                        else:
+                            print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                except:
+                    print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
+                print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
         def initialize(self):
             self.busUsed = {"O": None, "P": None, "Q": None, "R": None, "S": None, "T": None, "U": None, "V": None, "W": None, "X": None, "Y": None, "Z": None}
@@ -1782,8 +1864,29 @@ class GatingGroup(object):
     def calcMqttString(self):
         self.mqtt_string = self.unit.mqtt_string + "GatingGroup/" + str(self.group) + "/"
 
-    def mqttRunFunction(self):
-        pass
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+            try:
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
         self.getFirstMicPriority()
@@ -1887,8 +1990,29 @@ class Filter(object):
     def calcMqttString(self):
         self.mqtt_string = self.channel.mqtt_string + "Filter/" + str(self.node) + "/"
 
-    def mqttRunFunction(self):
-        pass
+    def mqttRunFunction(self, mosq, obj, msg):
+        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
+            try:
+                func = getattr(self, msg.topic.split("/")[-1])
+                try:
+                    args = inspect.getfullargspec(func).args
+                except TypeError:
+                    return
+                args.remove('self')
+                if len(args) is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                else:
+                    payload = json.loads(msg.payload)
+                    if isinstance(payload, list):
+                        if len(payload) == len(args):
+                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
+                        else:
+                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                    else:
+                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+            except:
+                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
+            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
     def initialize(self):
         self.getFilter()
