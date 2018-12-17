@@ -259,30 +259,40 @@ class XAPX00(object):
         print(" Serially Attached to Unit ID " + str(self.connected_unit_id))
         print(" Total Units Found: " + str(len(self.available_units)))
 
-    def getSerialData(self, command):
-        result = []
-        for serdata in self.serial.readlines(5000):
-            resp = serdata.decode('ascii').strip().split('#')
-            if len(resp) is 2:
-                data = resp[1].split()
-                data.append('')
-                if len(data) > 3:
-                    type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
-                    if str(cmd) == str(command):
-                        result.append([type, did, cmd, value1, value2])
-        return result
+    # def getSerialData(self, command):
+    #     result = []
+    #     for serdata in self.serial.readlines(5000):
+    #         resp = serdata.decode('ascii').strip().split('#')
+    #         if len(resp) is 2:
+    #             data = resp[1].split()
+    #             data.append('')
+    #             if len(data) > 3:
+    #                 type, did, cmd, value1, value2 = data[0][0:1], data[0][1:2], data[1], data[2], data[3]
+    #                 if str(cmd) == str(command):
+    #                     result.append([type, did, cmd, value1, value2])
+    #     return result
 
     def getSerialData(self, command):
-        rx_buf = [self.serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
+        results = []
+        rx_buf = [serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
         while True:  # Loop to read remaining data, to end of receive buffer.
-            pending = self.serial.inWaiting()
+            pending = serial.inWaiting()
             if pending:
-                rx_buf.append(self.serial.read(pending))  # Append read chunks to the list.
+                rx_buf.append(serial.read(pending))  # Append read chunks to the list.
             else:
                 break
-        rx_data = ''.join(rx_buf)  # Join the chunks, to get a string of serial data.
-        for cmd in rx_data.decode('ascii').strip().split('#'):
-            print(cmd)
+        rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
+        for line in rx_data.strip():
+            try:
+                line = line.replace('OK> #', '').split()
+                type, did = line[0][0], line[0][1]
+                cmd = line[1]
+                value = line
+                if str(command) == str(cmd):
+                    results.append([type, did, cmd, value])
+            except:
+                print('Unparsable Command:' + str(line))
+        return results
 
 
     def disconnect(self):
@@ -326,7 +336,7 @@ class XAPX00(object):
         _LOGGER.debug("Sending %s" % xapstr)
         starttime = time.time()
         while 1:
-            if self._waiting_response==1:
+            if self._waiting_response == 1:
                 if time.time() - starttime > self._maxrespdelay:
                     break
                 _LOGGER.debug("Send going to sleep\n")
@@ -339,6 +349,7 @@ class XAPX00(object):
         self._lastcall = currtime
         _LOGGER.debug("Sending: %s", xapstr)
         self.serial.reset_input_buffer()
+        self.serial.reset_output_buffer()
         self.serial.write(xapstr.encode())
         self._waiting_response = 1
         while 1:
@@ -784,34 +795,62 @@ class XAPX00(object):
             print("ERROR: Could not parse serial command " + str(command))
         return value
 
+    # def readResponseCommand(self):
+    #     """Get response from unit.
+    #     Args:
+    #     numElements: How many response components to return,
+    #     starts from end of response
+    #     Returns:
+    #         response string from unit
+    #     """
+    #     while 1:
+    #         resp = self.serial.readline().decode()  #Get the line
+    #         if len(resp) > 5 and resp[0:5] == "ERROR":  #If Error
+    #             self._waiting_response = 0
+    #             raise Exception(resp)
+    #         _LOGGER.debug("Response %s" % resp)
+    #         if resp.find('#') > -1:
+    #             self._waiting_response = 0
+    #             break
+    #         if resp == '':
+    #             # nothing coming, have read too many lines
+    #             return None, None
+    #     print("Resp:" + resp)
+    #     respitems = resp.split("#", maxsplit=1)[1].split()
+    #     print(respitems)
+    #     try:
+    #         command = respitems[1]
+    #     except:
+    #         command = "ERROR"
+    #     return respitems, command
+
     def readResponseCommand(self):
         """Get response from unit.
         Args:
         numElements: How many response components to return,
-        starts from end of resposne
+        starts from end of response
         Returns:
             response string from unit
         """
-        while 1:
-            resp = self.serial.readline().decode()  #Get the line
-            if len(resp) > 5 and resp[0:5] == "ERROR":  #If Error
-                self._waiting_response = 0
-                raise Exception(resp)
-            _LOGGER.debug("Response %s" % resp)
-            if resp.find('#') > -1:
-                self._waiting_response = 0
+        rx_buf = [serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
+        while True:  # Loop to read remaining data, to end of receive buffer.
+            pending = serial.inWaiting()
+            if pending:
+                rx_buf.append(serial.read(pending))  # Append read chunks to the list.
+            else:
                 break
-            if resp == '':
-                # nothing coming, have read too many lines
-                return None, None
-        print("Resp:" + resp)
-        respitems = resp.split("#", maxsplit=1)[1].split()
-        print(respitems)
-        try:
-            command = respitems[1]
-        except:
-            command = "ERROR"
-        return respitems, command
+        rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
+        for line in rx_data.strip():
+            if "ERROR" in line):
+                print('Error Response:' + line)
+            elif "OK> #" not in line):
+                print('Unparsable Line (Malformed Response):' + line)
+            elif len(line.replace('OK> #', '').split()) < 2:
+                print('Unparsable Line (Not enough elements):' + line)
+            else:
+                line = line.replace('OK> #', '').split()
+                cmd = line[1]
+            return line, cmd
 
     def readResponse(self, numElements=1):
         """Get response from unit.
