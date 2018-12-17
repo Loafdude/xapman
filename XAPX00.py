@@ -841,7 +841,7 @@ class XAPX00(object):
             else:
                 break
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
-        for line in rx_data():
+        for line in rx_data:
             if "ERROR" in line:
                 print('Error Response:' + line)
             elif "OK> #" not in line:
