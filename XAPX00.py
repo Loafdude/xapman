@@ -282,9 +282,9 @@ class XAPX00(object):
             else:
                 break
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
-        for line in rx_data.strip():
+        for line in rx_data:
             try:
-                line = line.replace('OK> #', '').split()
+                line = line.strip().replace('OK> #', '').split()
                 type, did = line[0][0], line[0][1]
                 cmd = line[1]
                 value = line
@@ -840,7 +840,7 @@ class XAPX00(object):
             else:
                 break
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
-        for line in rx_data.strip():
+        for line in rx_data():
             if "ERROR" in line:
                 print('Error Response:' + line)
             elif "OK> #" not in line:
@@ -848,7 +848,7 @@ class XAPX00(object):
             elif len(line.replace('OK> #', '').split()) < 2:
                 print('Unparsable Line (Not enough elements):' + line)
             else:
-                line = line.replace('OK> #', '').split()
+                line = line.strip().replace('OK> #', '').split()
                 cmd = line[1]
             return line, cmd
 
