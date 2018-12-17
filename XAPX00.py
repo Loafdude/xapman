@@ -194,6 +194,8 @@ class XAPX00(object):
         self.stopBits     = 1
         self.parity       = "N"
         self.timeout      = 1
+        self.readwait     = False
+        self.readwaiting  = False
         self.connected_unit_id = None
         self.available_units = []
         self.rtscts       = rtscts
@@ -307,6 +309,8 @@ class XAPX00(object):
             return len(data)
 
     def XAPCommand(self, command, *args, **kwargs):
+        while self.readwaiting is False:
+            self.readwait = True
         unitCode=kwargs.get('unitCode',0)
         rtnCount = kwargs.get('rtnCount',1)
         args = [str(x) for x in args]
@@ -332,15 +336,18 @@ class XAPX00(object):
         while 1:
             res, cmd = self.readResponseCommand()
             if res == None:
+                self.readwait = False
                 return None
             elif cmd == command:
+                self.readwait = False
                 return self.decodeResponse(res)
             else: # Got a response but not the right command.
                 othercmd = self.decodeResponse(res)
 
     def listen(self):
         #self._waiting_response = 1
-        time.sleep(0.1) #delay
+        while self.readwait is True:
+            self.readwaiting = True
         while 1:
             res, cmd = self.readResponseCommand()
             if res == None:
