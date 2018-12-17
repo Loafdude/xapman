@@ -243,13 +243,13 @@ class XAPX00(object):
                     attached_unit = str(d)[str(d).index("**IMATTACHED**")+15]
             except:
                 for u in units:
-                    self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[4].strip() + "\r").encode())
+                    self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[3][3].strip() + "\r").encode())
                 raise Exception("COULD NOT DETERMINE ATTACHED UNIT")
         for u in units:
             print(u)
-            if len(u[4]) == 3:
-                u[4].append("CLEAR")
-            self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[4][3].strip() + "\r").encode())
+            if len(u[3]) == 3:
+                u[3].append("CLEAR")
+            self.serial.write(("#" + u[0] + u[1] + " PRGSTRING 7 " + u[3][3].strip() + "\r").encode())
         if attached_unit is None:
             raise Exception("Could Not Determine Attached Unit")
         self.connected_unit_id = attached_unit
