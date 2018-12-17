@@ -848,7 +848,7 @@ class XAPX00(object):
                 print('Error Response:' + line)
             elif "OK> #" not in line:
                 if line.strip() is not "OK>" and line is not "":
-                    print('Unparsable Line (Malformed Response):' + line)
+                    print('Unparsable Line (Malformed Response):"' + line + '"')
             elif len(line.replace('OK> #', '').split()) < 2:
                 print('Unparsable Line (Not enough elements):' + line)
             else:
