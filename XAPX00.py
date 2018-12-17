@@ -339,7 +339,8 @@ class XAPX00(object):
                 othercmd = self.decodeResponse(res)
 
     def listen(self):
-        self._waiting_response = 1
+        #self._waiting_response = 1
+        time.sleep(0.1) #delay
         while 1:
             res, cmd = self.readResponseCommand()
             if res == None:
