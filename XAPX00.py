@@ -353,7 +353,6 @@ class XAPX00(object):
                     else:
                         item['cmd'](*item['args'])
                     time.sleep(0.1)
-            else:
             res, cmd = self.readResponseCommand()
             if res == None:
                 return None
