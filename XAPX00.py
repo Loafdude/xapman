@@ -193,7 +193,7 @@ class XAPX00(object):
         self.write_to_object = False
         self.stopBits     = 1
         self.parity       = "N"
-        self.timeout      = 0.5
+        self.timeout      = 0.1
         self.connected_unit_id = None
         self.available_units = []
         self.rtscts       = rtscts
