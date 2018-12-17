@@ -789,6 +789,7 @@ class XAPX00(object):
                 # nothing coming, have read too many lines
                 return None, None
         respitems = resp.split("#", maxsplit=1)[1].split()
+        print(respitems)
         command = respitems[1]
         return respitems, command
 
