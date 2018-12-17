@@ -841,9 +841,9 @@ class XAPX00(object):
                 break
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
         for line in rx_data.strip():
-            if "ERROR" in line):
+            if "ERROR" in line:
                 print('Error Response:' + line)
-            elif "OK> #" not in line):
+            elif "OK> #" not in line:
                 print('Unparsable Line (Malformed Response):' + line)
             elif len(line.replace('OK> #', '').split()) < 2:
                 print('Unparsable Line (Not enough elements):' + line)
