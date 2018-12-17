@@ -794,7 +794,6 @@ class XAPX00(object):
                 return None, None
         print("Resp:" + resp)
         respitems = resp.split("#", maxsplit=1)[1].split()
-        print(respitems)
         try:
             command = respitems[1]
         except:
