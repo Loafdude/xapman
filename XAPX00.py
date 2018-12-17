@@ -790,7 +790,10 @@ class XAPX00(object):
                 return None, None
         respitems = resp.split("#", maxsplit=1)[1].split()
         print(respitems)
-        command = respitems[1]
+        try:
+            command = respitems[1]
+        except:
+            command = "ERROR"
         return respitems, command
 
     def readResponse(self, numElements=1):
