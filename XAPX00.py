@@ -193,7 +193,7 @@ class XAPX00(object):
         self.write_to_object = False
         self.stopBits     = 1
         self.parity       = "N"
-        self.timeout      = 0.2
+        self.timeout      = None
         self.connected_unit_id = None
         self.available_units = []
         self.rtscts       = rtscts
@@ -842,6 +842,7 @@ class XAPX00(object):
                 rx_buf.append(self.serial.read(pending))  # Append read chunks to the list.
             else:
                 break
+        line = self.serial.readline()
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
         for line in rx_data:
             if "ERROR" in line:
