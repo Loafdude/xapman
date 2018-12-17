@@ -851,7 +851,7 @@ class XAPX00(object):
             else:
                 line = line.strip().replace('OK> #', '').split()
                 cmd = line[1]
-            return line, cmd
+                return line, cmd
 
     def readResponse(self, numElements=1):
         """Get response from unit.
