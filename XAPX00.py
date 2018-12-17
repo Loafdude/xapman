@@ -309,8 +309,7 @@ class XAPX00(object):
             return len(data)
 
     def XAPCommand(self, command, *args, **kwargs):
-        while self.readwaiting is False:
-            self.readwait = True
+        self.readwait = True
         unitCode=kwargs.get('unitCode',0)
         rtnCount = kwargs.get('rtnCount',1)
         args = [str(x) for x in args]
@@ -347,7 +346,7 @@ class XAPX00(object):
     def listen(self):
         #self._waiting_response = 1
         while self.readwait is True:
-            self.readwaiting = True
+            continue
         while 1:
             res, cmd = self.readResponseCommand()
             if res == None:
