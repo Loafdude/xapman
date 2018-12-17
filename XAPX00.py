@@ -852,6 +852,7 @@ class XAPX00(object):
             elif len(line.replace('OK> #', '').split()) < 2:
                 print('Unparsable Line (Not enough elements):' + line)
             else:
+                print('Parsed Command:' + line)
                 line = line.strip().replace('OK> #', '').split()
                 cmd = line[1]
                 results.append([line, cmd])
