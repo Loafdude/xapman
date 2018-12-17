@@ -274,11 +274,11 @@ class XAPX00(object):
 
     def getSerialData(self, command):
         results = []
-        rx_buf = [serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
+        rx_buf = [self.serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
         while True:  # Loop to read remaining data, to end of receive buffer.
-            pending = serial.inWaiting()
+            pending = self.serial.inWaiting()
             if pending:
-                rx_buf.append(serial.read(pending))  # Append read chunks to the list.
+                rx_buf.append(self.serial.read(pending))  # Append read chunks to the list.
             else:
                 break
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
@@ -832,11 +832,11 @@ class XAPX00(object):
         Returns:
             response string from unit
         """
-        rx_buf = [serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
+        rx_buf = [self.serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
         while True:  # Loop to read remaining data, to end of receive buffer.
-            pending = serial.inWaiting()
+            pending = self.serial.inWaiting()
             if pending:
-                rx_buf.append(serial.read(pending))  # Append read chunks to the list.
+                rx_buf.append(self.serial.read(pending))  # Append read chunks to the list.
             else:
                 break
         rx_data = b''.join(rx_buf).decode('ascii').split('\r\n')  # Join the chunks, to get a string of serial data.
