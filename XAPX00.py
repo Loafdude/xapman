@@ -272,6 +272,18 @@ class XAPX00(object):
                         result.append([type, did, cmd, value1, value2])
         return result
 
+    def getSerialData(self, command):
+        rx_buf = [self.serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
+        while True:  # Loop to read remaining data, to end of receive buffer.
+            pending = self.serial.inWaiting()
+            if pending:
+                rx_buf.append(self.serial.read(pending))  # Append read chunks to the list.
+            else:
+                break
+        rx_data = ''.join(rx_buf)  # Join the chunks, to get a string of serial data.
+        for cmd in rx_data.decode('ascii').strip().split('#'):
+            print(cmd)
+
 
     def disconnect(self):
         """Disconnect from serial port"""
