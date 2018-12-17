@@ -354,13 +354,14 @@ class XAPX00(object):
         self.serial.write(xapstr.encode())
         self._waiting_response = 1
         while 1:
-            res, cmd = self.readResponseCommand()
-            if res == None:
-                return None
-            elif cmd == command:
-                return self.decodeResponse(res)
-            else: # Got a response but not the right command.
-                othercmd = self.decodeResponse(res)
+            results = self.readResponseCommand()
+            for line in results:
+                if line[0] == None:
+                    return None
+                elif line[1] == command:
+                    return self.decodeResponse(line[0])
+                else: # Got a response but not the right command.
+                    othercmd = self.decodeResponse(line[0])
 
     def listen(self):
         self._waiting_response = 1
@@ -833,6 +834,7 @@ class XAPX00(object):
         Returns:
             response string from unit
         """
+        results = []
         rx_buf = [self.serial.read(16384)]  # Try reading a large chunk of data, blocking for timeout secs.
         while True:  # Loop to read remaining data, to end of receive buffer.
             pending = self.serial.inWaiting()
@@ -846,12 +848,14 @@ class XAPX00(object):
                 print('Error Response:' + line)
             elif "OK> #" not in line:
                 print('Unparsable Line (Malformed Response):' + line)
+
             elif len(line.replace('OK> #', '').split()) < 2:
                 print('Unparsable Line (Not enough elements):' + line)
             else:
                 line = line.strip().replace('OK> #', '').split()
                 cmd = line[1]
-                return line, cmd
+                results.append([line, cmd])
+        return results
 
     def readResponse(self, numElements=1):
         """Get response from unit.
