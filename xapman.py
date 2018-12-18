@@ -278,7 +278,7 @@ class connect(object):
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
-        # self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}] # Debug line to limit scanning time
+        self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}] # Debug line to limit scanning time
         for device in self.comms.available_units:
             u = device['device_id']
             self.comms.write_to_object = False
@@ -694,6 +694,7 @@ class OutputChannel(object):
                     for k, v in args:
                         if v.default is inspect.Parameter.empty:
                             minargs += 1
+                    print("Min Args = " + str(minargs) + " Max Args = " + str(maxargs))
                 except TypeError:
                     return
                 if maxargs is 0:
