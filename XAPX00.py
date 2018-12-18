@@ -923,7 +923,7 @@ class XAPX00(object):
         return db2linear(resp) if self.convertDb else resp
 
     
-    def setGain(self, channel, gain, group="I", isAbsolute=1, unitCode=0):
+    def setGain(self, channel, gain, group="I", isAbsolute=True, unitCode=0):
         """Sets the gain on the specified channel for the specified XAP800.
         unitCode - the unit code of the target XAP800
         channel - the target channel (1-8, A-D, 1-2, or * for all)
@@ -936,7 +936,7 @@ class XAPX00(object):
         if str(group) in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
             raise Exception('Gain not available on Expansion Bus')
         gain = linear2db(gain) if self.convertDb else gain
-        resp = self.XAPCommand("GAIN", channel, gain, group, "A" if isAbsolute == 1 else "R",
+        resp = self.XAPCommand("GAIN", channel, gain, group, "A" if isAbsolute else "R",
                                unitCode=unitCode, rtnCount=2)[0]
         return db2linear(resp) if self.convertDb else resp
 

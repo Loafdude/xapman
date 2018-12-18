@@ -1,5 +1,4 @@
 import xapman
-
 xap = xapman.connect()
 
 while 1:
