@@ -431,6 +431,7 @@ class XapUnit(object):
                     for k, v in args:
                         if v.default is inspect.Parameter.empty:
                             minargs += 1
+                    print("Min Args = " + str(minargs) + " Max Args = " + str(maxargs))
                 except TypeError:
                     return
                 if maxargs is 0:
@@ -441,7 +442,8 @@ class XapUnit(object):
                         if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                            print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                  'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
