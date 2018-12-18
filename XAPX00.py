@@ -152,7 +152,7 @@ class XAPX00(object):
         self.mqtt_command_queue = []
         self.connected_unit_id = None
         self.available_units = []
-        self.rtscts       = rtsctso
+        self.rtscts       = rtscts
         self.XAPType      = XAPType
         self.input_groups = ['I', "M", "P", "L"]
         self.unit_attribute = "units"
