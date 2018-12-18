@@ -921,7 +921,7 @@ class XAPX00(object):
         return db2linear(resp) if self.convertDb else resp
 
     
-    def setGain(self, channel, gain, isAbsolute=1, group="I", unitCode=0):
+    def setGain(self, channel, gain, group="I", isAbsolute=1, unitCode=0):
         """Sets the gain on the specified channel for the specified XAP800.
         unitCode - the unit code of the target XAP800
         channel - the target channel (1-8, A-D, 1-2, or * for all)
