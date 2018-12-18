@@ -111,7 +111,7 @@ matrixGeo = {'XAP800': [{"c": 1, "og": "O", "ig": "I"},
                         {"c": "B", "og": "P", "ig": "P"},
                         {"c": "C", "og": "P", "ig": "P"},
                         {"c": "D", "og": "P", "ig": "P"}]}
-nogainGroups = ('E')
+nogainGroups = ['E']
 unit_types = {5: "XAP800",
               7: "XAP400",
               4: "PSR1212",
@@ -931,7 +931,7 @@ class XAPX00(object):
         isAbsolute - true if the level specified is an absolute setting,
                      false if it's a relative movement.
         """
-        if group in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
+        if str(group) in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
             raise Exception('Gain not available on Expansion Bus')
         gain = linear2db(gain) if self.convertDb else gain
         resp = self.XAPCommand("GAIN", channel, group, gain, "A" if isAbsolute == 1 else "R",
