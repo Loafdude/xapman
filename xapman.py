@@ -278,7 +278,7 @@ class connect(object):
         print("Scanning for devices...")
         delay = self.comms._maxrespdelay
         self.comms._maxrespdelay = 0.1  # reduce timeout delay when searching for non-existant devices
-        self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}] # Debug line to limit scanning time
+        # self.comms.available_units = [{"device_id": 0, "device_type": "XAP800"}] # Debug line to limit scanning time
         for device in self.comms.available_units:
             u = device['device_id']
             self.comms.write_to_object = False
@@ -431,7 +431,6 @@ class XapUnit(object):
                     for k, v in args:
                         if v.default is inspect.Parameter.empty:
                             minargs += 1
-                    print("Min Args = " + str(minargs) + " Max Args = " + str(maxargs))
                 except TypeError:
                     return
                 if maxargs is 0:
@@ -696,7 +695,6 @@ class OutputChannel(object):
                     for k, v in args:
                         if v.default is inspect.Parameter.empty:
                             minargs += 1
-                    print("Min Args = " + str(minargs) + " Max Args = " + str(maxargs))
                 except TypeError:
                     return
                 if maxargs is 0:
@@ -967,19 +965,24 @@ class InputChannel(object):
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
                 try:
-                    args = inspect.getfullargspec(func).args
+                    args = inspect.signature(func).parameters.items()
+                    maxargs = len(args)
+                    minargs = 0
+                    for k, v in args:
+                        if v.default is inspect.Parameter.empty:
+                            minargs += 1
                 except TypeError:
                     return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                if maxargs is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
-                        if len(payload) == len(args):
+                        if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                            print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                  'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
@@ -1587,19 +1590,24 @@ class MatrixLink(object):
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
                 try:
-                    args = inspect.getfullargspec(func).args
+                    args = inspect.signature(func).parameters.items()
+                    maxargs = len(args)
+                    minargs = 0
+                    for k, v in args:
+                        if v.default is inspect.Parameter.empty:
+                            minargs += 1
                 except TypeError:
                     return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                if maxargs is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
-                        if len(payload) == len(args):
+                        if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                            print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                  'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
@@ -1731,19 +1739,24 @@ class ExpansionBusManager(object):
                 try:
                     func = getattr(self, msg.topic.split("/")[-1])
                     try:
-                        args = inspect.getfullargspec(func).args
+                        args = inspect.signature(func).parameters.items()
+                        maxargs = len(args)
+                        minargs = 0
+                        for k, v in args:
+                            if v.default is inspect.Parameter.empty:
+                                minargs += 1
                     except TypeError:
                         return
-                    args.remove('self')
-                    if len(args) is 0:
-                        self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                    if maxargs is 0:
+                        self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                     else:
                         payload = json.loads(msg.payload)
                         if isinstance(payload, list):
-                            if len(payload) == len(args):
+                            if maxargs >= len(payload) >= minargs:
                                 self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                             else:
-                                print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                                print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                      'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                         else:
                             print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
                 except:
@@ -1857,19 +1870,24 @@ class GatingGroup(object):
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
                 try:
-                    args = inspect.getfullargspec(func).args
+                    args = inspect.signature(func).parameters.items()
+                    maxargs = len(args)
+                    minargs = 0
+                    for k, v in args:
+                        if v.default is inspect.Parameter.empty:
+                            minargs += 1
                 except TypeError:
                     return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                if maxargs is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
-                        if len(payload) == len(args):
+                        if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                            print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                  'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
@@ -1983,19 +2001,24 @@ class Filter(object):
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
                 try:
-                    args = inspect.getfullargspec(func).args
+                    args = inspect.signature(func).parameters.items()
+                    maxargs = len(args)
+                    minargs = 0
+                    for k, v in args:
+                        if v.default is inspect.Parameter.empty:
+                            minargs += 1
                 except TypeError:
                     return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                if maxargs is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
-                        if len(payload) == len(args):
+                        if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                            print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                  'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
