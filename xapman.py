@@ -727,30 +727,6 @@ class OutputChannel(object):
         self.mqtt_string = self.unit.mqtt_string + "Outputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("OutputChannel(" + str(self.channel) + ")/"))
         self.label = self.label # To ensure label is published to MQTT
 
-    def mqttRunFunction(self, mosq, obj, msg):
-        if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
-            try:
-                func = getattr(self, msg.topic.split("/")[-1])
-                try:
-                    args = inspect.getfullargspec(func).args
-                except TypeError:
-                    return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
-                else:
-                    payload = json.loads(msg.payload)
-                    if isinstance(payload, list):
-                        if len(payload) == len(args):
-                            self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
-                        else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-                    else:
-                        print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-            except:
-                print("Command Failed - Unknown Reason Topic:" + str(msg.topic) + " Payload:" + str(msg.payload))
-            print("Data: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-
     def initialize(self):
         """Fetch all data Channel Data"""
         self.getLabel()
