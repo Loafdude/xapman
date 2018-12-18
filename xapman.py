@@ -705,7 +705,8 @@ class OutputChannel(object):
                         if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
-                            print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+                            print("BadPayloadLength Topic: " + msg.topic + " Payload:" + str(msg.payload) +
+                                  'MaxArgs:' + str(maxargs) + ' MinArgs:' + str(minargs))
                     else:
                         print("BadPayload: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
             except:
