@@ -117,51 +117,6 @@ unit_types = {5: "XAP800",
               4: "PSR1212",
               6: "XAPTH2"}
 
-def stereo(func):
-    """
-    Call as stereo.
-    This will take every method that starts with get or set
-    and call it twice, the second time incrementing the second argument
-    by 1, which should be the channel argument. If the method is a matrix
-    method, both the input and output channels (params 1 & 2) will be
-    incremented.
-    """
-    @wraps(func)
-    def stereoFunc(*args, **kwargs):
-        # trying to find a way to have a method
-        # calling another method not do the stereo repeat
-        # so if calling an internal func from a stereo func,
-        # add the stereo kw arg to call
-        # it will be removed before calling underlying func
-
-        if 'stereo' in kwargs.keys():
-            _stereo = kwargs['stereo']
-            del(kwargs['stereo'])
-        else:
-            _stereo = 1
-        res = func(*args, **kwargs)
-        if args[0].stereo and _stereo:  # self.stereo
-            _LOGGER.debug("Stereo Command {}:{}".format(func.__name__, args))
-            largs = list(args)
-            if type(largs[1]) == str:
-                largs[1] = chr(ord(largs[1])+1)
-            else:
-                largs[1] = largs[1] + 1
-            if func.__name__[3:9] == "Matrix":  # do stereo on input and output
-                _LOGGER.debug("Matrix Stereo Command {}".format(func.__name__))
-                if type(largs[2]) == str:
-                    largs[2] = chr(ord(largs[2])+1)
-                else:
-                    largs[2] = largs[2] + 1
-            res2 = func(*largs, **kwargs)
-            if res != res2:
-                _LOGGER.debug("Stereo out of sync {} : {}".format(res, res2))
-                warnings.warn("Stereo out of sync", RuntimeWarning)
-        if res is not None:
-            return res
-    return stereoFunc
-
-
 def db2linear(db, maxref=0):
     """Convert a db level to a linear level of 0-1.
     If maxref is provided, the return value is a proportion of maxref
@@ -183,7 +138,7 @@ class XAPX00(object):
     """XAPX000 Module."""
 
     def __init__(self, comPort="/dev/ttyUSB0", baudRate=38400,
-                 stereo=0, XAPType=XAP800Type, rtscts=True, object=None):
+                 XAPType=XAP800Type, rtscts=True, object=None):
         """init: no parameters required."""
         _LOGGER.debug("XAPX00 version: {}".format(__version__))
         self.comPort      = comPort
@@ -197,8 +152,7 @@ class XAPX00(object):
         self.mqtt_command_queue = []
         self.connected_unit_id = None
         self.available_units = []
-        self.rtscts       = rtscts
-        self.stereo       = stereo
+        self.rtscts       = rtsctso
         self.XAPType      = XAPType
         self.input_groups = ['I', "M", "P", "L"]
         self.unit_attribute = "units"
@@ -854,7 +808,7 @@ class XAPX00(object):
         warnings.warn("Clearing Serial Connection")
         self.serial.reset_input_buffer()
 
-    @stereo
+    
     def setDecayRate(self, channel, decayRate, unitCode=0):
         """Modify the decay rate for the specified XAP800.
         unitCode:   the unit code of the target XAP800
@@ -871,7 +825,6 @@ class XAPX00(object):
         return int(res)
 
 
-    @stereo
     def getDecayRate(self, channel, unitCode=0):
         """Request the decay rate for the specified XAP800.
         channel: 1-8
@@ -880,7 +833,6 @@ class XAPX00(object):
         res = self.XAPCommand("DECAY", channel, unitCode=unitCode)
         return res
 
-    @stereo
     def setEchoCanceller(self, channel, isEnabled, unitCode=0):
         """Enable/Disable the echo canceller.
         unitCode - the unit code of the target XAP800
@@ -890,7 +842,7 @@ class XAPX00(object):
         res = self.XAPCommand("AEC", channel, (1 if isEnabled else 0), unitCode=unitCode)
         return res
 
-    @stereo
+    
     def getEchoCanceller(self, channel, unitCode=0):
         """Enable or disable the echo canceller for the channel-unit.
         unitCode - the unit code of the target XAP800
@@ -900,7 +852,7 @@ class XAPX00(object):
         res = self.XAPCommand("AEC", channel, unitCode=unitCode)
         return res
 
-    @stereo
+    
     def getMaxGain(self, channel, group="I", unitCode=0):
         """Get max gain setting for a channel."""
         if group in nogainGroups: #E is expansion, GAIN is set on source unit, so returns max
@@ -908,7 +860,7 @@ class XAPX00(object):
         resp = self.XAPCommand("MAX", channel, group, unitCode=unitCode)
         return float(resp)
 
-    @stereo
+    
     def setMaxGain(self, channel, gain, group="I", unitCode=0):
         """Set max gain setting for a channel."""
         if group in nogainGroups: #E is expansion, GAIN is set on source unit, so returns max
@@ -916,7 +868,7 @@ class XAPX00(object):
         resp = self.XAPCommand("MAX", channel, group, gain, unitCode=unitCode)
         return resp
 
-    @stereo
+    
     def getMinGain(self, channel, group="I", unitCode=0):
         """Get min gain setting for a channel."""
         if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so returns mix
@@ -924,7 +876,7 @@ class XAPX00(object):
         resp = self.XAPCommand("MIN", channel, group, unitCode=unitCode)
         return float(resp)
 
-    @stereo
+    
     def setMinGain(self, channel, gain, group="I", unitCode=0):
         """Set min gain setting for a channel."""
         if group in nogainGroups:  # E is expansion, GAIN is set on source unit, so returns mix
@@ -932,34 +884,33 @@ class XAPX00(object):
         resp = self.XAPCommand("MIN", channel, group, gain, unitCode=unitCode)
         return resp
 
-    @stereo
+    
     def getPropGain(self, channel, group="I", unitCode=0):
         """Get gain level for a channel relative to that channel's maxgain setting
         Returned as linear scale of 0-1, with 1=maxgain
         """
         if group in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
             raise Exception('Gain not available on Expansion Bus')
-        maxdb = self.getMaxGain(channel, group=group, unitCode=unitCode,
-                                stereo=0)
+        maxdb = self.getMaxGain(channel, group=group, unitCode=unitCode)
         resp = self.XAPCommand("GAIN", channel, group, unitCode=unitCode, rtnCount=2)
         resp = db2linear(resp, maxdb)
         return resp
 
-    @stereo
+    
     def setPropGain(self, channel, gain, isAbsolute=1, group="I", unitCode=0):
         """Set gain level for a channel relative to that channel's maxgain setting.
         Gain input is on a linear scale of 0-1, with 1=maxgain
         """
         if group in nogainGroups: #E is expansion, GAIN is set on source unit, so return max
             raise Exception('Gain not available on Expansion Bus')
-        maxdb = self.getMaxGain(channel, group, unitCode, stereo=0)
+        maxdb = self.getMaxGain(channel, group, unitCode)
         dbgain = linear2db(gain, maxdb)  # if self.convertDb else gain
         _LOGGER.debug("setPropGain: linear:{}, max:{}, db:{}".format( gain, maxdb, dbgain))
         resp = self.XAPCommand("GAIN", channel, group, dbgain, "A" if isAbsolute == 1 else "R",
                                unitCode=unitCode, rtnCount=2)[0]
         return db2linear(resp, maxdb)  # if self.convertDb else resp
 
-    @stereo
+    
     def getGain(self, channel, group="I", unitCode=0):
         """Get gain level for a channel/group, 0 - 1"""
         if group == 'E': #E is expansion, GAIN is set on source unit, so return max
@@ -969,7 +920,7 @@ class XAPX00(object):
                                    rtnCount=2)[0]
         return db2linear(resp) if self.convertDb else resp
 
-    @stereo
+    
     def setGain(self, channel, gain, isAbsolute=1, group="I", unitCode=0):
         """Sets the gain on the specified channel for the specified XAP800.
         unitCode - the unit code of the target XAP800
@@ -987,7 +938,7 @@ class XAPX00(object):
                                unitCode=unitCode, rtnCount=2)[0]
         return db2linear(resp) if self.convertDb else resp
 
-    @stereo
+    
     def getLevel(self, channel, group="I", stage="I", unitCode=0):
         """Requests the db level of the target channel on the specified XAP800.
         read-only
@@ -1031,7 +982,7 @@ class XAPX00(object):
         resp = self.XAPCommand("GREPORT", toggle, unitCode=unitCode)
         return resp
 
-    @stereo
+    
     def setMatrixRouting(self, inChannel, outChannel, state=1, inGroup="I",
                          outGroup="O", unitCode=0):
         """Set the routing matrix for the target channel.
@@ -1051,7 +1002,7 @@ class XAPX00(object):
                    outChannel, outGroup, state, unitCode=unitCode)
         return res
 
-    @stereo
+    
     def getMatrixRouting(self, inChannel, outChannel, inGroup="I",
                          outGroup="O", unitCode=0):
         """Gets the routing matrix for the target channel
@@ -1082,7 +1033,7 @@ class XAPX00(object):
             routingMatrix.append(row)
         return routingMatrix
 
-    @stereo
+    
     def setMatrixLevel(self, inChannel, outChannel, level=0,
                        isAbsolute=1, inGroup="I", outGroup="O", unitCode=0):
         """Sets the matrix level at the crosspoint.
@@ -1104,7 +1055,7 @@ class XAPX00(object):
 
         return db2linear(resp) if self.convertDb else resp
 
-    @stereo
+    
     def getMatrixLevel(self, inChannel, outChannel, inGroup="I",
                        outGroup="O", unitCode=0):
         """
@@ -1129,10 +1080,10 @@ class XAPX00(object):
             levelMatrix.append([])
             for y in range(0, matrixGeo[self.XAPType]):
                 levelMatrix[x].append(self.getMatrixLevel(
-                    x + 1, y + 1, unitCode=unitCode, stereo=0))
+                    x + 1, y + 1, unitCode=unitCode))
         return levelMatrix
 
-    @stereo
+    
     def setMute(self, channel, isMuted=1, group="I", unitCode=0):
         """Mutes the target channel on the specified XAP800.
         Args:
@@ -1145,7 +1096,7 @@ class XAPX00(object):
                    unitCode=unitCode)
         return int(resp)
 
-    @stereo
+    
     def getMute(self, channel, group="I", unitCode=0):
         """Mutes the target channel on the specified XAP800.
         Args:
@@ -1158,7 +1109,7 @@ class XAPX00(object):
         resp = self.XAPCommand("MUTE", channel, group, unitCode=unitCode)
         return int(resp)
 
-    @stereo
+    
     def setRamp(self, channel, group, rate, target, unitCode=0):
         """Ramp the gain.
         Ramp gain at the specified rate in db/sec to the target
