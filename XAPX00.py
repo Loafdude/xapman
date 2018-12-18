@@ -268,7 +268,7 @@ class XAPX00(object):
         args = [str(x) for x in args]
         xapstr = "%s%s %s %s %s" % ( self.XAPCMD, unitCode, command, " ".join(args),  EOM)
         _LOGGER.debug("Sending %s" % xapstr)
-        print("" + xapstr)
+        #print("" + xapstr)
         starttime = time.time()
         while 1:
             if self._waiting_response==1:
@@ -751,7 +751,7 @@ class XAPX00(object):
         """
         while 1:
             resp = self.serial.readline().decode()  #Get the line
-            print("Resp:" + resp)
+            #print("Resp:" + resp)
             if len(resp) > 5 and resp[0:5] == "ERROR":  #If Error
                 self._waiting_response = 0
                 raise Exception(resp)

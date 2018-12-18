@@ -425,16 +425,20 @@ class XapUnit(object):
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
                 try:
-                    args = inspect.getfullargspec(func).args
+                    args = inspect.signature(func).parameters.items()
+                    maxargs = len(args)
+                    minargs = 0
+                    for k, v in args:
+                        if v.default is inspect.Parameter.empty:
+                            minargs += 1
                 except TypeError:
                     return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                if maxargs is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
-                        if len(payload) == len(args):
+                        if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
                             print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
@@ -684,16 +688,20 @@ class OutputChannel(object):
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
                 try:
-                    args = inspect.getfullargspec(func).args
+                    args = inspect.signature(func).parameters.items()
+                    maxargs = len(args)
+                    minargs = 0
+                    for k, v in args:
+                        if v.default is inspect.Parameter.empty:
+                            minargs += 1
                 except TypeError:
                     return
-                args.remove('self')
-                if len(args) is 0:
-                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': args})
+                if maxargs is 0:
+                    self.comms.mqtt_command_queue.append({'cmd': func, 'args': []})
                 else:
                     payload = json.loads(msg.payload)
                     if isinstance(payload, list):
-                        if len(payload) == len(args):
+                        if maxargs >= len(payload) >= minargs:
                             self.comms.mqtt_command_queue.append({'cmd': func, 'args': payload})
                         else:
                             print("BadPayloadLength: " + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
