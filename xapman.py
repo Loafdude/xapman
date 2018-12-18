@@ -835,7 +835,7 @@ class OutputChannel(object):
         gain = self.comms.getGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         return gain
 
-    def setGain(self, gain, isAbsolute):
+    def setGain(self, gain, isAbsolute=True):
         """Set absolute gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
