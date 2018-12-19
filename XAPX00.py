@@ -262,7 +262,6 @@ class XAPX00(object):
             return len(data)
 
     def XAPCommand(self, command, *args, **kwargs):
-        self.readwait = True
         unitCode=kwargs.get('unitCode',0)
         rtnCount = kwargs.get('rtnCount',1)
         args = [str(x) for x in args]
@@ -289,10 +288,8 @@ class XAPX00(object):
         while 1:
             res, cmd = self.readResponseCommand()
             if res == None:
-                self.readwait = False
                 return None
             elif cmd == command:
-                self.readwait = False
                 return self.decodeResponse(res)
             else: # Got a response but not the right command.
                 othercmd = self.decodeResponse(res)

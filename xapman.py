@@ -722,7 +722,7 @@ class OutputChannel(object):
                     self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
 
     def calcMqttString(self):
-        self.mqtt_string = self.unit.mqtt_string + "Outputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("OutputChannel(" + str(self.channel) + ")/"))
+        self.mqtt_string = self.unit.mqtt_string + "Outputs/" + ((self.label + "/") if self.label != "" else (str(self.channel) + "/"))
         self.label = self.label # To ensure label is published to MQTT
 
     def initialize(self):
@@ -957,7 +957,7 @@ class InputChannel(object):
                     self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
 
     def calcMqttString(self):
-        self.mqtt_string = self.unit.mqtt_string + "Inputs/" + ((self.label + "(" + str(self.channel) + ")/") if self.label != "" else ("InputChannel(" + str(self.channel) + ")/"))
+        self.mqtt_string = self.unit.mqtt_string + "Inputs/" + ((self.label + "/") if self.label != "" else (str(self.channel) + "/"))
         self.label = self.label  # To ensure label is published to MQTT
 
     def mqttRunFunction(self, mosq, obj, msg):
