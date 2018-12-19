@@ -148,7 +148,7 @@ class XAPX00(object):
         self.write_to_object = False
         self.stopBits     = 1
         self.parity       = "N"
-        self.timeout      = 1
+        self.timeout      = .5
         self.mqtt_command_queue = []
         self.connected_unit_id = None
         self.available_units = []
@@ -309,12 +309,11 @@ class XAPX00(object):
                 time.sleep(0.1)
 
     def listen(self):
-        while 1:
-            res, cmd = self.readResponseCommand()
-            if res == None:
-                return None
-            else: # Got a response but not the right command.
-                return self.decodeResponse(res)
+        res, cmd = self.readResponseCommand()
+        if res == None:
+            return None
+        else: # Got a response.
+            return self.decodeResponse(res)
 
     def decodeResponse(self, res):
         try:
