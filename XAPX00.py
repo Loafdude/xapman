@@ -496,7 +496,8 @@ class XAPX00(object):
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_lockout', value)
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_lockout_string', strings[value])
         elif command == "PRESET":
-            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), int(res[4])
+            print("ERROR: Could not parse serial command " + ' '.join(res))
+            channel, value = convertToInt(res[2]), convertToInt(res[3])
             # Not Implemented
         elif command == "DFLTM":
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
@@ -735,7 +736,7 @@ class XAPX00(object):
         elif command == "STRING":
             pass # Not implemented
         else:
-            print("ERROR: Could not parse serial command " + str(command))
+            print("ERROR: Could not parse serial command " + ' '.join(res))
         return value
 
     def readResponseCommand(self):
