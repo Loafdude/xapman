@@ -24,7 +24,7 @@ class MQTT(mqtt.Client):
         #print(string)
 
     def conn(self):
-        self.connect(MQTT_HOST, MQTT_PORT, 60)
+        self.connect(MQTT_HOST, int(MQTT_PORT), 60)
 
     def run(self):
         self.subscribe("$SYS/#", 0)
