@@ -3,6 +3,14 @@ from copy import deepcopy
 import mqtt
 import json
 import inspect
+import os
+
+MQTT_HOST = os.environ['MQTT_HOST']
+MQTT_PORT = os.environ['MQTT_PORT']
+MQTT_ROOT = os.environ['MQTT_ROOT']
+SERIAL_PORT = os.environ['SERIAL_PORT']
+BAUD_RATE = os.environ['BAUD_RATE']
+RAMP_RATE = os.environ['RAMP_RATE']
 
 channel_data = {"XAP800": {1: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
                            2: {"ig": "M", "og": "O", "itype": "Mic", "otype": "Output"},
@@ -230,11 +238,11 @@ class connect(object):
     def __repr__(self):
         return "XapConnection: " + self.serial_path
 
-    def __init__(self, serial_path="/dev/ttyUSB1",
-                 baudrate=38400,
+    def __init__(self, serial_path=SERIAL_PORT,
+                 baudrate=BAUD_RATE,
                  mqtt_root="Home/Audio/",
                  device_type="XAP800",
-                 ramp_rate=6,
+                 ramp_rate=RAMP_RATE,
                  init=True):
 
         self.mqtt_root = mqtt_root

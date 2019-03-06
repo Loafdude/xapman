@@ -1,4 +1,8 @@
 import paho.mqtt.client as mqtt
+import os
+
+MQTT_HOST = os.environ['MQTT_HOST']
+MQTT_PORT = os.environ['MQTT_PORT']
 
 class MQTT(mqtt.Client):
 
@@ -20,7 +24,7 @@ class MQTT(mqtt.Client):
         #print(string)
 
     def conn(self):
-        self.connect("10.9.8.184", 1883, 60)
+        self.connect(MQTT_HOST, MQTT_PORT, 60)
 
     def run(self):
         self.subscribe("$SYS/#", 0)
