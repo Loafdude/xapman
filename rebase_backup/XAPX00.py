@@ -262,6 +262,7 @@ class XAPX00(object):
             return len(data)
 
     def XAPCommand(self, command, *args, **kwargs):
+        self.readwait = True
         unitCode=kwargs.get('unitCode',0)
         rtnCount = kwargs.get('rtnCount',1)
         args = [str(x) for x in args]
@@ -288,8 +289,10 @@ class XAPX00(object):
         while 1:
             res, cmd = self.readResponseCommand()
             if res == None:
+                self.readwait = False
                 return None
             elif cmd == command:
+                self.readwait = False
                 return self.decodeResponse(res)
             else: # Got a response but not the right command.
                 othercmd = self.decodeResponse(res)
@@ -338,11 +341,11 @@ class XAPX00(object):
                         gate = getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[channel].gate_open
                         if gate is None:
                             gate = False
-                            getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
-                                    channel].__setattr__("gate_open", False)
+                            setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
+                                    channel], "gate_open", False)
                         if bool(int(bit)) is not gate:
-                            getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
-                                channel].__setattr__("gate_open", bool(int(bit)))
+                            setattr(getattr(getattr(self.object, self.unit_attribute)[unit], self.input_attribute)[
+                                channel], "gate_open", bool(int(bit)))
                     except (TypeError, KeyError):
                         break
                     channel += 1
@@ -496,8 +499,7 @@ class XAPX00(object):
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_lockout', value)
                 setattr(getattr(self.object, self.unit_attribute)[unit], 'panel_lockout_string', strings[value])
         elif command == "PRESET":
-            print("ERROR: Could not parse serial command " + ' '.join(res))
-            channel, value = convertToInt(res[2]), convertToInt(res[3])
+            channel, group, value = convertToInt(res[2]), convertToInt(res[3]), int(res[4])
             # Not Implemented
         elif command == "DFLTM":
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), str(res[4])
@@ -736,7 +738,7 @@ class XAPX00(object):
         elif command == "STRING":
             pass # Not implemented
         else:
-            print("ERROR: Could not parse serial command " + ' '.join(res))
+            print("ERROR: Could not parse serial command " + str(command))
         return value
 
     def readResponseCommand(self):

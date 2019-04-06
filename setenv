@@ -1,0 +1,6 @@
+export MQTT_HOST='10.9.8.184'
+export MQTT_PORT='1883'
+export MQTT_ROOT='Home/Audio/'
+export SERIAL_PORT='/dev/ttyS1'
+export BAUD_RATE=38400
+export RAMP_RATE=6
