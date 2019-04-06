@@ -636,6 +636,11 @@ class XapUnit(object):
         status = self.comms.setFrontPanelLock(isEnabled, unitCode=self.device_id)
         return status
 
+    def runPreset(self, preset):
+        """Execute Preset number"""
+        status = self.comms.setPreset(preset, unitCode=self.device_id)
+        return status
+
 
 class OutputChannel(object):
     """XAP Output Channel Wrapper"""
