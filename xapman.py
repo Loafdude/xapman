@@ -465,18 +465,18 @@ class XapUnit(object):
             self.refreshData()
             self.scanOutputChannels()
             self.scanInputChannels()
-            #self.scanMatrix()
+            self.scanMatrix()
             print("  Scanning Output Channels...")
             for id, channel in self.output_channels.items():
                 channel.initialize()
             print("  Scanning Input Channels...")
             for id, channel in self.input_channels.items():
                 channel.initialize()
-            # print("  Scanning Matrix...")
-            # for y, row in self.matrix.items():
-            #     for x, matrix_item in row.items():
-            #         if matrix_item:
-            #             matrix_item.initialize()
+            print("  Scanning Matrix...")
+            for y, row in self.matrix.items():
+                for x, matrix_item in row.items():
+                    if matrix_item:
+                        matrix_item.initialize()
             print("  Scanning Gating Groups...")
             for group, data in self.gating_groups.items():
                 self.gating_groups[group].initialize()
@@ -1803,23 +1803,23 @@ class ExpansionBusManager(object):
             for channel, status in self.busUsed.items():
                 self.getChannelUsage(channel)
 
-        # def getChannelUsage(self, channel, OutputOnly=False):
-        #     inUse = False
-        #     output = 0
-        #     input = 0
-        #     for id, unit in self.units.items():
-        #         for y_channel, data in channel_data[unit.device_type].items():
-        #             if y_channel == channel:
-        #                 continue
-        #             if not OutputOnly:
-        #                 if unit.matrix[y_channel][channel].enabled:
-        #                     inUse = True
-        #                     input += 1
-        #             if unit.matrix[channel][y_channel].enabled:
-        #                 inUse = True
-        #                 output  += 1
-        #     self.busUsed[channel] = inUse
-        #     return {'inUse':inUse, "input": input, "output": output}
+        def getChannelUsage(self, channel, OutputOnly=False):
+            inUse = False
+            output = 0
+            input = 0
+            for id, unit in self.units.items():
+                for y_channel, data in channel_data[unit.device_type].items():
+                    if y_channel == channel:
+                        continue
+                    if not OutputOnly:
+                        if unit.matrix[y_channel][channel].enabled:
+                            inUse = True
+                            input += 1
+                    if unit.matrix[channel][y_channel].enabled:
+                        inUse = True
+                        output  += 1
+            self.busUsed[channel] = inUse
+            return {'inUse':inUse, "input": input, "output": output}
 
         def requestExpChannel(self):
             for channel, status in self.busUsed.items():
