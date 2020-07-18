@@ -411,6 +411,7 @@ class XAPX00(object):
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation', float(value))
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], "matrix")[src_channel][dst_channel], 'attenuation_string', value)
         elif command == "MUTE":
+            print(res)
             channel, group, value = convertToInt(res[2]), convertToInt(res[3]), bool(int(res[4]))
             if self.write_to_object:
                 setattr(getattr(getattr(self.object, self.unit_attribute)[unit], (self.output_attribute if group
