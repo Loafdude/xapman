@@ -1084,8 +1084,8 @@ class XAPX00(object):
                     x + 1, y + 1, unitCode=unitCode))
         return levelMatrix
 
-    
-    def setMute(self, channel, isMuted=1, group="I", unitCode=0):
+
+    def setMute(self, channel, group="I", isMuted=1, unitCode=0):
         """Mutes the target channel on the specified XAP800.
         Args:
         unitCode - the unit code of the target XAP800

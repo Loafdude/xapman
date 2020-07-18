@@ -1092,6 +1092,10 @@ class InputChannel(object):
 
     def setMute(self, mute):
         """Set mute status for Channel"""
+        try:
+            mute = int(mute)
+        except:
+            print("Could not parse input " + mute)
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
         mute = self.comms.setMute(self.channel, self.group, mute, unitCode=self.unit.device_id)
