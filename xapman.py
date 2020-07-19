@@ -1603,6 +1603,7 @@ class MatrixLink(object):
         self.mqtt_string = self.unit.mqtt_string + "Matrix/Src:" + self.source.label + "(" + str(self.source.channel) + ")/" + "Dest:" + self.dest.label + "(" + str(self.dest.channel) + ")/"
 
     def mqttRunFunction(self, mosq, obj, msg):
+        print(msg)
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
