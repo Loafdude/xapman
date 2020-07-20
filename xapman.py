@@ -807,7 +807,7 @@ class OutputChannel(object):
         """Set gain 0-1 proportional to max_gain for Channel"""
         if self.group == "E":  # Expansion Bus is Not Compatible with this function
             return None
-        prop_gain = self.comms.setPropGain(self.channel, channel_data[self.unit.device_type][self.channel]['og'], prop_gain, unitCode=self.unit.device_id)
+        prop_gain = self.comms.setPropGain(self.channel, prop_gain, 1, channel_data[self.unit.device_type][self.channel]['og'], unitCode=self.unit.device_id)
         return prop_gain
 
     def rampToDb(self, targetDb, rate=False):
