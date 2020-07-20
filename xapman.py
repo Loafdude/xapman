@@ -1658,7 +1658,7 @@ class MatrixLink(object):
         return
 
     def setAttenuation(self, level):
-        attn = self.comms.getMatrixLevel(inChannel=self.source.channel, inGroup=self.source.group,
+        attn = self.comms.setMatrixLevel(inChannel=self.source.channel, inGroup=self.source.group,
                                          outChannel=self.dest.channel, outGroup=self.dest.group,
                                          unitCode=self.dest.unit.device_id, level=level)
         return
