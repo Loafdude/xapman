@@ -1052,11 +1052,11 @@ class XAPX00(object):
         level = linear2db(level) if self.convertDb else level
         resp = self.XAPCommand("MTRXLVL", inChannel, inGroup,
                    outChannel, outGroup, level, "A" if isAbsolute == 1
-                               else "R", unitCode=unitCode, rtnCount=2)[0]
+                               else "R", unitCode=unitCode, rtnCount=1)
 
         return db2linear(resp) if self.convertDb else resp
 
-    
+
     def getMatrixLevel(self, inChannel, outChannel, inGroup="I",
                        outGroup="O", unitCode=0):
         """
@@ -1070,7 +1070,7 @@ class XAPX00(object):
         outGroup - otput group (O=all Outputs 1-12, P=processing A-H, ...
         """
         resp = self.XAPCommand("MTRXLVL", inChannel, inGroup,
-                   outChannel, outGroup, unitCode=unitCode, rtnCount=2)[0]
+                   outChannel, outGroup, unitCode=unitCode, rtnCount=1)
 
         return db2linear(resp) if self.convertDb else resp
 
