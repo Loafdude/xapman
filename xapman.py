@@ -1595,14 +1595,15 @@ class MatrixLink(object):
         if self.connection.mqtt:
             for item in self.__dir__():
                 if item[0] != "_" and item not in self.mqttRestrictedFunctions and callable(getattr(self, item)):
-                    self.connection.mqtt.subscriptions.append(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.subscribe(self.connection.mqtt_root + self.mqtt_string + item)
-                    self.connection.mqtt.message_callback_add(self.connection.mqtt_root + self.mqtt_string + item, self.mqttRunFunction)
+                    self.connection.mqtt.subscriptions.append(self.mqtt_string + item)
+                    self.connection.mqtt.subscribe(self.mqtt_string + item)
+                    self.connection.mqtt.message_callback_add(self.mqtt_string + item, self.mqttRunFunction)
 
     def calcMqttString(self):
         self.mqtt_string = self.unit.mqtt_string + "Matrix/Src:" + self.source.label + "(" + str(self.source.channel) + ")/" + "Dest:" + self.dest.label + "(" + str(self.dest.channel) + ")/"
 
     def mqttRunFunction(self, mosq, obj, msg):
+        print(msg)
         if msg.topic.split()[-1] not in self.mqttRestrictedFunctions:
             try:
                 func = getattr(self, msg.topic.split("/")[-1])
