@@ -814,7 +814,7 @@ class OutputChannel(object):
         """Ramp Gain to specified DB"""
         if not rate:
             rate = self.ramp_rate
-        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb, unitCode=self.unit.device_id)
         return ramp
 
     def rampToPercent(self, targetPercent, rate=False):
@@ -824,7 +824,7 @@ class OutputChannel(object):
         if targetPercent < 0 or targetPercent > 1:
             raise NotSupported("Percentage must be between 0 and 1")
         targetDb = (self.gain_max - self.gain_min) * targetPercent
-        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb, unitCode=self.unit.device_id)
         return ramp
 
     def getGain(self):
@@ -1526,7 +1526,7 @@ class InputChannel(object):
         """Ramp Gain to specified DB"""
         if not rate:
             rate = self.ramp_rate
-        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb, unitCode=self.unit.device_id)
         return ramp
 
 
@@ -1537,7 +1537,7 @@ class InputChannel(object):
         if targetPercent < 0 or targetPercent > 1:
             raise NotSupported("Percentage must be between 0 and 1")
         targetDb = (self.gain_max - self.gain_min) * targetPercent
-        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb)
+        ramp = self.comms.ramp(self.channel, self.group, rate, targetDb, unitCode=self.unit.device_id)
         return ramp
 
 
